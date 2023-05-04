@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
 
 use Praetorius\ViteAssetCollector\Service\ViteService;
@@ -38,7 +40,7 @@ final class ViteViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $assetOptions = [
-            'priority' => $this->arguments['priority']
+            'priority' => $this->arguments['priority'],
         ];
 
         if ($this->useDevServer()) {
@@ -66,9 +68,8 @@ final class ViteViewHelper extends AbstractViewHelper
         $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
         if ($useDevServer === 'auto') {
             return Environment::getContext()->isDevelopment();
-        } else {
-            return (bool) $useDevServer;
         }
+        return (bool)$useDevServer;
     }
 
     private function getDevServerUri(): UriInterface
@@ -76,9 +77,8 @@ final class ViteViewHelper extends AbstractViewHelper
         $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
         if ($devServerUri === 'auto') {
             return $this->viteService->determineDevServer($this->renderingContext->getRequest());
-        } else {
-            return new Uri($devServerUri);
         }
+        return new Uri($devServerUri);
     }
 
     public function injectViteService(ViteService $viteService): void

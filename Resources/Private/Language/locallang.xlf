@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext" original="EXT:vite_asset_collector/Resources/Private/Language/locallang.xlf" date="2023-05-04T16:38:32Z" product-name="vite_asset_collector">
-        <header/>
-        <body>
-            <trans-unit id="useDevServer" xml:space="preserve">
-                <source>Use vite development server (auto = use in development context)</source>
-            </trans-unit>
-            <trans-unit id="devServerUri" xml:space="preserve">
-                <source>URI of vite development server (auto = determine automatically for DDEV setups with vite-serve)</source>
-            </trans-unit>
-        </body>
-    </file>
+	<file source-language="en" datatype="plaintext" original="EXT:vite_asset_collector/Resources/Private/Language/locallang.xlf" date="2023-05-04T16:38:32Z" product-name="vite_asset_collector">
+		<header/>
+		<body>
+			<trans-unit id="useDevServer" xml:space="preserve">
+				<source>Use vite development server (auto = use in development context)</source>
+			</trans-unit>
+			<trans-unit id="devServerUri" xml:space="preserve">
+				<source>URI of vite development server (auto = determine automatically for DDEV setups with vite-serve)</source>
+			</trans-unit>
+		</body>
+	</file>
 </xliff>

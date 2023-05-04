@@ -1,16 +1,18 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Praetorius\ViteAssetCollector\Service;
 
+use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Praetorius\ViteAssetCollector\Exception\ViteException;
 
 class ViteService
 {
-    const DEFAULT_PORT = 5173;
+    public const DEFAULT_PORT = 5173;
 
     public function __construct(
         protected AssetCollector $assetCollector
@@ -20,7 +22,7 @@ class ViteService
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
         $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-        return $request->getUri()->withPath('')->withPort((int) $vitePort);
+        return $request->getUri()->withPath('')->withPort((int)$vitePort);
     }
 
     public function addAssetsFromDevServer(
@@ -32,13 +34,13 @@ class ViteService
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
         $this->assetCollector->addJavaScript(
             'vite',
-            (string) $devServerUri->withPath('@vite/client'),
+            (string)$devServerUri->withPath('@vite/client'),
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
         $this->assetCollector->addJavaScript(
             "vite:${entry}",
-            (string) $devServerUri->withPath($entry),
+            (string)$devServerUri->withPath($entry),
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
