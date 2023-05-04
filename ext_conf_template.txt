@@ -1,0 +1,5 @@
+# cat=Vite; type=options[auto,1,0]; label=LLL:EXT:vite_asset_collector/Resources/Private/Language/locallang.xlf:useDevServer
+useDevServer = auto
+
+# cat=Vite; type=string; label=LLL:EXT:vite_asset_collector/Resources/Private/Language/locallang.xlf:devServerUri
+devServerUri = auto
