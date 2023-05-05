@@ -10,7 +10,8 @@
         "node_modules",
         ".DS_Store",
         ".xsd",
-        ".php-cs-fixer.cache"
+        ".php-cs-fixer.cache",
+        "LICENSE"
     ],
     "AllowedContentTypes": [],
     "PassedFiles": [],
