@@ -10,11 +10,17 @@
 	},
 	"require-dev": {
 		"typo3/coding-standards": "^0.7.1",
-		"editorconfig-checker/editorconfig-checker": "^10.3"
+		"editorconfig-checker/editorconfig-checker": "^10.3",
+		"typo3/testing-framework": "^8.0"
 	},
 	"autoload": {
 		"psr-4": {
 			"Praetorius\\ViteAssetCollector\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Praetorius\\ViteAssetCollector\\Tests\\": "Tests/"
 		}
 	},
 	"config": {
@@ -27,7 +33,7 @@
 	},
 	"extra": {
 		"typo3/cms": {
-			"web-dir": ".Build/Web",
+			"web-dir": ".Build/web",
 			"extension-key": "vite_asset_collector"
 		}
 	},
@@ -37,6 +43,13 @@
 			"@lint:editorconfig"
 		],
 		"lint:php": "php-cs-fixer fix --config=./Build/CodeQuality/.php-cs-fixer.dist.php --diff --dry-run",
-		"lint:editorconfig": "ec -config Build/CodeQuality/.ecrc ."
+		"lint:editorconfig": "ec -config Build/CodeQuality/.ecrc .",
+
+		"test": [
+			"@test:unit",
+			"@test:functional"
+		],
+		"test:unit": "phpunit -c Build/Testing/UnitTests.xml",
+		"test:functional": "phpunit -c Build/Testing/FunctionalTests.xml"
 	}
 }

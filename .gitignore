@@ -1,3 +1,4 @@
 /.Build
 /composer.lock
 /.php-cs-fixer.cache
+/var
