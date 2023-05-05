@@ -6,8 +6,8 @@ vite's hot reloading and hot module replacement features (and many others)
 in your TYPO3 project.
 
 This extension is inspired by
-[typo3-vite-demo](https://github.com/fgeierst/typo3-vite-demo) from
-[Florian Geierstanger](https://github.com/fgeierst/).
+[typo3-vite-demo](https://github.com/fgeierst/typo3-vite-demo) which was created
+by [Florian Geierstanger](https://github.com/fgeierst/).
 
 ## Installation
 
