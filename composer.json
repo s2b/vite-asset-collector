@@ -45,6 +45,11 @@
 		"lint:php": "php-cs-fixer fix --config=./Build/CodeQuality/.php-cs-fixer.dist.php --diff --dry-run",
 		"lint:editorconfig": "ec -config Build/CodeQuality/.ecrc .",
 
+		"fix": [
+			"@fix:php"
+		],
+		"fix:php": "php-cs-fixer fix --config=./Build/CodeQuality/.php-cs-fixer.dist.php",
+
 		"test": [
 			"@test:unit",
 			"@test:functional"

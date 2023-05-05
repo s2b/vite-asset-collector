@@ -33,9 +33,9 @@ final class ViteServiceTest extends UnitTestCase
     public function determineDevServer(): void
     {
         $request = new ServerRequest(new Uri('https://localhost/path/to/file'));
-        $this->assertEquals(
+        self::assertEquals(
             'https://localhost:5173',
-            (string) $this->viteService->determineDevServer($request)
+            (string)$this->viteService->determineDevServer($request)
         );
     }
 
@@ -48,12 +48,12 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => []
+                        'options' => [],
                     ],
                     'vite:path/to/Main.js' => [
                         'source' => 'https://localhost:5173/path/to/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => []
+                        'options' => [],
                     ],
                 ],
                 [],
@@ -65,15 +65,15 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['priority' => true]
+                        'options' => ['priority' => true],
                     ],
                     'vite:path/to/Main.js' => [
                         'source' => 'https://localhost:5173/path/to/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['priority' => true]
+                        'options' => ['priority' => true],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -90,11 +90,11 @@ final class ViteServiceTest extends UnitTestCase
             ['async' => true, 'otherAttribute' => 'otherValue']
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             $javaScripts,
             $this->assetCollector->getJavaScripts(false)
         );
-        $this->assertEquals(
+        self::assertEquals(
             $priorityJavaScripts,
             $this->assetCollector->getJavaScripts(true)
         );
@@ -113,7 +113,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => []
+                        'options' => [],
                     ],
                 ],
                 [],
@@ -128,7 +128,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => []
+                        'options' => [],
                     ],
                 ],
                 [],
@@ -136,7 +136,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => []
+                        'options' => [],
                     ],
                 ],
                 [],
@@ -150,7 +150,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['priority' => true]
+                        'options' => ['priority' => true],
                     ],
                 ],
                 [],
@@ -158,7 +158,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => true]
+                        'options' => ['priority' => true],
                     ],
                 ],
             ],
@@ -187,19 +187,19 @@ final class ViteServiceTest extends UnitTestCase
             ['media' => 'print']
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             $javaScripts,
             $this->assetCollector->getJavaScripts(false)
         );
-        $this->assertEquals(
+        self::assertEquals(
             $priorityJavaScripts,
             $this->assetCollector->getJavaScripts(true)
         );
-        $this->assertEquals(
+        self::assertEquals(
             $styleSheets,
             $this->assetCollector->getStyleSheets(false)
         );
-        $this->assertEquals(
+        self::assertEquals(
             $priorityStyleSheets,
             $this->assetCollector->getStyleSheets(true)
         );
@@ -228,7 +228,7 @@ final class ViteServiceTest extends UnitTestCase
                 $fixtureDir . 'ValidManifest/manifest.json',
                 'NonExistentEntry.js',
                 1683200524,
-            ]
+            ],
         ];
     }
 
