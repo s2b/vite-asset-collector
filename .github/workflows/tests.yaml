@@ -1,0 +1,112 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+    lint:
+        name: Source code linting
+        runs-on: ubuntu-latest
+        steps:
+            -
+                uses: actions/checkout@v3
+
+            -
+                name: Validate composer.json
+                run: composer validate
+
+            -
+                name: Cache composer dependencies
+                uses: actions/cache@v3
+                with:
+                    path: ~/.composer/cache
+                    key: composer
+
+            -
+                name: Install composer dependencies
+                run: composer install --prefer-dist --no-progress --no-suggest
+
+            -
+                name: PHP Linting
+                run: composer lint:php
+
+            -
+                name: Editorconfig Linting
+                run: composer lint:editorconfig
+
+
+    test-unit:
+        runs-on: ubuntu-latest
+
+        strategy:
+            max-parallel: 2
+            matrix:
+                php-versions: [8.2, 8.1]
+                typo3-versions: [12]
+
+        name: Unit Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
+        steps:
+            -
+                uses: actions/checkout@v3
+
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: intl, mbstring, pdo_sqlite
+
+            -
+                name: Cache composer dependencies
+                uses: actions/cache@v3
+                with:
+                    path: ~/.composer/cache
+                    key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+
+            -
+                name: Install composer dependencies
+                run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+
+            -
+                name: Unit Testing
+                run: composer test:unit
+
+
+    test-functional:
+        runs-on: ubuntu-latest
+
+        strategy:
+            max-parallel: 2
+            matrix:
+                php-versions: [8.2, 8.1]
+                typo3-versions: [12]
+
+        name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
+        steps:
+            -
+                uses: actions/checkout@v3
+
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: intl, mbstring, pdo_sqlite
+
+            -
+                name: Setup GraphicsMagick
+                run: sudo apt-get install -y graphicsmagick
+
+            -
+                name: Cache composer dependencies
+                uses: actions/cache@v3
+                with:
+                    path: ~/.composer/cache
+                    key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+
+            -
+                name: Install composer dependencies
+                run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+
+            -
+                name: Functional Testing
+                run: typo3DatabaseDriver=pdo_sqlite composer test:functional
