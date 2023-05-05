@@ -18,6 +18,7 @@ final class ViteServiceTest extends UnitTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
         $this->assetCollector = new AssetCollector();
         $this->viteService = new ViteService($this->assetCollector);
     }
@@ -25,6 +26,7 @@ final class ViteServiceTest extends UnitTestCase
     public function tearDown(): void
     {
         $this->assetCollector = $this->viteService = null;
+        parent::tearDown();
     }
 
     /**
