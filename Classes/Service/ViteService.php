@@ -58,7 +58,7 @@ class ViteService
         $manifestDir = dirname($manifestFile) . '/';
         $manifest = $this->parseManifestFile($manifestFile);
 
-        if (!isset($manifest[$entry]) || !$manifest[$entry]['isEntry']) {
+        if (!isset($manifest[$entry]) || empty($manifest[$entry]['isEntry'])) {
             throw new ViteException(sprintf(
                 'Invalid vite entry point "%s" in manifest file "%s".',
                 $entry,
