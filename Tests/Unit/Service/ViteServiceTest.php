@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
@@ -20,7 +21,10 @@ final class ViteServiceTest extends UnitTestCase
     {
         parent::setUp();
         $this->assetCollector = new AssetCollector();
-        $this->viteService = new ViteService($this->assetCollector);
+        $this->viteService = new ViteService(
+            new NullFrontend('manifest'),
+            $this->assetCollector
+        );
     }
 
     public function tearDown(): void

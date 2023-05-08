@@ -7,6 +7,7 @@ namespace Praetorius\ViteAssetCollector\Service;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -15,6 +16,7 @@ class ViteService
     public const DEFAULT_PORT = 5173;
 
     public function __construct(
+        private readonly FrontendInterface $cache,
         protected AssetCollector $assetCollector
     ) {
     }
@@ -102,13 +104,18 @@ class ViteService
 
     protected function parseManifestFile(string $manifestFile): array
     {
-        $manifest = json_decode(file_get_contents($manifestFile), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ViteException(sprintf(
-                'Invalid vite manifest file "%s": %s.',
-                $manifestFile,
-                json_last_error_msg()
-            ), 1683200523);
+        $cacheIdentifier = md5($manifestFile);
+        $manifest = $this->cache->get($cacheIdentifier);
+        if ($manifest === false) {
+            $manifest = json_decode(file_get_contents($manifestFile), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new ViteException(sprintf(
+                    'Invalid vite manifest file "%s": %s.',
+                    $manifestFile,
+                    json_last_error_msg()
+                ), 1683200523);
+            }
+            $this->cache->set($cacheIdentifier, $manifest);
         }
         return $manifest;
     }

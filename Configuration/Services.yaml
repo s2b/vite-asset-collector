@@ -1,9 +1,18 @@
 services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-        public: false
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
 
-    Praetorius\ViteAssetCollector\:
-        resource: '../Classes/*'
-        exclude: '../Classes/Domain/Model/*'
+  Praetorius\ViteAssetCollector\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+
+  cache.viteassetcollector_manifest:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['viteassetcollector_manifest']
+
+  Praetorius\ViteAssetCollector\Service\ViteService:
+    arguments:
+      $cache: '@cache.viteassetcollector_manifest'
