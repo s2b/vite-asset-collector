@@ -72,6 +72,14 @@ Example **Layouts/Default.html**:
 />
 ```
 
+### Setup development environment
+
+Development environments can be highly individual. However, if ddev is your
+tool of choice for local development, a few steps can get you started with
+a ready-to-use development environment with vite, composer and TYPO3.
+
+[Instructions for DDEV](./Documentation/DdevSetup.md)
+
 ## Configuration
 
 The extension has two configuration options to setup the vite dev server.
