@@ -13,7 +13,8 @@ configuration, templates and frontend assets will be located:
 
 ## Setup vite-serve for ddev
 
-Next, you can setup the vite process in your ddev environment:
+Next, you can setup the vite process in your ddev environment with
+[ddev-viteserve](https://github.com/torenware/ddev-viteserve):
 
 ```sh
 ddev get torenware/ddev-viteserve
@@ -40,7 +41,13 @@ ddev vite-serve start
 
 ## Configure vite and set up the extension
 
-Follow the instructions in the [extension documentation](../README.md).
+Install vite via npm:
+
+```sh
+ddev npm install -D vite
+```
+
+After that, follow the instructions in the [extension documentation](../README.md).
 
 ## Switch between development and production
 
