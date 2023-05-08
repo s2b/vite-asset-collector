@@ -102,7 +102,8 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['devServerUri'
 
 * `manifest` (type: `string`, required): Path to your manifest.json file
 * `entry` (type: `string`, required): Identifier of the desired vite entry point;
-this is the value specified as `input` in the vite configuration file
+this is the value specified as `input` in the vite configuration file. Can be
+omitted if manifest file exists and only one entry point is present.
 * `devTagAttributes` (type: `array`): HTML attributes that should be added to
 script tags that point to the vite dev server
 * `scriptTagAttributes` (type: `array`): HTML attributes that should be added

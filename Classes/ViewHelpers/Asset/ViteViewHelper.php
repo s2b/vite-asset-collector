@@ -24,7 +24,11 @@ final class ViteViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         $this->registerArgument('manifest', 'string', 'Path to vite manifest file', true);
-        $this->registerArgument('entry', 'string', 'Name of entrypoint that should be included', true);
+        $this->registerArgument(
+            'entry',
+            'string',
+            'Name of entrypoint that should be included; can be omitted if manifest file exists and only contains one entrypoint'
+        );
         $this->registerArgument('devTagAttributes', 'array', 'Additional attributes for dev server script tags.', false, []);
         $this->registerArgument('scriptTagAttributes', 'array', 'Additional attributes for script tags.', false, []);
         $this->registerArgument('cssTagAttributes', 'array', 'Additional attributes for css link tags.', false, []);
@@ -43,17 +47,20 @@ final class ViteViewHelper extends AbstractViewHelper
             'priority' => $this->arguments['priority'],
         ];
 
+        $entry = $this->arguments['entry'];
+        $entry ??= $this->viteService->determineEntrypointFromManifest($this->arguments['manifest']);
+
         if ($this->useDevServer()) {
             $this->viteService->addAssetsFromDevServer(
                 $this->getDevServerUri(),
-                $this->arguments['entry'],
+                $entry,
                 $assetOptions,
                 $this->arguments['devTagAttributes']
             );
         } else {
             $this->viteService->addAssetsFromManifest(
                 $this->arguments['manifest'],
-                $this->arguments['entry'],
+                $entry,
                 true,
                 $assetOptions,
                 $this->arguments['scriptTagAttributes'],

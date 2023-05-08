@@ -48,6 +48,29 @@ class ViteService
         );
     }
 
+    public function determineEntrypointFromManifest(string $manifestFile): string
+    {
+        $manifestFile = $this->resolveManifestFile($manifestFile);
+        $manifest = $this->parseManifestFile($manifestFile);
+
+        $entrypoints = [];
+        foreach ($manifest as $entrypoint => $assetData) {
+            if (!empty($assetData['isEntry'])) {
+                $entrypoints[] = $entrypoint;
+            }
+        }
+
+        if (count($entrypoints) !== 1) {
+            throw new ViteException(sprintf(
+                'Appropriate vite entrypoint could not be determined automatically. Expected 1 entrypoint in "%s", found %d.',
+                $manifestFile,
+                count($entrypoints)
+            ), 1683552723);
+        }
+
+        return $entrypoints[0];
+    }
+
     public function addAssetsFromManifest(
         string $manifestFile,
         string $entry,

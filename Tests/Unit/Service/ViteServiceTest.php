@@ -45,6 +45,43 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function determineEntrypointFromManifest(): void
+    {
+        self::assertEquals(
+            'Main.js',
+            $this->viteService->determineEntrypointFromManifest(
+                realpath(__DIR__ . '/../../Fixtures/ValidManifest/manifest.json')
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function determineEntrypointFromManifestWithMultipleEntries(): void
+    {
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1683552723);
+        $this->viteService->determineEntrypointFromManifest(
+            realpath(__DIR__ . '/../../Fixtures/MultipleEntries/manifest.json')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function determineEntrypointFromManifestWithNoEntries(): void
+    {
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1683552723);
+        $this->viteService->determineEntrypointFromManifest(
+            realpath(__DIR__ . '/../../Fixtures/NoEntries/manifest.json')
+        );
+    }
+
     public static function addAssetsFromDevServerDataProvider(): array
     {
         return [

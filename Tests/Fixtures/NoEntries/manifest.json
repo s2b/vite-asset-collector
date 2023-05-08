@@ -1,0 +1,24 @@
+{
+	"Main.css": {
+		"file": "assets/Main-973bb662.css",
+		"src": "Main.css"
+	},
+	"Main.js": {
+		"css": [
+			"assets/Main-973bb662.css"
+		],
+		"file": "assets/Main-4483b920.js",
+		"src": "Main.js"
+	},
+	"Alt.css": {
+		"file": "assets/Alt-973bb662.css",
+		"src": "Alt.css"
+	},
+	"Alt.js": {
+		"css": [
+			"assets/Alt-973bb662.css"
+		],
+		"file": "assets/Alt-4483b920.js",
+		"src": "Alt.js"
+	}
+}
