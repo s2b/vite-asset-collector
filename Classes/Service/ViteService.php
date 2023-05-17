@@ -130,7 +130,15 @@ class ViteService
         $cacheIdentifier = md5($manifestFile);
         $manifest = $this->cache->get($cacheIdentifier);
         if ($manifest === false) {
-            $manifest = json_decode(file_get_contents($manifestFile), true);
+            $manifestContent = file_get_contents($manifestFile);
+            if ($manifestContent === false) {
+                throw new ViteException(sprintf(
+                    'Unable to open manifest file "%s".',
+                    $manifestFile
+                ), 1684256597);
+            }
+
+            $manifest = json_decode($manifestContent, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new ViteException(sprintf(
                     'Invalid vite manifest file "%s": %s.',

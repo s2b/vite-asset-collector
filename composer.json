@@ -11,7 +11,9 @@
 	"require-dev": {
 		"typo3/coding-standards": "^0.7.1",
 		"editorconfig-checker/editorconfig-checker": "^10.3",
-		"typo3/testing-framework": "^8.0"
+		"typo3/testing-framework": "^8.0",
+		"phpstan/phpstan": "^1.10",
+		"saschaegerer/phpstan-typo3": "^1.8"
 	},
 	"autoload": {
 		"psr-4": {
@@ -40,10 +42,12 @@
 	"scripts": {
 		"lint": [
 			"@lint:php",
+			"@lint:phpstan",
 			"@lint:editorconfig"
 		],
 		"lint:php": "php-cs-fixer fix --config=./Build/CodeQuality/.php-cs-fixer.dist.php --diff --dry-run",
 		"lint:editorconfig": "ec -config Build/CodeQuality/.ecrc .",
+		"lint:phpstan": "phpstan analyse -c Build/CodeQuality/phpstan.neon",
 
 		"fix": [
 			"@fix:php"

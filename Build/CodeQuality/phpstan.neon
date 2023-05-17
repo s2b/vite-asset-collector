@@ -1,0 +1,20 @@
+includes:
+	- ../../.Build/vendor/saschaegerer/phpstan-typo3/extension.neon
+
+parameters:
+	level: 5
+	phpVersion: 80100
+	treatPhpDocTypesAsCertain: true
+
+	paths:
+		- ../../
+
+	excludePaths:
+		- ../../.Build/
+		- ../../Build/
+
+	ignoreErrors:
+		-
+			message: '#Variable \$_EXTKEY might not be defined.#'
+			path: ../../ext_emconf.php
+

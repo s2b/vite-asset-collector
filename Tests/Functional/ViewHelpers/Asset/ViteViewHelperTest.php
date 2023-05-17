@@ -35,7 +35,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         $this->view = GeneralUtility::makeInstance(StandaloneView::class);
         $this->view->getViewHelperResolver()->addNamespace(
             'vac',
-            \Praetorius\ViteAssetCollector\ViewHelpers::class
+            'Praetorius\\ViteAssetCollector\\ViewHelpers'
         );
         $this->assetCollector = $this->get(AssetCollector::class);
     }

@@ -9,6 +9,7 @@ use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -20,6 +21,11 @@ final class ViteViewHelper extends AbstractViewHelper
     protected ExtensionConfiguration $extensionConfiguration;
 
     protected ViteService $viteService;
+
+    /**
+     * @var RenderingContext
+     */
+    protected $renderingContext;
 
     public function initializeArguments(): void
     {
