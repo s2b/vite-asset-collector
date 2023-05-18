@@ -3,110 +3,155 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-    lint:
-        name: Source code linting
-        runs-on: ubuntu-latest
-        steps:
-            -
-                uses: actions/checkout@v3
+  lint:
+    name: Source code linting
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v3
 
-            -
-                name: Validate composer.json
-                run: composer validate
+      -
+        name: Validate composer.json
+        run: composer validate
 
-            -
-                name: Cache composer dependencies
-                uses: actions/cache@v3
-                with:
-                    path: ~/.composer/cache
-                    key: composer
+      -
+        name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: composer
 
-            -
-                name: Install composer dependencies
-                run: composer install --prefer-dist --no-progress --no-suggest
+      -
+        name: Install composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-            -
-                name: PHP Linting
-                run: composer lint:php
+      -
+        name: PHP Linting
+        run: composer lint:php
 
-            -
-                name: Editorconfig Linting
-                run: composer lint:editorconfig
-
-
-    test-unit:
-        runs-on: ubuntu-latest
-
-        strategy:
-            max-parallel: 2
-            matrix:
-                php-versions: [8.2, 8.1]
-                typo3-versions: [12]
-
-        name: Unit Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
-        steps:
-            -
-                uses: actions/checkout@v3
-
-            -
-                name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php-versions }}
-                    extensions: intl, mbstring, pdo_sqlite
-
-            -
-                name: Cache composer dependencies
-                uses: actions/cache@v3
-                with:
-                    path: ~/.composer/cache
-                    key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
-
-            -
-                name: Install composer dependencies
-                run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
-
-            -
-                name: Unit Testing
-                run: composer test:unit
+      -
+        name: Editorconfig Linting
+        run: composer lint:editorconfig
 
 
-    test-functional:
-        runs-on: ubuntu-latest
+  test-unit:
+    runs-on: ubuntu-latest
 
-        strategy:
-            max-parallel: 2
-            matrix:
-                php-versions: [8.2, 8.1]
-                typo3-versions: [12]
+    strategy:
+      max-parallel: 2
+      matrix:
+        php-versions: [8.2, 8.1]
+        typo3-versions: [12]
 
-        name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
-        steps:
-            -
-                uses: actions/checkout@v3
+    name: Unit Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
+    steps:
+      -
+        uses: actions/checkout@v3
 
-            -
-                name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php-versions }}
-                    extensions: intl, mbstring, pdo_sqlite
+      -
+        name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: intl, mbstring, pdo_sqlite
 
-            -
-                name: Setup GraphicsMagick
-                run: sudo apt-get install -y graphicsmagick
+      -
+        name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
 
-            -
-                name: Cache composer dependencies
-                uses: actions/cache@v3
-                with:
-                    path: ~/.composer/cache
-                    key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+      -
+        name: Install composer dependencies
+        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
 
-            -
-                name: Install composer dependencies
-                run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+      -
+        name: Unit Testing
+        run: composer coverage:unit
 
-            -
-                name: Functional Testing
-                run: typo3DatabaseDriver=pdo_sqlite composer test:functional
+      -
+        name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-unit-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
+          path: .Build/logs/clover.unit.xml
+
+
+  test-functional:
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 2
+      matrix:
+        php-versions: [8.2, 8.1]
+        typo3-versions: [12]
+
+    name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
+    steps:
+      -
+        uses: actions/checkout@v3
+
+      -
+        name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: intl, mbstring, pdo_sqlite
+
+      -
+        name: Setup GraphicsMagick
+        run: sudo apt-get install -y graphicsmagick
+
+      -
+        name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+
+      -
+        name: Install composer dependencies
+        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+
+      -
+        name: Functional testing
+        run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
+
+      -
+        name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-functional-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
+          path: .Build/logs/clover.functional.xml
+
+  coverage:
+    needs:
+      - test-unit
+      - test-functional
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v3
+      -
+        name: Download unit test coverage reports
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-unit-8.2-12
+
+      -
+        name: Download functional test coverage reports
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-functional-8.2-12
+
+      -
+        name: Upload coverage results to Coveralls
+        uses: paambaati/codeclimate-action@v4.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: |
+            clover.unit.xml:clover
+            clover.functional.xml:clover
