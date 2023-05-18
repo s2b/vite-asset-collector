@@ -68,6 +68,6 @@
 		],
 		"coverage:unit": "phpunit -c Build/Testing/UnitTests.xml --coverage-clover .Build/logs/clover.unit.xml --coverage-php .Build/logs/clover.unit.cov",
 		"coverage:functional": "phpunit -c Build/Testing/FunctionalTests.xml --coverage-clover .Build/logs/clover.functional.xml --coverage-php .Build/logs/clover.functional.cov",
-		"coverage:report": "tools/phpcov merge --html .Build/logs/report .Build/logs"
+		"coverage:report": "phpcov merge --html .Build/logs/report .Build/logs"
 	}
 }

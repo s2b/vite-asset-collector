@@ -178,7 +178,7 @@ final class ViteServiceTest extends UnitTestCase
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'assets/Main-973bb662.css',
-                        'attributes' => ['media' => 'print'],
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => [],
                     ],
                 ],
@@ -200,7 +200,7 @@ final class ViteServiceTest extends UnitTestCase
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'assets/Main-973bb662.css',
-                        'attributes' => ['media' => 'print'],
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['priority' => true],
                     ],
                 ],
@@ -227,7 +227,7 @@ final class ViteServiceTest extends UnitTestCase
             $addCss,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
-            ['media' => 'print']
+            ['media' => 'print', 'disabled' => true]
         );
 
         self::assertEquals(
