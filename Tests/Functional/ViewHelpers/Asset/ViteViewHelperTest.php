@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 
+use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -30,6 +31,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
             'devServerUri' => 'https://localhost:5173',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/manifest.json',
         ]);
 
         $this->view = GeneralUtility::makeInstance(StandaloneView::class);
@@ -48,13 +50,13 @@ final class ViteViewHelperTest extends FunctionalTestCase
 
     public static function renderDataProvider(): array
     {
-        $manifestDir = self::getInstancePath() . '/fileadmin/Fixtures/ValidManifest/';
+        $manifestDir = self::getInstancePath() . '/fileadmin/Fixtures/';
         return [
             'basic' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false],
                     ],
@@ -62,7 +64,26 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['priority' => false],
+                    ],
+                ],
+                [],
+            ],
+            'defaultManifest' => [
+                '<vac:asset.vite entry="Default.js" />',
+                [
+                    'vite:Default.js' => [
+                        'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => false],
+                    ],
+                ],
+                [],
+                [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false],
                     ],
@@ -73,7 +94,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false],
                     ],
@@ -81,7 +102,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false],
                     ],
@@ -97,7 +118,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 />',
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
                         'options' => ['priority' => false],
                     ],
@@ -105,7 +126,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
                         'options' => ['priority' => false],
                     ],
@@ -117,7 +138,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => true],
                     ],
@@ -125,7 +146,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => true],
                     ],
@@ -196,5 +217,23 @@ final class ViteViewHelperTest extends FunctionalTestCase
             ],
             $this->assetCollector->getJavaScripts(false)
         );
+    }
+
+    /**
+     * @test
+     */
+    public function renderWithoutManifest()
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'defaultManifest' => '',
+        ]);
+
+        $this->view->setTemplateSource(
+            '<vac:asset.vite entry="Default.js" />'
+        );
+
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1684528724);
+        $this->view->render();
     }
 }

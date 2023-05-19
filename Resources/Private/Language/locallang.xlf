@@ -9,6 +9,9 @@
 			<trans-unit id="devServerUri" xml:space="preserve">
 				<source>URI of vite development server (auto = determine automatically for DDEV setups with vite-serve)</source>
 			</trans-unit>
+			<trans-unit id="defaultManifest" xml:space="preserve">
+				<source>Path to manifest file that will be used if no other manifest file was specified</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

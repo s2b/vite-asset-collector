@@ -102,10 +102,18 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['useDevServer'
 $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['devServerUri'] = (string) getenv('TYPO3_VITE_DEV_SERVER');
 ```
 
+You can also specify a default manifest file in the extension configuration.
+If specified, the `manifest` parameter of the ViewHelper can be omitted.
+
+```php
+$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/manifest.json';
+```
+
 ## ViewHelper Arguments
 
-* `manifest` (type: `string`, required): Path to your manifest.json file
-* `entry` (type: `string`, required): Identifier of the desired vite entry point;
+* `manifest` (type: `string`): Path to your manifest.json file. If omitted,
+default manifest from extension configuration will be used instead.
+* `entry` (type: `string`): Identifier of the desired vite entry point;
 this is the value specified as `input` in the vite configuration file. Can be
 omitted if manifest file exists and only one entry point is present.
 * `devTagAttributes` (type: `array`): HTML attributes that should be added to

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
 
+use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -29,7 +30,11 @@ final class ViteViewHelper extends AbstractViewHelper
 
     public function initializeArguments(): void
     {
-        $this->registerArgument('manifest', 'string', 'Path to vite manifest file', true);
+        $this->registerArgument(
+            'manifest',
+            'string',
+            'Path to vite manifest file; if omitted, default manifest from extension configuration will be used instead.'
+        );
         $this->registerArgument(
             'entry',
             'string',
@@ -53,8 +58,10 @@ final class ViteViewHelper extends AbstractViewHelper
             'priority' => $this->arguments['priority'],
         ];
 
+        $manifest = $this->getManifest();
+
         $entry = $this->arguments['entry'];
-        $entry ??= $this->viteService->determineEntrypointFromManifest($this->arguments['manifest']);
+        $entry ??= $this->viteService->determineEntrypointFromManifest($manifest);
 
         if ($this->useDevServer()) {
             $this->viteService->addAssetsFromDevServer(
@@ -65,7 +72,7 @@ final class ViteViewHelper extends AbstractViewHelper
             );
         } else {
             $this->viteService->addAssetsFromManifest(
-                $this->arguments['manifest'],
+                $manifest,
                 $entry,
                 true,
                 $assetOptions,
@@ -74,6 +81,24 @@ final class ViteViewHelper extends AbstractViewHelper
             );
         }
         return '';
+    }
+
+    private function getManifest(): string
+    {
+        $manifest = $this->arguments['manifest'];
+        $manifest ??= $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
+
+        if (!is_string($manifest) || $manifest === '') {
+            throw new ViteException(
+                sprintf(
+                    'Unable to determine vite manifest from specified argument and default manifest.',
+                    $manifest
+                ),
+                1684528724
+            );
+        }
+
+        return $manifest;
     }
 
     private function useDevServer(): bool

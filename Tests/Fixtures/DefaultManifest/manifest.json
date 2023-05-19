@@ -1,0 +1,14 @@
+{
+	"Default.css": {
+		"file": "assets/Default-973bb662.css",
+		"src": "Default.css"
+	},
+	"Default.js": {
+		"css": [
+			"assets/Default-973bb662.css"
+		],
+		"file": "assets/Default-4483b920.js",
+		"isEntry": true,
+		"src": "Default.js"
+	}
+}
