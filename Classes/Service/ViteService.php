@@ -41,7 +41,7 @@ class ViteService
             $assetOptions
         );
         $this->assetCollector->addJavaScript(
-            "vite:${entry}",
+            "vite:{$entry}",
             (string)$devServerUri->withPath($entry),
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
@@ -93,7 +93,7 @@ class ViteService
 
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
         $this->assetCollector->addJavaScript(
-            "vite:${entry}",
+            "vite:{$entry}",
             $manifestDir . $manifest[$entry]['file'],
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
@@ -103,7 +103,7 @@ class ViteService
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
             foreach ($manifest[$entry]['css'] as $file) {
                 $this->assetCollector->addStyleSheet(
-                    "vite:${entry}:${file}",
+                    "vite:{$entry}:{$file}",
                     $manifestDir . $file,
                     $cssTagAttributes,
                     $assetOptions
