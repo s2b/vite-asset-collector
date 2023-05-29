@@ -85,7 +85,7 @@ jobs:
       max-parallel: 2
       matrix:
         php-versions: [8.2, 8.1]
-        typo3-versions: [12]
+        typo3-versions: [11, 12]
 
     name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
     steps:
