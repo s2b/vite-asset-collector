@@ -40,13 +40,14 @@ export default defineConfig({
     build: {
         manifest: true,
         rollupOptions: {
-            input: 'path/to/sitepackage/Resources/Private/JavaScript/Main.js'
+            input: 'path/to/sitepackage/Resources/Private/JavaScript/Main.js',
+            output: {
+                entryFileNames: "[name].js",
+                assetFileNames: "[name][extname]",
+            },
         },
         outDir: 'path/to/sitepackage/Resources/Public/Vite/',
     },
-    css: {
-        devSourcemap: true,
-    }
 })
 ```
 
