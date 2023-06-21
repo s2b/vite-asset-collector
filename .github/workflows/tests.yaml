@@ -33,6 +33,10 @@ jobs:
         name: Editorconfig Linting
         run: composer lint:editorconfig
 
+      -
+        name: Phpstan Linting
+        run: composer lint:phpstan
+
 
   test-unit:
     runs-on: ubuntu-latest
