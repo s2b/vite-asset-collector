@@ -91,7 +91,7 @@ final class ViteViewHelper extends AbstractViewHelper
         if (!is_string($manifest) || $manifest === '') {
             throw new ViteException(
                 sprintf(
-                    'Unable to determine vite manifest from specified argument and default manifest.',
+                    'Unable to determine vite manifest from specified argument and default manifest: %s',
                     $manifest
                 ),
                 1684528724
