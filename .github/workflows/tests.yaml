@@ -105,7 +105,9 @@ jobs:
 
       -
         name: Setup GraphicsMagick
-        run: sudo apt-get install -y graphicsmagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphicsmagick
 
       -
         name: Cache composer dependencies
