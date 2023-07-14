@@ -42,6 +42,7 @@ final class ViteViewHelper extends AbstractViewHelper
         );
         $this->registerArgument('devTagAttributes', 'array', 'Additional attributes for dev server script tags.', false, []);
         $this->registerArgument('scriptTagAttributes', 'array', 'Additional attributes for script tags.', false, []);
+        $this->registerArgument('addCss', 'boolean', 'Define whether css assets should be included.', false, true);
         $this->registerArgument('cssTagAttributes', 'array', 'Additional attributes for css link tags.', false, []);
         $this->registerArgument(
             'priority',
@@ -74,7 +75,7 @@ final class ViteViewHelper extends AbstractViewHelper
             $this->viteService->addAssetsFromManifest(
                 $manifest,
                 $entry,
-                true,
+                $this->arguments['addCss'],
                 $assetOptions,
                 $this->arguments['scriptTagAttributes'],
                 $this->arguments['cssTagAttributes']
