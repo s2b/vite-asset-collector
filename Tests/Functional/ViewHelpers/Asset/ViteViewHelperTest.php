@@ -71,6 +71,19 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 ],
                 [],
             ],
+            'withoutCss' => [
+                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
+                [
+                    'vite:Main.js' => [
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => false],
+                    ],
+                ],
+                [],
+                [],
+                [],
+            ],
             'defaultManifest' => [
                 '<vac:asset.vite entry="Default.js" />',
                 [
