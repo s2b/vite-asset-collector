@@ -128,6 +128,8 @@ to script tags for built JavaScript assets
 css link tags for built CSS assets
 * `priority` (type: `bool`, default: `false`): Include assets before other assets
 in HTML
+* `addCss` (type: `bool`, default: `true`): If set to `false`, CSS files associated
+with the entry point won't be added to the asset collector
 
 Example:
 
