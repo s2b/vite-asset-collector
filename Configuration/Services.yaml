@@ -16,3 +16,8 @@ services:
   Praetorius\ViteAssetCollector\Service\ViteService:
     arguments:
       $cache: '@cache.viteassetcollector_manifest'
+
+  Praetorius\ViteAssetCollector\EventListener\DevServerPolicyEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'vite-asset-collector/dev-server-policy'
