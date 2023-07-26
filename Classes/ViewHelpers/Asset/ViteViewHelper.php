@@ -51,12 +51,14 @@ final class ViteViewHelper extends AbstractViewHelper
             false,
             false
         );
+        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
     }
 
     public function render(): string
     {
         $assetOptions = [
             'priority' => $this->arguments['priority'],
+            'useNonce' => $this->arguments['useNonce'],
         ];
 
         $manifest = $this->getManifest();

@@ -58,7 +58,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -66,7 +66,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -77,7 +77,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -90,7 +90,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Default.js' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -98,7 +98,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -109,7 +109,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -117,7 +117,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -133,7 +133,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -141,7 +141,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => false],
+                        'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -153,7 +153,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true],
+                        'options' => ['priority' => true, 'useNonce' => false],
                     ],
                 ],
                 [],
@@ -161,9 +161,28 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => true],
+                        'options' => ['priority' => true, 'useNonce' => false],
                     ],
                 ],
+            ],
+            'withNonce' => [
+                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
+                [
+                    'vite:Main.js' => [
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => false, 'useNonce' => true],
+                    ],
+                ],
+                [],
+                [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['priority' => false, 'useNonce' => true],
+                    ],
+                ],
+                [],
             ],
         ];
     }
@@ -220,12 +239,12 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false],
+                    'options' => ['priority' => false, 'useNonce' => false],
                 ],
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false],
+                    'options' => ['priority' => false, 'useNonce' => false],
                 ],
             ],
             $this->assetCollector->getJavaScripts(false)
