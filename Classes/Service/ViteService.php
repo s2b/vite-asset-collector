@@ -10,6 +10,7 @@ use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 class ViteService
 {
@@ -110,6 +111,22 @@ class ViteService
                 );
             }
         }
+    }
+
+    public function getAssetPathFromManifest(
+        string $manifestFile,
+        string $assetFile
+    ): string {
+        $manifestFile = $this->resolveManifestFile($manifestFile);
+        $manifest = $this->parseManifestFile($manifestFile);
+        if (!isset($manifest[$assetFile])) {
+            throw new ViteException(sprintf(
+                'Invalid asset file "%s" in vite manifest file "%s".',
+                $assetFile,
+                $manifestFile
+            ), 1690735353);
+        }
+        return PathUtility::getAbsoluteWebPath(dirname($manifestFile) . '/' . $manifest[$assetFile]['file']);
     }
 
     protected function resolveManifestFile(string $manifestFile): string
