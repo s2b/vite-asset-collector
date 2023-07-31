@@ -257,3 +257,17 @@ editor:
             # Using another manifest.json
             - "%vite('EXT:sitepackage/Resources/Private/Css/Rte.css', 'path/to/manifest.json')%"
 ```
+
+### IconProvider
+
+To use an icon along with `core:icon` add the following to the `Icons.php` file:
+
+```php
+return [
+    'site-logo' => [
+        'provider' => \Praetorius\ViteAssetCollector\IconProvider\VacSvgIconProvider::class,
+        'source' => 'assets/Image/Icon/typo3.svg',
+        'manifest' => 'EXT:sitepackage/Resources/Public/manifest.json', // optional, defaults to defaultManifest
+    ],
+];
+```

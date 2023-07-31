@@ -35,7 +35,7 @@ final class ViteViewHelper extends AbstractViewHelper
 
     public function render(): string
     {
-        return $this->viteService->getAssetPathFromManifest(
+        return $this->viteService->getAssetWebPathFromManifest(
             $this->getManifest(),
             $this->arguments['file']
         );
