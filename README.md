@@ -115,6 +115,11 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManife
 
 ## ViewHelper Arguments
 
+### asset.vite ViewHelper
+
+The `asset.vite` ViewHelper embeds all JavaScript and CSS belonging to the
+specified vite `entry` using TYPO3's AssetCollector API.
+
 * `manifest` (type: `string`): Path to your manifest.json file. If omitted,
 default manifest from extension configuration will be used instead.
 * `entry` (type: `string`): Identifier of the desired vite entry point;
@@ -147,4 +152,28 @@ Example:
     }"
     priority="1"
 />
+```
+
+### resource.vite ViteHelper
+
+The `resource.vite` ViewHelper extracts the uri to one specific asset file from a vite
+manifest file.
+
+* `manifest` (type: `string`): Path to your manifest.json file. If omitted,
+default manifest from extension configuration will be used instead.
+* `file` (type: `string`): Identifier of the desired asset file for which a uri
+should be generated
+
+This can be used to preload certain assets in the HTML `<head>` tag:
+
+```xml
+<f:section name="HeaderAssets">
+    <link
+        rel="preload"
+        href="{vac:resource.vite(file: 'path/to/sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    />
+</f:section>
 ```

@@ -288,4 +288,29 @@ final class ViteServiceTest extends UnitTestCase
         $this->expectExceptionCode($exceptionCode);
         $this->viteService->addAssetsFromManifest($manifestFile, $entry);
     }
+
+    /**
+     * @test
+     */
+    public function getAssetPathFromManifest(): void
+    {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ValidManifest') . '/';
+        self::assertEquals(
+            $manifestDir . 'assets/Main-973bb662.css',
+            $this->viteService->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'Main.css')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getAssetPathFromManifestErrorHandling(): void
+    {
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1690735353);
+
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $this->viteService->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'NonExistentEntry.css');
+    }
 }
