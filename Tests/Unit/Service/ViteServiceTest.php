@@ -201,7 +201,7 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => '.test {color: #000;}',
+                        'source' => ".test {color: #000;}\n",
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['priority' => true],
                     ],

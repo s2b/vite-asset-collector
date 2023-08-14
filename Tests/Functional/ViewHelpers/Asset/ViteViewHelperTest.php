@@ -100,7 +100,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => '.test {color: #000;}',
+                        'source' => ".test {color: #000;}\n",
                         'attributes' => [],
                         'options' => ['priority' => true, 'useNonce' => false],
                     ],
