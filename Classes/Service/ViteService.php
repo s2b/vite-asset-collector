@@ -78,7 +78,8 @@ class ViteService
         bool $addCss = true,
         array $assetOptions = [],
         array $scriptTagAttributes = [],
-        array $cssTagAttributes = []
+        array $cssTagAttributes = [],
+        bool $inlineCss = false
     ): void {
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifestDir = dirname($manifestFile) . '/';
@@ -103,12 +104,32 @@ class ViteService
         if ($addCss && !empty($manifest[$entry]['css'])) {
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
             foreach ($manifest[$entry]['css'] as $file) {
-                $this->assetCollector->addStyleSheet(
-                    "vite:{$entry}:{$file}",
-                    $manifestDir . $file,
-                    $cssTagAttributes,
-                    $assetOptions
-                );
+                $identifier = "vite:{$entry}:{$file}";
+
+                if ($inlineCss) {
+                    $styleSheetContent = file_get_contents($manifestDir . $file);
+
+                    if ($styleSheetContent === false) {
+                        throw new ViteException(sprintf(
+                            'Unable to open stylesheet file "%s".',
+                            $manifestDir . $file
+                        ), 1684256597);
+                    }
+
+                    $this->assetCollector->addInlineStyleSheet(
+                        $identifier,
+                        $styleSheetContent,
+                        $cssTagAttributes,
+                        array_merge($assetOptions, ['priority' => true])
+                    );
+                } else {
+                    $this->assetCollector->addStyleSheet(
+                        $identifier,
+                        $manifestDir . $file,
+                        $cssTagAttributes,
+                        $assetOptions
+                    );
+                }
             }
         }
     }

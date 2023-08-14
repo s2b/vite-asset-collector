@@ -3,3 +3,4 @@
 /.php-cs-fixer.cache
 /var
 /Build/Testing/.phpunit.cache
+/.idea
