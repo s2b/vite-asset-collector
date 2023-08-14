@@ -206,8 +206,7 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['priority' => true],
                     ],
                 ],
-                true
-
+                true,
             ],
             'withCssAndPriority' => [
                 $manifestFile,
@@ -285,7 +284,6 @@ final class ViteServiceTest extends UnitTestCase
                 $this->assetCollector->getStyleSheets(true)
             );
         }
-
     }
 
     public static function addAssetsFromManifestFileErrorHandlingDataProvider(): array
