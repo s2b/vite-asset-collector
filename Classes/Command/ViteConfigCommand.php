@@ -34,8 +34,8 @@ const VITE_ENTRYPOINTS = [
         $this
             ->setHelp('Generates a boilerplate vite config file')
             ->addArgument('extension', InputArgument::OPTIONAL, 'If provided, vite config will be generated for extension context instead of project context', null)
-            ->addOption('entrypoint', 'e', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'vite entrypoint(s)')
-            ->addOption('glob', 'g', InputOption::VALUE_NEGATABLE, 'Enable glob patterns for entrypoints; this requires "fast-glob" to be installed')
+            ->addOption('entry', 'e', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'vite entrypoint(s)')
+            ->addOption('glob', 'g', InputOption::VALUE_NONE, 'Enable glob patterns for entrypoints; this requires "fast-glob" to be installed')
             ->addOption('outputfile', 'o', InputOption::VALUE_REQUIRED, 'Write generated vite config to file')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Write file even if it already exists')
         ;
@@ -66,7 +66,7 @@ const VITE_ENTRYPOINTS = [
         }
 
         $entrypoints = [];
-        foreach ($input->getOption('entrypoint') as $entrypoint) {
+        foreach ($input->getOption('entry') as $entrypoint) {
             $entrypoint = $this->partialRealpath($this->getAbsoluteInputPath($entrypoint));
             $entrypointRelativeToRoot = PathUtility::getRelativePath($rootPath, PathUtility::dirname($entrypoint));
             $entrypoints[] = $entrypointRelativeToRoot . PathUtility::basename($entrypoint);
@@ -75,7 +75,7 @@ const VITE_ENTRYPOINTS = [
         $viteConfig = $this->generateViteConfig(
             $configFileRelativeToRoot,
             $entrypoints,
-            $input->getOption('glob') === true,
+            $input->getOption('glob'),
             $extensionName !== null
         );
 
