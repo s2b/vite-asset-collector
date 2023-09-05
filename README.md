@@ -39,18 +39,15 @@ Example **vite.config.js**:
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-    publicDir: false,
+    base: '',
     build: {
         manifest: true,
         rollupOptions: {
             input: 'path/to/sitepackage/Resources/Private/JavaScript/Main.js',
-            output: {
-                entryFileNames: "[name].js",
-                assetFileNames: "[name][extname]",
-            },
         },
         outDir: 'path/to/sitepackage/Resources/Public/Vite/',
     },
+    publicDir: false,
 })
 ```
 
