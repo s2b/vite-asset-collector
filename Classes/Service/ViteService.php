@@ -8,6 +8,8 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -18,7 +20,8 @@ class ViteService
 
     public function __construct(
         private readonly FrontendInterface $cache,
-        protected AssetCollector $assetCollector
+        protected AssetCollector $assetCollector,
+        protected PackageManager $packageManager
     ) {
     }
 
@@ -34,6 +37,8 @@ class ViteService
         array $assetOptions = [],
         array $scriptTagAttributes = []
     ): void {
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
+
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
         $this->assetCollector->addJavaScript(
             'vite',
@@ -80,6 +85,8 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = []
     ): void {
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
+
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifestDir = dirname($manifestFile) . '/';
         $manifest = $this->parseManifestFile($manifestFile);
@@ -117,6 +124,8 @@ class ViteService
         string $manifestFile,
         string $assetFile
     ): string {
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
+
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
         if (!isset($manifest[$assetFile])) {
@@ -126,6 +135,7 @@ class ViteService
                 $manifestFile
             ), 1690735353);
         }
+
         return PathUtility::getAbsoluteWebPath(dirname($manifestFile) . '/' . $manifest[$assetFile]['file']);
     }
 
@@ -166,6 +176,20 @@ class ViteService
             $this->cache->set($cacheIdentifier, $manifest);
         }
         return $manifest;
+    }
+
+    protected function determineAssetIdentifierFromExtensionPath(string $identifier): string
+    {
+        if (!PathUtility::isExtensionPath($identifier)) {
+            return $identifier;
+        }
+
+        $absolutePath = $this->packageManager->resolvePackagePath($identifier);
+        $file = PathUtility::basename($absolutePath);
+        $dir = realpath(PathUtility::dirname($absolutePath));
+        $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
+
+        return $relativeDirToProjectRoot . $file;
     }
 
     protected function prepareScriptAttributes(array $attributes): array

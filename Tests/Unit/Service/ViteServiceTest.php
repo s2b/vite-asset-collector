@@ -9,6 +9,7 @@ use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -21,9 +22,26 @@ final class ViteServiceTest extends UnitTestCase
     {
         parent::setUp();
         $this->assetCollector = new AssetCollector();
+
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $packageManager = $this->createStub(PackageManager::class);
+        $packageManager
+            ->method('resolvePackagePath')
+            ->willReturnMap([
+                [
+                    'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                    $fixtureDir . 'test_extension/Resources/Private/JavaScript/Main.js',
+                ],
+                [
+                    'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                    $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
+                ],
+            ]);
+
         $this->viteService = new ViteService(
             new NullFrontend('manifest'),
-            $this->assetCollector
+            $this->assetCollector,
+            $packageManager
         );
     }
 
@@ -86,6 +104,7 @@ final class ViteServiceTest extends UnitTestCase
     {
         return [
             'withoutPriority' => [
+                'path/to/Main.js',
                 [],
                 [
                     'vite' => [
@@ -102,6 +121,7 @@ final class ViteServiceTest extends UnitTestCase
                 [],
             ],
             'withPriority' => [
+                'path/to/Main.js',
                 ['priority' => true],
                 [],
                 [
@@ -117,6 +137,40 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
             ],
+            'withExtPath' => [
+                'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                [],
+                [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
+            'withSymlinkedExtPath' => [
+                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                [],
+                [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
         ];
     }
 
@@ -124,11 +178,11 @@ final class ViteServiceTest extends UnitTestCase
      * @test
      * @dataProvider addAssetsFromDevServerDataProvider
      */
-    public function addAssetsFromDevServer(array $options, array $javaScripts, array $priorityJavaScripts): void
+    public function addAssetsFromDevServer(string $entry, array $options, array $javaScripts, array $priorityJavaScripts): void
     {
         $this->viteService->addAssetsFromDevServer(
             new Uri('https://localhost:5173'),
-            'path/to/Main.js',
+            $entry,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue']
         );
@@ -145,16 +199,18 @@ final class ViteServiceTest extends UnitTestCase
 
     public static function addAssetsFromManifestDataProvider(): array
     {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         $manifestDir = realpath(__DIR__ . '/../../Fixtures/ValidManifest') . '/';
-        $manifestFile = $manifestDir . 'manifest.json';
+        $manifestFile = $fixtureDir . 'ValidManifest/manifest.json';
         return [
             'withoutCss' => [
-                $manifestFile,
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'Main.js',
                 [],
                 false,
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => [],
                     ],
@@ -164,12 +220,13 @@ final class ViteServiceTest extends UnitTestCase
                 [],
             ],
             'withCss' => [
-                $manifestFile,
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'Main.js',
                 [],
                 true,
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => [],
                     ],
@@ -177,7 +234,7 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => [],
                     ],
@@ -185,13 +242,14 @@ final class ViteServiceTest extends UnitTestCase
                 [],
             ],
             'withCssAndPriority' => [
-                $manifestFile,
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'Main.js',
                 ['priority' => true],
                 true,
                 [],
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['priority' => true],
                     ],
@@ -199,11 +257,43 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'assets/Main-973bb662.css',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['priority' => true],
                     ],
                 ],
+            ],
+            'withExtPath' => [
+                $fixtureDir . 'ExtPathManifest/manifest.json',
+                'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                [],
+                false,
+                [
+                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [],
+                [],
+            ],
+            'withSymlinkedExtPath' => [
+                $fixtureDir . 'ExtPathManifest/manifest.json',
+                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                [],
+                false,
+                [
+                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [],
+                [],
             ],
         ];
     }
@@ -214,6 +304,7 @@ final class ViteServiceTest extends UnitTestCase
      */
     public function addAssetsFromManifest(
         string $manifestFile,
+        string $entry,
         array $options,
         bool $addCss,
         array $javaScripts,
@@ -223,7 +314,7 @@ final class ViteServiceTest extends UnitTestCase
     ): void {
         $this->viteService->addAssetsFromManifest(
             $manifestFile,
-            'Main.js',
+            $entry,
             $addCss,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
@@ -299,6 +390,22 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             $manifestDir . 'assets/Main-973bb662.css',
             $this->viteService->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'Main.css')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getAssetWithExtPathFromManifest(): void
+    {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ExtPathManifest') . '/';
+        self::assertEquals(
+            $manifestDir . 'assets/Main-4483b920.js',
+            $this->viteService->getAssetPathFromManifest(
+                $fixtureDir . 'ExtPathManifest/manifest.json',
+                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
+            )
         );
     }
 
