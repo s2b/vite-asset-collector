@@ -7,10 +7,11 @@
 [![TYPO3 versions](https://typo3-badges.dev/badge/vite_assetcollector/typo3/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
 [![Latest version](https://typo3-badges.dev/badge/vite_assetcollector/version/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
 
-This TYPO3 extension uses TYPO3's AssetCollector API to embed frontend assets
-generated with [vite](https://vitejs.dev/). This means that you can use
-vite's hot reloading and hot module replacement features (and many others)
-in your TYPO3 project.
+Bundle your TYPO3 frontend assets with **[vite](https://vitejs.dev/)**, a modern
+and flexible frontend tool. This TYPO3 extension provides a future-proof
+integration for vite using TYPO3's AssetCollector API.
+This means that you can use vite's hot reloading and hot module replacement features
+(and many others) in your TYPO3 projects.
 
 This extension is inspired by
 [typo3-vite-demo](https://github.com/fgeierst/typo3-vite-demo) which was created
@@ -18,7 +19,7 @@ by [Florian Geierstanger](https://github.com/fgeierst/).
 
 ## Installation
 
-The extension can be installed via composer:
+Vite AssetCollector can be installed with composer:
 
 ```sh
 composer req praetorius/vite-asset-collector
@@ -34,8 +35,8 @@ npm install --dev vite
 
 ### 1. Vite Setup
 
-To get you started, the extension provides a console command that generates a ready-to-use
-`vite.config.js` file:
+To get things started, the extension provides a console command that generates a
+ready-to-use `vite.config.js` file:
 
 ```sh
 vendor/bin/typo3 vite:config --entry 'EXT:sitepackage/Resources/Private/Main.entry.js' --outputfile ./vite.config.js
@@ -87,6 +88,8 @@ a ready-to-use development environment with vite, composer and TYPO3.
 ## Configuration
 
 If you use the setup as described above, no configuration should be necessary.
+However, you can customize almost everything to create your individual development
+setup:
 
 <details>
     <summary><i>Adjust vite dev server</i></summary>
@@ -112,10 +115,12 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['devServerUri'
 <details>
     <summary><i>Change location of default manifest.json</i></summary>
 
-You can also specify a default manifest file in the extension configuration.
+You can specify a default manifest file in the extension configuration.
 By default, this is set to `_assets/vite/manifest.json`, so it will run
 out-of-the-box if you generated your vite configuration with this extension.
-If you change the path here, you need to adjust your `vite.config.js` accordingly:
+
+If you change the path here, please be aware that you need to adjust your
+the `outDir` in your `vite.config.js` as well:
 
 ```php
 $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/manifest.json';
@@ -192,6 +197,7 @@ with the entry point won't be added to the asset collector
     priority="1"
 />
 ```
+
 </details>
 
 
