@@ -10,13 +10,13 @@ const VITE_TYPO3_ROOT = './';
 const VITE_ENTRYPOINTS = [
   'packages/**/*.entry.{js,ts}'
 ];
+
+// Output path for generated assets
+const VITE_OUTPUT_PATH = 'public/_assets/vite/';
 // ------------------------------------------------------
 
 // Ignored patterns to speed up globbing
 const VITE_PATTERN_IGNORE = ['**/node_modules/**', '**/.git/**'];
-
-// Output path for generated assets
-const VITE_OUTPUT_PATH = 'public/_assets/vite/';
 
 const rootPath = resolve(__dirname, VITE_TYPO3_ROOT);
 export default defineConfig({

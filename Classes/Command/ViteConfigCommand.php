@@ -26,6 +26,9 @@ const VITE_TYPO3_ROOT = %2$s;
 const VITE_ENTRYPOINTS = [
 %3$s
 ];
+
+// Output path for generated assets
+const VITE_OUTPUT_PATH = %4$s;
 ';
     protected PackageManager $packageManager;
 
@@ -98,18 +101,16 @@ const VITE_ENTRYPOINTS = [
     ): string {
         $configuration = explode(self::TEMPLATE_SEPARATOR, $this->getTemplate($useGlob), 3);
 
-        $entrypointCode = implode(
-            ",\n  ",
-            array_map(
-                fn ($entry) => json_encode($entry, JSON_UNESCAPED_SLASHES),
-                $entrypoints
-            )
-        );
+        $encodedEntrypoints = array_map(fn ($entry) => json_encode($entry, JSON_UNESCAPED_SLASHES), $entrypoints);
+        $entrypointCode = implode(",\n  ", $encodedEntrypoints);
+
+        $outputPath = ($configurationForExtension) ? 'Resources/Public/Vite/' : 'public/_assets/vite/';
 
         $configuration[1] = vsprintf(ltrim(self::CONFIGURATION_TEMPLATE), [
             ($configurationForExtension) ? 'Extension' : 'TYPO3',
             json_encode($rootPath, JSON_UNESCAPED_SLASHES),
-            $entrypointCode ? "  $entrypointCode," : ''
+            $entrypointCode ? "  $entrypointCode," : '',
+            json_encode($outputPath, JSON_UNESCAPED_SLASHES),
         ]);
 
         return implode('', $configuration);

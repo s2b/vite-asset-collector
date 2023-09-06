@@ -10,10 +10,10 @@ const VITE_ENTRYPOINTS = [
   'packages/sitepackage/Resources/Private/JavaScript/Main.entry.js',
   'packages/my_extension/Resources/Private/JavaScript/Extension.entry.js',
 ];
-// ------------------------------------------------------
 
 // Output path for generated assets
 const VITE_OUTPUT_PATH = 'public/_assets/vite/';
+// ------------------------------------------------------
 
 const rootPath = resolve(__dirname, VITE_TYPO3_ROOT);
 export default defineConfig({
