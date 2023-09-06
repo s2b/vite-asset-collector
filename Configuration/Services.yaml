@@ -16,3 +16,9 @@ services:
   Praetorius\ViteAssetCollector\Service\ViteService:
     arguments:
       $cache: '@cache.viteassetcollector_manifest'
+
+  Praetorius\ViteAssetCollector\Command\ViteConfigCommand:
+    tags:
+      - name: console.command
+        command: 'vite:config'
+        description: 'Generates a boilerplate vite config file'
