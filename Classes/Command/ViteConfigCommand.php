@@ -32,6 +32,11 @@ const VITE_OUTPUT_PATH = %4$s;
 ';
     protected PackageManager $packageManager;
 
+    public function injectPackageManager(PackageManager $packageManager)
+    {
+        $this->packageManager = $packageManager;
+    }
+
     protected function configure(): void
     {
         $this
@@ -68,29 +73,39 @@ const VITE_OUTPUT_PATH = %4$s;
             $configFileRelativeToRoot = './';
         }
 
-        $entrypoints = [];
-        foreach ($input->getOption('entry') as $entrypoint) {
-            $entrypoint = $this->partialRealpath($this->getAbsoluteInputPath($entrypoint));
-            $entrypointRelativeToRoot = PathUtility::getRelativePath($rootPath, PathUtility::dirname($entrypoint));
-            $entrypoints[] = $entrypointRelativeToRoot . PathUtility::basename($entrypoint);
-        }
-
         $viteConfig = $this->generateViteConfig(
             $configFileRelativeToRoot,
-            $entrypoints,
+            $this->prepareEntrypoints($input->getOption('entry'), $rootPath),
             $input->getOption('glob'),
             $extensionName !== null
         );
 
         if ($configFile) {
-            GeneralUtility::mkdir_deep(PathUtility::dirname($configFile));
-            GeneralUtility::writeFile($configFile, $viteConfig);
+            $this->writeConfigFile($configFile, $viteConfig);
             $output->write(sprintf('Vite config has been written to %s.', $configFile), true);
         } else {
             $output->write($viteConfig);
         }
 
         return Command::SUCCESS;
+    }
+
+    protected function prepareEntrypoints(array $entrypoints, string $rootPath): array
+    {
+        return array_map(function ($entrypoint) use ($rootPath) {
+            $entrypoint = $this->partialRealpath($this->getAbsoluteInputPath($entrypoint));
+            $entrypointRelativeToRoot = PathUtility::getRelativePath($rootPath, PathUtility::dirname($entrypoint));
+            return $entrypointRelativeToRoot . PathUtility::basename($entrypoint);
+        }, $entrypoints);
+    }
+
+    protected function getTemplate(bool $useGlob = false): string
+    {
+        $templateFile = $useGlob ? 'glob.vite.config.js' : 'static.vite.config.js';
+        return file_get_contents(ExtensionManagementUtility::extPath(
+            'vite_asset_collector',
+            "Resources/Private/ViteConfigTemplates/$templateFile"
+        ));
     }
 
     protected function generateViteConfig(
@@ -101,28 +116,25 @@ const VITE_OUTPUT_PATH = %4$s;
     ): string {
         $configuration = explode(self::TEMPLATE_SEPARATOR, $this->getTemplate($useGlob), 3);
 
-        $encodedEntrypoints = array_map(fn ($entry) => json_encode($entry, JSON_UNESCAPED_SLASHES), $entrypoints);
+        $encodedEntrypoints = array_map($this->jsonEncode(...), $entrypoints);
         $entrypointCode = implode(",\n  ", $encodedEntrypoints);
 
         $outputPath = ($configurationForExtension) ? 'Resources/Public/Vite/' : 'public/_assets/vite/';
 
         $configuration[1] = vsprintf(ltrim(self::CONFIGURATION_TEMPLATE), [
             ($configurationForExtension) ? 'Extension' : 'TYPO3',
-            json_encode($rootPath, JSON_UNESCAPED_SLASHES),
+            $this->jsonEncode($rootPath),
             $entrypointCode ? "  $entrypointCode," : '',
-            json_encode($outputPath, JSON_UNESCAPED_SLASHES),
+            $this->jsonEncode($outputPath),
         ]);
 
         return implode('', $configuration);
     }
 
-    protected function getTemplate(bool $useGlob = false): string
+    protected function writeConfigFile(string $file, string $content): void
     {
-        $templateFile = $useGlob ? 'glob.vite.config.js' : 'static.vite.config.js';
-        return file_get_contents(ExtensionManagementUtility::extPath(
-            'vite_asset_collector',
-            "Resources/Private/ViteConfigTemplates/$templateFile"
-        ));
+        GeneralUtility::mkdir_deep(PathUtility::dirname($file));
+        GeneralUtility::writeFile($file, $content);
     }
 
     protected function getAbsoluteInputPath(string $path): string
@@ -155,8 +167,8 @@ const VITE_OUTPUT_PATH = %4$s;
         return implode(DIRECTORY_SEPARATOR, array_reverse($dynamicPath));
     }
 
-    public function injectPackageManager(PackageManager $packageManager)
+    protected function jsonEncode($input): string
     {
-        $this->packageManager = $packageManager;
+        return (string)json_encode($input, JSON_UNESCAPED_SLASHES);
     }
 }
