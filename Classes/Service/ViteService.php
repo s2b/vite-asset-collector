@@ -88,7 +88,7 @@ class ViteService
         $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
 
         $manifestFile = $this->resolveManifestFile($manifestFile);
-        $manifestDir = dirname($manifestFile) . '/';
+        $manifestDir = PathUtility::dirname($manifestFile) . '/';
         $manifest = $this->parseManifestFile($manifestFile);
 
         if (!isset($manifest[$entry]) || empty($manifest[$entry]['isEntry'])) {
@@ -136,7 +136,7 @@ class ViteService
             ), 1690735353);
         }
 
-        return PathUtility::getAbsoluteWebPath(dirname($manifestFile) . '/' . $manifest[$assetFile]['file']);
+        return PathUtility::getAbsoluteWebPath(PathUtility::dirname($manifestFile) . '/' . $manifest[$assetFile]['file']);
     }
 
     protected function resolveManifestFile(string $manifestFile): string
