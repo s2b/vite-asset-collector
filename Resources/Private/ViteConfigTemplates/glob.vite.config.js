@@ -6,7 +6,7 @@ import fg from 'fast-glob'
 // TYPO3 root path (relative to this config file)
 const VITE_TYPO3_ROOT = './';
 
-// Vite input file pattern (relative to TYPO3 root path)
+// Vite input files (relative to TYPO3 root path)
 const VITE_ENTRYPOINTS = [
   'packages/**/*.entry.{js,ts}'
 ];
