@@ -101,7 +101,7 @@ const VITE_ENTRYPOINTS = [
         $configuration[1] = vsprintf(ltrim(self::CONFIGURATION_TEMPLATE), [
             ($configurationForExtension) ? 'Extension' : 'TYPO3',
             json_encode($rootPath, JSON_UNESCAPED_SLASHES),
-            '  ' . implode(",\n  ", array_map(fn ($entry) => json_encode($entry, JSON_UNESCAPED_SLASHES), $entrypoints)),
+            '  ' . implode(",\n  ", array_map(fn ($entry) => json_encode($entry, JSON_UNESCAPED_SLASHES), $entrypoints)) . ',',
         ]);
 
         return implode('', $configuration);
