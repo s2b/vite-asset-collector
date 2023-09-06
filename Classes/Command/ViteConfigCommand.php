@@ -59,7 +59,7 @@ const VITE_OUTPUT_PATH = %4$s;
             }
 
             if (file_exists($configFile) && !$input->getOption('force')) {
-                $output->write('Output file already exists. Use --force if you want to overwrite the existing file.', true);
+                $output->write(sprintf('Output file %s already exists. Use --force if you want to overwrite the existing file.', $configFile), true);
                 return Command::FAILURE;
             }
 
@@ -85,7 +85,7 @@ const VITE_OUTPUT_PATH = %4$s;
         if ($configFile) {
             GeneralUtility::mkdir_deep(PathUtility::dirname($configFile));
             GeneralUtility::writeFile($configFile, $viteConfig);
-            $output->write("Vite config has been written to $configFile.", true);
+            $output->write(sprintf('Vite config has been written to %s.', $configFile), true);
         } else {
             $output->write($viteConfig);
         }
