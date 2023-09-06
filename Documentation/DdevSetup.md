@@ -20,7 +20,7 @@ Next, you can setup the vite process in your ddev environment with
 ddev get torenware/ddev-viteserve
 ```
 
-You should check the created `.ddev/.env file for the correct configuration,
+You should check the created `.ddev/.env` file for the correct configuration,
 for example:
 
 ```sh
