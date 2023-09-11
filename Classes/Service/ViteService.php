@@ -122,7 +122,8 @@ class ViteService
 
     public function getAssetPathFromManifest(
         string $manifestFile,
-        string $assetFile
+        string $assetFile,
+        bool $returnWebPath = true
     ): string {
         $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
 
@@ -136,7 +137,8 @@ class ViteService
             ), 1690735353);
         }
 
-        return PathUtility::getAbsoluteWebPath(PathUtility::dirname($manifestFile) . '/' . $manifest[$assetFile]['file']);
+        $assetPath = PathUtility::dirname($manifestFile) . '/' . $manifest[$assetFile]['file'];
+        return ($returnWebPath) ? PathUtility::getAbsoluteWebPath($assetPath) : $assetPath;
     }
 
     protected function resolveManifestFile(string $manifestFile): string
