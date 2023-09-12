@@ -1,0 +1,10 @@
+testWithoutManifest:
+  withoutQuotes: '%vite(Default.css)%'
+  singleQuotes: "%vite('Default.css')%"
+  doubleQuotes: '%vite("Default.css")%'
+
+testWithManifest:
+  withoutQuotes: '%vite(Main.css, EXT:vite_asset_collector/Tests/Fixtures/MultipleEntries/manifest.json)%'
+  singleQuotes: "%vite('Main.css', 'EXT:vite_asset_collector/Tests/Fixtures/MultipleEntries/manifest.json')%"
+  doubleQuotes: '%vite("Main.css", "EXT:vite_asset_collector/Tests/Fixtures/MultipleEntries/manifest.json")%'
+  whitespace: '%vite("Main.css"   ,     "EXT:vite_asset_collector/Tests/Fixtures/MultipleEntries/manifest.json")%'
