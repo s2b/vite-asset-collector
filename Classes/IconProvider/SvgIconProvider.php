@@ -6,17 +6,22 @@ namespace Praetorius\ViteAssetCollector\IconProvider;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 
-class VacSvgIconProvider extends AbstractSvgIconProvider
+class SvgIconProvider extends AbstractSvgIconProvider
 {
-    protected ExtensionConfiguration $extensionConfiguration;
-    protected ViteService $viteService;
+    public function __construct(
+        private readonly ViteService $viteService,
+        private readonly ExtensionConfiguration $extensionConfiguration
+    ) {
+    }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException|ViteException
      */
     protected function generateMarkup(Icon $icon, array $options): string
     {
@@ -52,7 +57,7 @@ class VacSvgIconProvider extends AbstractSvgIconProvider
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException|ViteException|ExtensionConfigurationExtensionNotConfiguredException|ExtensionConfigurationPathDoesNotExistException
      */
     protected function generateInlineMarkup(array $options): string
     {
@@ -61,20 +66,11 @@ class VacSvgIconProvider extends AbstractSvgIconProvider
         }
 
         $source = $this->viteService->getAssetPathFromManifest(
-            $this->getManifest($options['manifest'] ?? ''),
-            $options['source']
+            $options['manifest'] ?? $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest'),
+            $options['source'],
+            false
         );
 
         return $this->getInlineSvg($source);
-    }
-
-    public function injectViteService(ViteService $viteService): void
-    {
-        $this->viteService = $viteService;
-    }
-
-    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
-    {
-        $this->extensionConfiguration = $extensionConfiguration;
     }
 }
