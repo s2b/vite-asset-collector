@@ -29,7 +29,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
             throw new \InvalidArgumentException('[' . $icon->getIdentifier() . '] The option "source" is required and must not be empty', 1460976566);
         }
 
-        $source = $this->viteService->getAssetWebPathFromManifest(
+        $source = $this->viteService->getAssetPathFromManifest(
             $this->getManifest($options['manifest'] ?? ''),
             $options['source']
         );

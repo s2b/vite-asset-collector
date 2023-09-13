@@ -23,8 +23,8 @@ services:
         command: 'vite:config'
         description: 'Generates a boilerplate vite config file'
 
-  Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
+  Praetorius\ViteAssetCollector\Configuration\VitePlaceholderProcessor:
     public: true
 
-  Praetorius\ViteAssetCollector\Configuration\VitePlaceholderProcessor:
+  Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
     public: true
