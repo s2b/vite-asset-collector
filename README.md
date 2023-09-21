@@ -28,7 +28,7 @@ composer req praetorius/vite-asset-collector
 vite can be installed with the frontend package manager of your choice:
 
 ```sh
-npm install --dev vite
+npm install --save-dev vite
 ```
 
 ## Getting Started
