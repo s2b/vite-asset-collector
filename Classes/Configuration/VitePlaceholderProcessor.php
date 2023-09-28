@@ -26,8 +26,7 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
     public function __construct(
         private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly ViteService $viteService
-    ) {
-    }
+    ) {}
 
     public function canProcess(string $placeholder, array $referenceArray): bool
     {

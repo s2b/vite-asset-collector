@@ -22,8 +22,7 @@ class ViteService
         private readonly FrontendInterface $cache,
         protected AssetCollector $assetCollector,
         protected PackageManager $packageManager
-    ) {
-    }
+    ) {}
 
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
