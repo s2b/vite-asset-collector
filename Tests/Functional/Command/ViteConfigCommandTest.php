@@ -33,6 +33,15 @@ final class ViteConfigCommandTest extends FunctionalTestCase
         }
     }
 
+    public function tearDown(): void
+    {
+        // Delete config file from overwriteConfigFile() test
+        $overwriteConfigFile = self::getInstancePath() . '/vite.config.js';
+        if (file_exists($overwriteConfigFile)) {
+            unlink($overwriteConfigFile);
+        }
+    }
+
     public static function outputConfigDataProvider(): array
     {
         return [
@@ -255,7 +264,11 @@ final class ViteConfigCommandTest extends FunctionalTestCase
         $input = ['--outputfile' => './vite.config.js'];
         $output = new BufferedOutput();
         $command->run(new ArrayInput($input, $command->getDefinition()), $output);
-        self::assertEquals(sprintf("Vite config has been written to %s.\n", $outputFile), $output->fetch());
+        self::assertEquals(
+            sprintf("Vite config has been written to %s.\n", $outputFile),
+            $output->fetch(),
+            'Initial file can be written'
+        );
         self::assertEquals(
             $expectedFirstResult,
             file_get_contents($outputFile),
@@ -268,7 +281,11 @@ final class ViteConfigCommandTest extends FunctionalTestCase
         ];
         $output = new BufferedOutput();
         $command->run(new ArrayInput($input, $command->getDefinition()), $output);
-        self::assertEquals(sprintf("Output file %s already exists. Use --force if you want to overwrite the existing file.\n", $outputFile), $output->fetch());
+        self::assertEquals(
+            sprintf("Output file %s already exists. Use --force if you want to overwrite the existing file.\n", $outputFile),
+            $output->fetch(),
+            'Overwrite attempt without force option'
+        );
         self::assertEquals(
             $expectedFirstResult,
             file_get_contents($outputFile),
@@ -278,7 +295,11 @@ final class ViteConfigCommandTest extends FunctionalTestCase
         $input['--force'] = null;
         $output = new BufferedOutput();
         $command->run(new ArrayInput($input, $command->getDefinition()), $output);
-        self::assertEquals(sprintf("Vite config has been written to %s.\n", $outputFile), $output->fetch());
+        self::assertEquals(
+            sprintf("Vite config has been written to %s.\n", $outputFile),
+            $output->fetch(),
+            'Overwrite attempt with force option'
+        );
         self::assertEquals(
             $expectedLaterResult,
             file_get_contents($outputFile),

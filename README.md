@@ -48,6 +48,11 @@ The generated configuration makes sure that vite
 * generates a `manifest.json` file
 * outputs assets to a publicly accessible directory
 
+**Note that you might need to set `VITE_DEV_ORIGIN` in the generated config file manually
+to the URL of your vite dev server in order to be able to load generated assets (e. g.
+font files referenced in a css file) correctly. There will probably be a cleaner solution
+in an upcoming version of the extension.**
+
 <details>
     <summary><i>More Options</i></summary>
 

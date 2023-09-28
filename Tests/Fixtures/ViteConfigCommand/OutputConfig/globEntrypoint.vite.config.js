@@ -13,6 +13,11 @@ const VITE_ENTRYPOINTS = [
 // Output path for generated assets
 const VITE_OUTPUT_PATH = "public/_assets/vite/";
 
+// Base URL that will be prepended to all referenced assets in dev mode
+// Set this to the URL of your vite dev server,
+// e. g. https://myproject.ddev.site:5173
+const VITE_DEV_ORIGIN = '';
+
 // Ignored patterns to speed up globbing
 const VITE_PATTERN_IGNORE = ['**/node_modules/**', '**/.git/**'];
 
@@ -30,4 +35,7 @@ export default defineConfig({
     outDir: resolve(rootPath, VITE_OUTPUT_PATH),
   },
   publicDir: false,
+  server: {
+    origin: VITE_DEV_ORIGIN,
+  },
 });
