@@ -36,6 +36,10 @@ final class ViteServiceTest extends UnitTestCase
                     'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
                     $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
                 ],
+                [
+                    'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
+                    $fixtureDir . 'test_extension/Resources/Private/NonExistent/NonExistent.js',
+                ],
             ]);
 
         $this->viteService = new ViteService(
@@ -409,15 +413,32 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
+    public static function getAssetPathFromManifestErrorHandlingDataProvider(): array
+    {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        return [
+            [
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'NonExistentEntry.css',
+                1690735353,
+            ],
+            [
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
+                1696238083,
+            ],
+        ];
+    }
+
     /**
      * @test
+     * @dataProvider getAssetPathFromManifestErrorHandlingDataProvider
      */
-    public function getAssetPathFromManifestErrorHandling(): void
+    public function getAssetPathFromManifestErrorHandling(string $manifestFile, string $entry, int $exceptionCode): void
     {
         $this->expectException(ViteException::class);
-        $this->expectExceptionCode(1690735353);
+        $this->expectExceptionCode($exceptionCode);
 
-        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $this->viteService->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'NonExistentEntry.css');
+        $this->viteService->getAssetPathFromManifest($manifestFile, $entry);
     }
 }
