@@ -17,8 +17,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
     public function __construct(
         private readonly ViteService $viteService,
         private readonly ExtensionConfiguration $extensionConfiguration
-    ) {
-    }
+    ) {}
 
     /**
      * @throws \InvalidArgumentException|ViteException
