@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Functional\Imaging;
 
 use Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider;
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider as CoreSvgIconProvider;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
