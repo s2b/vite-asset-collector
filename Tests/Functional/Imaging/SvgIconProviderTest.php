@@ -92,9 +92,15 @@ SVG_MARKUP;
      */
     public function getIconReturnsCorrectMarkupIfIconIsRegisteredAsLogoIcon(): void
     {
+        $iconMarkup = $this->subject->getIcon($this->registeredIconIdentifier)->render();
+        self::assertMatchesRegularExpression(
+            '<span class="t3js-icon icon icon-size-([a-z]*) icon-state-default icon-typo3-logo" data-identifier="typo3-logo"(.*)>',
+            $iconMarkup
+        );
+
         self::assertStringContainsString(
-            '<span class="t3js-icon icon icon-size-medium icon-state-default icon-typo3-logo" data-identifier="typo3-logo" aria-hidden="true">',
-            $this->subject->getIcon($this->registeredIconIdentifier)->render()
+            '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="32" height="32" alt="" />',
+            $iconMarkup
         );
     }
 }
