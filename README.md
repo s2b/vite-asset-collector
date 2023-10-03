@@ -260,7 +260,10 @@ editor:
 
 ### IconProvider
 
-To use an icon along with `core:icon` add the following to the `Icons.php` file:
+Use the `SvgIconProvider` for icons processed by Vite. It works in Frontend and Backend.
+For more details about the TYPO3 Icon API see the [documentation](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Icon/Index.html)
+
+To use an icon along with `core:icon` ViewHelper, add the following to the `Configuration/Icons.php` file:
 
 ```php
 return [

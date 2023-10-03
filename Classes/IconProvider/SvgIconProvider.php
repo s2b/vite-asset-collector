@@ -65,7 +65,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
         }
 
         $source = $this->viteService->getAssetPathFromManifest(
-            $options['manifest'] ?? $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest'),
+            $this->getManifest($options['manifest'] ?? ''),
             $options['source'],
             false
         );
