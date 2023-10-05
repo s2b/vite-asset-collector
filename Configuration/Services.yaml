@@ -25,3 +25,6 @@ services:
 
   Praetorius\ViteAssetCollector\Configuration\VitePlaceholderProcessor:
     public: true
+
+  Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
+    public: true

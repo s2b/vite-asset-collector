@@ -10,5 +10,9 @@
 		"file": "assets/Default-4483b920.js",
 		"isEntry": true,
 		"src": "Default.js"
+	},
+	"typo3.svg": {
+		"file": "assets/typo3-57f5650e.svg",
+		"src": "assets/typo3.svg"
 	}
 }
