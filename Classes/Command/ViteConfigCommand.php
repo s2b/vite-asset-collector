@@ -46,6 +46,7 @@ const VITE_OUTPUT_PATH = %4$s;
             ->addOption('glob', 'g', InputOption::VALUE_NONE, 'Enable glob patterns for entrypoints; this requires "fast-glob" to be installed')
             ->addOption('outputfile', 'o', InputOption::VALUE_REQUIRED, 'Write generated vite config to file')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Write file even if it already exists')
+            ->addOption('auto-origin', null, InputOption::VALUE_NEGATABLE, 'Use "vite-plugin-auto-origin" to determine origin for dev server automatically (default: enabled)')
         ;
     }
 
@@ -77,6 +78,7 @@ const VITE_OUTPUT_PATH = %4$s;
             $configFileRelativeToRoot,
             $this->prepareEntrypoints($input->getOption('entry'), $rootPath),
             $input->getOption('glob'),
+            $input->getOption('auto-origin') !== false,
             $extensionName !== null
         );
 
@@ -99,12 +101,13 @@ const VITE_OUTPUT_PATH = %4$s;
         }, $entrypoints);
     }
 
-    protected function getTemplate(bool $useGlob = false): string
+    protected function getTemplate(bool $useGlob = false, bool $useAutoOrigin = true): string
     {
-        $templateFile = $useGlob ? 'glob.vite.config.js' : 'static.vite.config.js';
+        $templateName = $useGlob ? 'glob' : 'static';
+        $templateName .= $useAutoOrigin ? '-auto' : '';
         return file_get_contents(ExtensionManagementUtility::extPath(
             'vite_asset_collector',
-            "Resources/Private/ViteConfigTemplates/$templateFile"
+            "Resources/Private/ViteConfigTemplates/$templateName.vite.config.js"
         ));
     }
 
@@ -112,9 +115,10 @@ const VITE_OUTPUT_PATH = %4$s;
         string $rootPath,
         array $entrypoints,
         bool $useGlob = false,
+        bool $useAutoOrigin = true,
         bool $configurationForExtension = false
     ): string {
-        $configuration = explode(self::TEMPLATE_SEPARATOR, $this->getTemplate($useGlob), 3);
+        $configuration = explode(self::TEMPLATE_SEPARATOR, $this->getTemplate($useGlob, $useAutoOrigin), 3);
 
         $encodedEntrypoints = array_map($this->jsonEncode(...), $entrypoints);
         $entrypointCode = implode(",\n  ", $encodedEntrypoints);
