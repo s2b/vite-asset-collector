@@ -51,6 +51,9 @@ The generated configuration makes sure that vite
 * generates a `manifest.json` file
 * outputs assets to a publicly accessible directory
 
+Note that the console command is only intended as a kickstarter for your initial
+vite configuration file.
+
 <details>
     <summary><i>More Options</i></summary>
 
