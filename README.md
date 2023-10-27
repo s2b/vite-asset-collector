@@ -28,8 +28,11 @@ composer req praetorius/vite-asset-collector
 vite can be installed with the frontend package manager of your choice:
 
 ```sh
-npm install --save-dev vite
+npm install --save-dev vite vite-plugin-auto-origin
 ```
+
+*[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin)
+is recommended as it simplifies configuration and daily usage of vite with TYPO3.*
 
 ## Getting Started
 
@@ -48,10 +51,8 @@ The generated configuration makes sure that vite
 * generates a `manifest.json` file
 * outputs assets to a publicly accessible directory
 
-**Note that you might need to set `VITE_DEV_ORIGIN` in the generated config file manually
-to the URL of your vite dev server in order to be able to load generated assets (e. g.
-font files referenced in a css file) correctly. There will probably be a cleaner solution
-in an upcoming version of the extension.**
+Note that the console command is only intended as a kickstarter for your initial
+vite configuration file.
 
 <details>
     <summary><i>More Options</i></summary>
@@ -60,6 +61,9 @@ in an upcoming version of the extension.**
 * You can add `--glob` to enable pattern matching for your entrypoint paths
 ([fast-glob](https://www.npmjs.com/package/fast-glob) required).
 * If you omit `--outputfile`, the file content will be outputted instead.
+* Add `--no-auto-origin` if you don't want to use
+[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin).
+Note that you need to specify `VITE_DEV_ORIGIN` manually then.
 * `--help` shows all available options.
 
 </details>

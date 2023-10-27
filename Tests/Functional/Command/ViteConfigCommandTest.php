@@ -89,6 +89,23 @@ final class ViteConfigCommandTest extends FunctionalTestCase
                 ],
                 'globEntrypoint.vite.config.js',
             ],
+            'noAutoOrigin' => [
+                self::getInstancePath(),
+                [
+                    '--entry' => ['EXT:test_extension/Resources/Private/JavaScript/main.js'],
+                    '--no-auto-origin' => null,
+                ],
+                'noAutoOrigin.vite.config.js',
+            ],
+            'globNoAutoOrigin' => [
+                self::getInstancePath(),
+                [
+                    '--entry' => ['EXT:test_extension/Resources/Private/*.js'],
+                    '--glob' => null,
+                    '--no-auto-origin' => null,
+                ],
+                'globNoAutoOrigin.vite.config.js',
+            ],
             'configForExtension' => [
                 self::getInstancePath(),
                 [

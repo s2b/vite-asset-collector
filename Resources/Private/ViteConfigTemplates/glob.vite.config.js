@@ -1,31 +1,31 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
-import fg from 'fast-glob'
+import { defineConfig } from "vite"
+import { resolve } from "path"
+import fg from "fast-glob"
 
 // ------------------------------------------------------
 // TYPO3 root path (relative to this config file)
-const VITE_TYPO3_ROOT = './';
+const VITE_TYPO3_ROOT = "./";
 
 // Vite input files (relative to TYPO3 root path)
 const VITE_ENTRYPOINTS = [
-  'packages/**/*.entry.{js,ts}'
+  "packages/**/*.entry.{js,ts}"
 ];
 
 // Output path for generated assets
-const VITE_OUTPUT_PATH = 'public/_assets/vite/';
+const VITE_OUTPUT_PATH = "public/_assets/vite/";
 // ------------------------------------------------------
 
 // Base URL that will be prepended to all referenced assets in dev mode
 // Set this to the URL of your vite dev server,
 // e. g. https://myproject.ddev.site:5173
-const VITE_DEV_ORIGIN = '';
+const VITE_DEV_ORIGIN = "";
 
 // Ignored patterns to speed up globbing
-const VITE_PATTERN_IGNORE = ['**/node_modules/**', '**/.git/**'];
+const VITE_PATTERN_IGNORE = ["**/node_modules/**", "**/.git/**"];
 
 const rootPath = resolve(__dirname, VITE_TYPO3_ROOT);
 export default defineConfig({
-  base: '',
+  base: "",
   build: {
     manifest: true,
     rollupOptions: {
