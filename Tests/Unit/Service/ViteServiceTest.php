@@ -222,6 +222,7 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [],
                 [],
+                false,
             ],
             'withCss' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
@@ -244,6 +245,29 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 [],
+                false,
+            ],
+            'withInlineCss' => [
+                $manifestFile,
+                [],
+                true,
+                [
+                    'vite:Main.js' => [
+                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [],
+                [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".test {color: #000;}\n",
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => ['priority' => true],
+                    ],
+                ],
+                true,
             ],
             'withCssAndPriority' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
@@ -266,6 +290,7 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['priority' => true],
                     ],
                 ],
+                false,
             ],
             'withExtPath' => [
                 $fixtureDir . 'ExtPathManifest/manifest.json',
@@ -314,7 +339,8 @@ final class ViteServiceTest extends UnitTestCase
         array $javaScripts,
         array $priorityJavaScripts,
         array $styleSheets,
-        array $priorityStyleSheets
+        array $priorityStyleSheets,
+        bool $inlineCss
     ): void {
         $this->viteService->addAssetsFromManifest(
             $manifestFile,
@@ -322,7 +348,8 @@ final class ViteServiceTest extends UnitTestCase
             $addCss,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
-            ['media' => 'print', 'disabled' => true]
+            ['media' => 'print', 'disabled' => true],
+            $inlineCss
         );
 
         self::assertEquals(
@@ -333,14 +360,25 @@ final class ViteServiceTest extends UnitTestCase
             $priorityJavaScripts,
             $this->assetCollector->getJavaScripts(true)
         );
-        self::assertEquals(
-            $styleSheets,
-            $this->assetCollector->getStyleSheets(false)
-        );
-        self::assertEquals(
-            $priorityStyleSheets,
-            $this->assetCollector->getStyleSheets(true)
-        );
+        if ($inlineCss) {
+            self::assertEquals(
+                $styleSheets,
+                $this->assetCollector->getInlineStyleSheets(false)
+            );
+            self::assertEquals(
+                $priorityStyleSheets,
+                $this->assetCollector->getInlineStyleSheets(true)
+            );
+        } else {
+            self::assertEquals(
+                $styleSheets,
+                $this->assetCollector->getStyleSheets(false)
+            );
+            self::assertEquals(
+                $priorityStyleSheets,
+                $this->assetCollector->getStyleSheets(true)
+            );
+        }
     }
 
     public static function addAssetsFromManifestFileErrorHandlingDataProvider(): array

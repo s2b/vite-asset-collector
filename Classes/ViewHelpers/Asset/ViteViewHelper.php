@@ -52,6 +52,7 @@ final class ViteViewHelper extends AbstractViewHelper
             false
         );
         $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
+        $this->registerArgument('inlineCss', 'boolean', 'Define whether css assets should be inlined.', false, false);
     }
 
     public function render(): string
@@ -80,7 +81,8 @@ final class ViteViewHelper extends AbstractViewHelper
                 $this->arguments['addCss'],
                 $assetOptions,
                 $this->arguments['scriptTagAttributes'],
-                $this->arguments['cssTagAttributes']
+                $this->arguments['cssTagAttributes'],
+                $this->arguments['inlineCss'],
             );
         }
         return '';

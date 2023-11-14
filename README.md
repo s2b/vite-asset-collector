@@ -186,6 +186,7 @@ in HTML
 
 * `addCss` (type: `bool`, default: `true`): If set to `false`, CSS files associated
 with the entry point won't be added to the asset collector
+* `inlineCss` (type: `bool`, default: `false`): If set to `true`, CSS files associated with the entry point will be inlined
 
 </details>
 
