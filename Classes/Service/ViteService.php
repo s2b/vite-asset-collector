@@ -87,7 +87,7 @@ class ViteService
         $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
 
         $manifestFile = $this->resolveManifestFile($manifestFile);
-        $manifestDir = PathUtility::dirname($manifestFile) . '/';
+        $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
         if (!isset($manifest[$entry]) || empty($manifest[$entry]['isEntry'])) {
@@ -101,7 +101,7 @@ class ViteService
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
         $this->assetCollector->addJavaScript(
             "vite:{$entry}",
-            $manifestDir . $manifest[$entry]['file'],
+            $outputDir . $manifest[$entry]['file'],
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
@@ -111,7 +111,7 @@ class ViteService
             foreach ($manifest[$entry]['css'] as $file) {
                 $this->assetCollector->addStyleSheet(
                     "vite:{$entry}:{$file}",
-                    $manifestDir . $file,
+                    $outputDir . $file,
                     $cssTagAttributes,
                     $assetOptions
                 );
@@ -136,7 +136,7 @@ class ViteService
             ), 1690735353);
         }
 
-        $assetPath = PathUtility::dirname($manifestFile) . '/' . $manifest[$assetFile]['file'];
+        $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest[$assetFile]['file'];
         return ($returnWebPath) ? PathUtility::getAbsoluteWebPath($assetPath) : $assetPath;
     }
 
@@ -144,6 +144,13 @@ class ViteService
     {
         $resolvedManifestFile = GeneralUtility::getFileAbsFileName($manifestFile);
         if ($resolvedManifestFile === '' || !file_exists($resolvedManifestFile)) {
+            // Fallback to directory structure from vite < 5
+            $legacyManifestFile = $this->determineOutputDirFromManifestFile($manifestFile) . PathUtility::basename($manifestFile);
+            $resolvedLegacyManifestFile = GeneralUtility::getFileAbsFileName($legacyManifestFile);
+            if ($resolvedLegacyManifestFile !== '' && file_exists($resolvedLegacyManifestFile)) {
+                return $resolvedLegacyManifestFile;
+            }
+
             throw new ViteException(sprintf(
                 'Vite manifest file "%s" was resolved to "%s" and cannot be opened.',
                 $manifestFile,
@@ -197,6 +204,15 @@ class ViteService
         $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
 
         return $relativeDirToProjectRoot . $file;
+    }
+
+    protected function determineOutputDirFromManifestFile(string $manifestFile): string
+    {
+        $outputDir = PathUtility::dirname($manifestFile);
+        if (PathUtility::basename($outputDir) === '.vite') {
+            $outputDir = PathUtility::dirname($outputDir);
+        }
+        return $outputDir . '/';
     }
 
     protected function prepareScriptAttributes(array $attributes): array

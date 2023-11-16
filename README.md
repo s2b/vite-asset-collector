@@ -125,14 +125,16 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['devServerUri'
     <summary><i>Change location of default manifest.json</i></summary>
 
 You can specify a default manifest file in the extension configuration.
-By default, this is set to `_assets/vite/manifest.json`, so it will run
-out-of-the-box if you generated your vite configuration with this extension.
+By default, this is set to `_assets/vite/.vite/manifest.json`, so it will run
+out-of-the-box with vite 5 if you generated your vite configuration with this
+extension. If you still use vite < 5, you should to change this to
+`_assets/vite/manifest.json`.
 
-If you change the path here, please be aware that you need to adjust your
+If you change the path here, please be aware that you may need to adjust your
 the `outDir` in your `vite.config.js` as well:
 
 ```php
-$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/manifest.json';
+$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json';
 ```
 
 If you use the `vite.config.js` provided by the extension:
@@ -194,7 +196,7 @@ with the entry point won't be added to the asset collector
 
 ```xml
 <vac:asset.vite
-    manifest="EXT:sitepackage/Resources/Public/Vite/manifest.json"
+    manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
     entry="EXT:sitepackage/Resources/Private/JavaScript/Main.js"
     scriptTagAttributes="{
         type: 'text/javascript',
@@ -276,7 +278,7 @@ return [
     'site-logo' => [
         'provider' => \Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider::class,
         'source' => 'assets/Image/Icon/typo3.svg',
-        'manifest' => 'EXT:sitepackage/Resources/Public/manifest.json', // optional, defaults to defaultManifest
+        'manifest' => 'path/to/manifest.json', // optional, defaults to defaultManifest
     ],
 ];
 ```

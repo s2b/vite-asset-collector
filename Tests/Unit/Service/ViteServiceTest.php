@@ -299,6 +299,50 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [],
             ],
+            'vite5' => [
+                $fixtureDir . 'Vite5Manifest/.vite/manifest.json',
+                'Default.js',
+                [],
+                true,
+                [
+                    'vite:Default.js' => [
+                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-973bb662.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
+            'vite5PathFallback' => [
+                $fixtureDir . 'DefaultManifest/.vite/manifest.json',
+                'Default.js',
+                [],
+                true,
+                [
+                    'vite:Default.js' => [
+                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-973bb662.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
         ];
     }
 
