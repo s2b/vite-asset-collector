@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
-import { resolve } from "path"
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 import autoOrigin from "vite-plugin-auto-origin"
 
 // TYPO3 root path (relative to this config file)
@@ -14,7 +15,8 @@ const VITE_ENTRYPOINTS = [
 // Output path for generated assets
 const VITE_OUTPUT_PATH = "public/_assets/vite/";
 
-const rootPath = resolve(__dirname, VITE_TYPO3_ROOT);
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const rootPath = resolve(currentDir, VITE_TYPO3_ROOT);
 export default defineConfig({
   base: "",
   build: {
