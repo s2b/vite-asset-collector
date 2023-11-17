@@ -5,4 +5,4 @@ useDevServer = auto
 devServerUri = auto
 
 # cat=Vite; type=string; label=LLL:EXT:vite_asset_collector/Resources/Private/Language/locallang.xlf:defaultManifest
-defaultManifest = _assets/vite/manifest.json
+defaultManifest = _assets/vite/.vite/manifest.json
