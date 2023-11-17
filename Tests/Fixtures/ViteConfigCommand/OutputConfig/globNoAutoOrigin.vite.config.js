@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
-import { resolve } from "path"
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 import fg from "fast-glob"
 
 // TYPO3 root path (relative to this config file)
@@ -21,7 +22,8 @@ const VITE_DEV_ORIGIN = "";
 // Ignored patterns to speed up globbing
 const VITE_PATTERN_IGNORE = ["**/node_modules/**", "**/.git/**"];
 
-const rootPath = resolve(__dirname, VITE_TYPO3_ROOT);
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const rootPath = resolve(currentDir, VITE_TYPO3_ROOT);
 export default defineConfig({
   base: "",
   build: {
