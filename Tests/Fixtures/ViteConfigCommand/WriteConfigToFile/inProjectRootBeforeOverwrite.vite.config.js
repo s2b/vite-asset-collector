@@ -25,6 +25,9 @@ export default defineConfig({
     },
     outDir: resolve(rootPath, VITE_OUTPUT_PATH),
   },
+  css: {
+    devSourcemap: true,
+  },
   plugins: [ autoOrigin() ],
   publicDir: false,
 });

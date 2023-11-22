@@ -32,6 +32,9 @@ export default defineConfig({
     },
     outDir: resolve(rootPath, VITE_OUTPUT_PATH),
   },
+  css: {
+    devSourcemap: true,
+  },
   publicDir: false,
   server: {
     origin: VITE_DEV_ORIGIN,
