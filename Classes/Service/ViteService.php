@@ -8,7 +8,9 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -20,14 +22,33 @@ class ViteService
 
     public function __construct(
         private readonly FrontendInterface $cache,
-        protected AssetCollector $assetCollector,
-        protected PackageManager $packageManager
+        protected readonly AssetCollector $assetCollector,
+        protected readonly PackageManager $packageManager,
+        protected readonly ExtensionConfiguration $extensionConfiguration
     ) {}
+
+    public function getDefaultManifestFile(): string
+    {
+        return $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
+    }
+
+    public function useDevServer(): bool
+    {
+        $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
+        if ($useDevServer === 'auto') {
+            return Environment::getContext()->isDevelopment();
+        }
+        return (bool)$useDevServer;
+    }
 
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
-        $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-        return $request->getUri()->withPath('')->withPort((int)$vitePort);
+        $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
+        if ($devServerUri === 'auto') {
+            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
+            return $request->getUri()->withPath('')->withPort((int)$vitePort);
+        }
+        return new Uri($devServerUri);
     }
 
     public function addAssetsFromDevServer(
