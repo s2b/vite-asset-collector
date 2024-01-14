@@ -8,15 +8,13 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 
 class SvgIconProvider extends AbstractSvgIconProvider
 {
     public function __construct(
-        private readonly ViteService $viteService,
-        private readonly ExtensionConfiguration $extensionConfiguration
+        private readonly ViteService $viteService
     ) {}
 
     /**
@@ -39,7 +37,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
     private function getManifest(string $manifest): string
     {
         if ($manifest === '') {
-            $manifest = $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
+            $manifest = $this->viteService->getDefaultManifestFile();
         }
 
         if (!is_string($manifest) || $manifest === '') {
