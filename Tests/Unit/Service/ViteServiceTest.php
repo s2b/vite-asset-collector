@@ -7,6 +7,7 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Package\PackageManager;
@@ -15,55 +16,50 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ViteServiceTest extends UnitTestCase
 {
-    private ?ViteService $viteService;
-    private ?AssetCollector $assetCollector;
-
-    public function setUp(): void
+    /**
+     * @test
+     */
+    public function getDefaultManifestFile(): void
     {
-        parent::setUp();
-        $this->assetCollector = new AssetCollector();
-
-        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $packageManager = $this->createStub(PackageManager::class);
-        $packageManager
-            ->method('resolvePackagePath')
-            ->willReturnMap([
-                [
-                    'EXT:test_extension/Resources/Private/JavaScript/Main.js',
-                    $fixtureDir . 'test_extension/Resources/Private/JavaScript/Main.js',
-                ],
-                [
-                    'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                    $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
-                ],
-                [
-                    'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
-                    $fixtureDir . 'test_extension/Resources/Private/NonExistent/NonExistent.js',
-                ],
-            ]);
-
-        $this->viteService = new ViteService(
-            new NullFrontend('manifest'),
-            $this->assetCollector,
-            $packageManager
-        );
+        self::assertEquals('myDefaultManifest.json', $this->createViteService(defaultManifest: 'myDefaultManifest.json')->getDefaultManifestFile());
     }
 
-    public function tearDown(): void
+    public static function useDevServerDataProvider(): array
     {
-        $this->assetCollector = $this->viteService = null;
-        parent::tearDown();
+        return [
+            'auto' => ['auto', false],
+            'enabled' => ['1', true],
+            'disabled' => ['0', false],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider useDevServerDataProvider
      */
-    public function determineDevServer(): void
+    public function useDevServer(string $useDevServer, bool $expected): void
+    {
+        self::assertEquals($expected, $this->createViteService(useDevServer: $useDevServer)->useDevServer());
+    }
+
+    public static function determineDevServerDataProvider(): array
+    {
+        return [
+            'auto' => ['auto', 'https://localhost:5173'],
+            'uri' => ['https://devserver.localhost:5173', 'https://devserver.localhost:5173'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider determineDevServerDataProvider
+     */
+    public function determineDevServer(string $devServerUri, string $expected): void
     {
         $request = new ServerRequest(new Uri('https://localhost/path/to/file'));
         self::assertEquals(
-            'https://localhost:5173',
-            (string)$this->viteService->determineDevServer($request)
+            $expected,
+            (string)$this->createViteService(devServerUri: $devServerUri)->determineDevServer($request)
         );
     }
 
@@ -74,7 +70,7 @@ final class ViteServiceTest extends UnitTestCase
     {
         self::assertEquals(
             'Main.js',
-            $this->viteService->determineEntrypointFromManifest(
+            $this->createViteService()->determineEntrypointFromManifest(
                 realpath(__DIR__ . '/../../Fixtures/ValidManifest/manifest.json')
             )
         );
@@ -87,7 +83,7 @@ final class ViteServiceTest extends UnitTestCase
     {
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1683552723);
-        $this->viteService->determineEntrypointFromManifest(
+        $this->createViteService()->determineEntrypointFromManifest(
             realpath(__DIR__ . '/../../Fixtures/MultipleEntries/manifest.json')
         );
     }
@@ -99,7 +95,7 @@ final class ViteServiceTest extends UnitTestCase
     {
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1683552723);
-        $this->viteService->determineEntrypointFromManifest(
+        $this->createViteService()->determineEntrypointFromManifest(
             realpath(__DIR__ . '/../../Fixtures/NoEntries/manifest.json')
         );
     }
@@ -184,7 +180,8 @@ final class ViteServiceTest extends UnitTestCase
      */
     public function addAssetsFromDevServer(string $entry, array $options, array $javaScripts, array $priorityJavaScripts): void
     {
-        $this->viteService->addAssetsFromDevServer(
+        $assetCollector = new AssetCollector();
+        $this->createViteService($assetCollector)->addAssetsFromDevServer(
             new Uri('https://localhost:5173'),
             $entry,
             $options,
@@ -193,19 +190,17 @@ final class ViteServiceTest extends UnitTestCase
 
         self::assertEquals(
             $javaScripts,
-            $this->assetCollector->getJavaScripts(false)
+            $assetCollector->getJavaScripts(false)
         );
         self::assertEquals(
             $priorityJavaScripts,
-            $this->assetCollector->getJavaScripts(true)
+            $assetCollector->getJavaScripts(true)
         );
     }
 
     public static function addAssetsFromManifestDataProvider(): array
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ValidManifest') . '/';
-        $manifestFile = $fixtureDir . 'ValidManifest/manifest.json';
         return [
             'withoutCss' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
@@ -360,7 +355,8 @@ final class ViteServiceTest extends UnitTestCase
         array $styleSheets,
         array $priorityStyleSheets
     ): void {
-        $this->viteService->addAssetsFromManifest(
+        $assetCollector = new AssetCollector();
+        $this->createViteService($assetCollector)->addAssetsFromManifest(
             $manifestFile,
             $entry,
             $addCss,
@@ -371,19 +367,19 @@ final class ViteServiceTest extends UnitTestCase
 
         self::assertEquals(
             $javaScripts,
-            $this->assetCollector->getJavaScripts(false)
+            $assetCollector->getJavaScripts(false)
         );
         self::assertEquals(
             $priorityJavaScripts,
-            $this->assetCollector->getJavaScripts(true)
+            $assetCollector->getJavaScripts(true)
         );
         self::assertEquals(
             $styleSheets,
-            $this->assetCollector->getStyleSheets(false)
+            $assetCollector->getStyleSheets(false)
         );
         self::assertEquals(
             $priorityStyleSheets,
-            $this->assetCollector->getStyleSheets(true)
+            $assetCollector->getStyleSheets(true)
         );
     }
 
@@ -425,7 +421,7 @@ final class ViteServiceTest extends UnitTestCase
     ): void {
         $this->expectException(ViteException::class);
         $this->expectExceptionCode($exceptionCode);
-        $this->viteService->addAssetsFromManifest($manifestFile, $entry);
+        $this->createViteService()->addAssetsFromManifest($manifestFile, $entry);
     }
 
     /**
@@ -437,7 +433,7 @@ final class ViteServiceTest extends UnitTestCase
         $manifestDir = realpath(__DIR__ . '/../../Fixtures/ValidManifest') . '/';
         self::assertEquals(
             $manifestDir . 'assets/Main-973bb662.css',
-            $this->viteService->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'Main.css')
+            $this->createViteService()->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'Main.css')
         );
     }
 
@@ -450,7 +446,7 @@ final class ViteServiceTest extends UnitTestCase
         $manifestDir = realpath(__DIR__ . '/../../Fixtures/ExtPathManifest') . '/';
         self::assertEquals(
             $manifestDir . 'assets/Main-4483b920.js',
-            $this->viteService->getAssetPathFromManifest(
+            $this->createViteService()->getAssetPathFromManifest(
                 $fixtureDir . 'ExtPathManifest/manifest.json',
                 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
             )
@@ -483,6 +479,50 @@ final class ViteServiceTest extends UnitTestCase
         $this->expectException(ViteException::class);
         $this->expectExceptionCode($exceptionCode);
 
-        $this->viteService->getAssetPathFromManifest($manifestFile, $entry);
+        $this->createViteService()->getAssetPathFromManifest($manifestFile, $entry);
+    }
+
+    private function createViteService(
+        AssetCollector $assetCollector = null,
+        string $defaultManifest = '_assets/vite/.vite/manifest.json',
+        string $useDevServer = 'auto',
+        string $devServerUri = 'auto'
+    ) {
+        $assetCollector ??= new AssetCollector();
+
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $packageManager = $this->createStub(PackageManager::class);
+        $packageManager
+            ->method('resolvePackagePath')
+            ->willReturnMap([
+                [
+                    'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                    $fixtureDir . 'test_extension/Resources/Private/JavaScript/Main.js',
+                ],
+                [
+                    'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                    $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
+                ],
+                [
+                    'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
+                    $fixtureDir . 'test_extension/Resources/Private/NonExistent/NonExistent.js',
+                ],
+            ]);
+
+        $extensionConfiguration = $this->createStub(ExtensionConfiguration::class);
+        $extensionConfiguration
+            ->method('get')
+            ->willReturnMap([
+                ['vite_asset_collector', 'defaultManifest', $defaultManifest],
+                ['vite_asset_collector', 'useDevServer', $useDevServer],
+                ['vite_asset_collector', 'devServerUri', $devServerUri],
+            ]);
+
+        return new ViteService(
+            new NullFrontend('manifest'),
+            $assetCollector,
+            $packageManager,
+            $extensionConfiguration
+        );
     }
 }

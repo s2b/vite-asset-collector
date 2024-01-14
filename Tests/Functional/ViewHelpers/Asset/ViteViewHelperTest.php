@@ -6,10 +6,15 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
+use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 final class ViteViewHelperTest extends FunctionalTestCase
 {
@@ -21,9 +26,6 @@ final class ViteViewHelperTest extends FunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
     ];
 
-    private ?StandaloneView $view;
-    private ?AssetCollector $assetCollector;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -33,19 +35,6 @@ final class ViteViewHelperTest extends FunctionalTestCase
             'devServerUri' => 'https://localhost:5173',
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/manifest.json',
         ]);
-
-        $this->view = GeneralUtility::makeInstance(StandaloneView::class);
-        $this->view->getViewHelperResolver()->addNamespace(
-            'vac',
-            'Praetorius\\ViteAssetCollector\\ViewHelpers'
-        );
-        $this->assetCollector = $this->get(AssetCollector::class);
-    }
-
-    public function tearDown(): void
-    {
-        $this->view = $this->assetCollector = null;
-        parent::tearDown();
     }
 
     public static function renderDataProvider(): array
@@ -198,24 +187,27 @@ final class ViteViewHelperTest extends FunctionalTestCase
         array $styleSheets,
         array $priorityStyleSheets
     ): void {
-        $this->view->setTemplateSource($template);
-        $this->view->render();
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource($template);
+        (new TemplateView($context))->render();
 
         self::assertEquals(
             $javaScripts,
-            $this->assetCollector->getJavaScripts(false)
+            $assetCollector->getJavaScripts(false)
         );
         self::assertEquals(
             $priorityJavaScripts,
-            $this->assetCollector->getJavaScripts(true)
+            $assetCollector->getJavaScripts(true)
         );
         self::assertEquals(
             $styleSheets,
-            $this->assetCollector->getStyleSheets(false)
+            $assetCollector->getStyleSheets(false)
         );
         self::assertEquals(
             $priorityStyleSheets,
-            $this->assetCollector->getStyleSheets(true)
+            $assetCollector->getStyleSheets(true)
         );
     }
 
@@ -229,10 +221,11 @@ final class ViteViewHelperTest extends FunctionalTestCase
             'devServerUri' => 'https://localhost:5173',
         ]);
 
-        $this->view->setTemplateSource(
-            '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />'
-        );
-        $this->view->render();
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />');
+        (new TemplateView($context))->render();
 
         self::assertEquals(
             [
@@ -247,7 +240,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'options' => ['priority' => false, 'useNonce' => false],
                 ],
             ],
-            $this->assetCollector->getJavaScripts(false)
+            $assetCollector->getJavaScripts(false)
         );
     }
 
@@ -260,12 +253,26 @@ final class ViteViewHelperTest extends FunctionalTestCase
             'defaultManifest' => '',
         ]);
 
-        $this->view->setTemplateSource(
-            '<vac:asset.vite entry="Default.js" />'
-        );
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vac:asset.vite entry="Default.js" />');
 
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
-        $this->view->render();
+        (new TemplateView($context))->render();
+    }
+
+    protected function createRenderingContext(): RenderingContextInterface
+    {
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
+        $context->setRequest(
+            // TODO remove the ExtBase request when support for TYPO3 v11 is dropped
+            new Request(
+                (new ServerRequest())
+                    ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+                    ->withAttribute('extbase', new ExtbaseRequestParameters())
+            )
+        );
+        return $context;
     }
 }

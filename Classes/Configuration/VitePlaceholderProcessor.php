@@ -6,7 +6,6 @@ namespace Praetorius\ViteAssetCollector\Configuration;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Configuration\Processor\Placeholder\PlaceholderProcessorInterface;
 
 final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
@@ -24,7 +23,6 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
     public const PLACEHOLDER_PATTERN = '^[\'"]?([^(]*?)[\'"]?(?:\s*,\s*[\'"]?([^(]*?)[\'"]?)?$';
 
     public function __construct(
-        private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly ViteService $viteService
     ) {}
 
@@ -41,7 +39,7 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
         }
 
         $assetFile = $matches[1];
-        $manifest = $matches[2] ?? $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
+        $manifest = $matches[2] ?? $this->viteService->getDefaultManifestFile();
 
         if (!is_string($manifest) || $manifest === '') {
             throw new ViteException(
