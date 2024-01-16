@@ -154,7 +154,7 @@ jobs:
 
       -
         name: Upload coverage results to Coveralls
-        uses: paambaati/codeclimate-action@v4.0.0
+        uses: paambaati/codeclimate-action@v5.0.0
         env:
           CC_TEST_REPORTER_ID: 32807026fddd031a98d1371e6a9360c6bd30f7be0d4bb9a5516a93cd748d9b34
         with:
