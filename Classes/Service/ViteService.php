@@ -138,6 +138,22 @@ class ViteService
                 );
             }
         }
+
+        if ($addCss && $manifest[$entry]['imports'] ?? false) {
+            foreach ($manifest[$entry]['imports'] as $import) {
+                if ($manifest[$import]['css'] ?? false) {
+                    foreach ($manifest[$import]['css'] as $file) {
+                        $this->assetCollector->addStyleSheet(
+                            "vite:{$entry}:{$file}",
+                            $outputDir . $file,
+                            $cssTagAttributes,
+                            $assetOptions
+                        );
+                    }
+                }
+            }
+        }
+
     }
 
     public function getAssetPathFromManifest(
