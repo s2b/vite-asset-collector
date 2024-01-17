@@ -153,7 +153,6 @@ class ViteService
                 }
             }
         }
-
     }
 
     public function getAssetPathFromManifest(
