@@ -127,28 +127,15 @@ class ViteService
             $assetOptions
         );
 
-        if ($addCss && !empty($manifest[$entry]['css'])) {
-            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
-            foreach ($manifest[$entry]['css'] as $file) {
-                $this->assetCollector->addStyleSheet(
-                    "vite:{$entry}:{$file}",
-                    $outputDir . $file,
-                    $cssTagAttributes,
-                    $assetOptions
-                );
+        if ($addCss) {
+            if (!empty($manifest[$entry]['css'])) {
+                $this->addStyleSheets($manifest[$entry]['css'], $entry, $outputDir, $cssTagAttributes, $assetOptions);
             }
-        }
 
-        if ($addCss && $manifest[$entry]['imports'] ?? false) {
-            foreach ($manifest[$entry]['imports'] as $import) {
-                if ($manifest[$import]['css'] ?? false) {
-                    foreach ($manifest[$import]['css'] as $file) {
-                        $this->assetCollector->addStyleSheet(
-                            "vite:{$entry}:{$file}",
-                            $outputDir . $file,
-                            $cssTagAttributes,
-                            $assetOptions
-                        );
+            if (!empty($manifest[$entry]['imports'])) {
+                foreach ($manifest[$entry]['imports'] as $import) {
+                    if (!empty($manifest[$import]['css'])) {
+                        $this->addStyleSheets($manifest[$import]['css'], $entry, $outputDir, $cssTagAttributes, $assetOptions);
                     }
                 }
             }
@@ -267,5 +254,24 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    protected function addStyleSheets(
+        array $files,
+        string $entry,
+        string $outputDir,
+        array $cssTagAttributes,
+        array $assetOptions
+    ): void
+    {
+        $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+        foreach ($files as $file) {
+            $this->assetCollector->addStyleSheet(
+                "vite:{$entry}:{$file}",
+                $outputDir . $file,
+                $cssTagAttributes,
+                $assetOptions
+            );
+        }
     }
 }
