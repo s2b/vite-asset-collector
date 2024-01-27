@@ -128,10 +128,6 @@ class ViteService
         );
 
         if ($addCss) {
-            if (!empty($manifest[$entry]['css'])) {
-                $this->addStyleSheetsFromManifest("vite:{$entry}:", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
-            }
-
             if (!empty($manifest[$entry]['imports'])) {
                 foreach ($manifest[$entry]['imports'] as $import) {
                     if (!empty($manifest[$import]['css'])) {
@@ -139,6 +135,10 @@ class ViteService
                         $this->addStyleSheetsFromManifest($identifier, $manifest[$import]['css'], $outputDir, $cssTagAttributes, $assetOptions);
                     }
                 }
+            }
+
+            if (!empty($manifest[$entry]['css'])) {
+                $this->addStyleSheetsFromManifest("vite:{$entry}:", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
             }
         }
     }
