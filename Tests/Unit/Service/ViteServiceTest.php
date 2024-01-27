@@ -330,7 +330,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
                 [],
                 [
-                    'vite:18180c035c06afd22c13c58e8969eb4c:assets/Shared-pjWofKK4.css' => [
+                    'vite:0de09f89e47b2f42476a2e8490834087:assets/Shared-pjWofKK4.css' => [
                         'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => [],
