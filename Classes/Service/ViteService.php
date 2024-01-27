@@ -127,15 +127,18 @@ class ViteService
             $assetOptions
         );
 
-        if ($addCss && !empty($manifest[$entry]['css'])) {
-            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
-            foreach ($manifest[$entry]['css'] as $file) {
-                $this->assetCollector->addStyleSheet(
-                    "vite:{$entry}:{$file}",
-                    $outputDir . $file,
-                    $cssTagAttributes,
-                    $assetOptions
-                );
+        if ($addCss) {
+            if (!empty($manifest[$entry]['imports'])) {
+                foreach ($manifest[$entry]['imports'] as $import) {
+                    if (!empty($manifest[$import]['css'])) {
+                        $identifier = md5($import . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
+                        $this->addStyleSheetsFromManifest("vite:{$identifier}", $manifest[$import]['css'], $outputDir, $cssTagAttributes, $assetOptions);
+                    }
+                }
+            }
+
+            if (!empty($manifest[$entry]['css'])) {
+                $this->addStyleSheetsFromManifest("vite:{$entry}", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
             }
         }
     }
@@ -252,5 +255,23 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    protected function addStyleSheetsFromManifest(
+        string $identifier,
+        array $files,
+        string $outputDir,
+        array $cssTagAttributes,
+        array $assetOptions
+    ): void {
+        $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+        foreach ($files as $file) {
+            $this->assetCollector->addStyleSheet(
+                "{$identifier}:{$file}",
+                $outputDir . $file,
+                $cssTagAttributes,
+                $assetOptions
+            );
+        }
     }
 }

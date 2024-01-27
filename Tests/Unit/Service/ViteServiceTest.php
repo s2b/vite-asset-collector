@@ -294,6 +294,55 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [],
             ],
+            'withImportedJs' => [
+                $fixtureDir . 'ImportJs/manifest.json',
+                'Main.js',
+                [],
+                true,
+                [
+                    'vite:Main.js' => [
+                        'source' =>  $fixtureDir . 'ImportJs/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' =>  $fixtureDir . 'ImportJs/assets/Main-973bb662.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
+            'withImportedJsAndCss' => [
+                $fixtureDir . 'ImportJsAndCss/manifest.json',
+                'Main.js',
+                [],
+                true,
+                [
+                    'vite:Main.js' => [
+                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [
+                    'vite:18180c035c06afd22c13c58e8969eb4c:assets/Shared-pjWofKK4.css' => [
+                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
             'vite5' => [
                 $fixtureDir . 'Vite5Manifest/.vite/manifest.json',
                 'Default.js',
@@ -380,6 +429,81 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             $priorityStyleSheets,
             $assetCollector->getStyleSheets(true)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function addAssetsFromManifestPreventDuplicateCss(): void
+    {
+        $assetCollector = new AssetCollector();
+        $viteService = $this->createViteService($assetCollector);
+
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestFile = $fixtureDir . 'ImportJsAndCss/manifest.json';
+        $viteService->addAssetsFromManifest($manifestFile, 'Main.js');
+        $viteService->addAssetsFromManifest($manifestFile, 'Alternative.js');
+
+        self::assertEquals(
+            [
+                'vite:73c562ec32054af04c92dbddc14e1331:assets/Shared-pjWofKK4.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'attributes' => [],
+                    'options' => [],
+                ],
+                'vite:Main.js:assets/Main-973bb662.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                    'attributes' => [],
+                    'options' => [],
+                ],
+                'vite:Alternative.js:assets/Alternative-973bb662.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
+                    'attributes' => [],
+                    'options' => [],
+                ],
+            ],
+            $assetCollector->getStyleSheets(false)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function addAssetsFromManifestAddDuplicateCssWithDifferentSettings(): void
+    {
+        $assetCollector = new AssetCollector();
+        $viteService = $this->createViteService($assetCollector);
+
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestFile = $fixtureDir . 'ImportJsAndCss/manifest.json';
+        $viteService->addAssetsFromManifest($manifestFile, 'Main.js', cssTagAttributes: ['media' => 'print']);
+        $viteService->addAssetsFromManifest($manifestFile, 'Alternative.js');
+
+        self::assertEquals(
+            [
+                'vite:3303cb4a84cd610d452f0d1a37be9266:assets/Shared-pjWofKK4.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'attributes' => ['media' => 'print'],
+                    'options' => [],
+                ],
+                'vite:Main.js:assets/Main-973bb662.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                    'attributes' => ['media' => 'print'],
+                    'options' => [],
+                ],
+                'vite:73c562ec32054af04c92dbddc14e1331:assets/Shared-pjWofKK4.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'attributes' => [],
+                    'options' => [],
+                ],
+                'vite:Alternative.js:assets/Alternative-973bb662.css' => [
+                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
+                    'attributes' => [],
+                    'options' => [],
+                ],
+            ],
+            $assetCollector->getStyleSheets(false)
         );
     }
 
