@@ -1,6 +1,10 @@
 name: tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   lint:
@@ -27,7 +31,7 @@ jobs:
 
       -
         name: Install composer dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
 
       -
         name: PHP Linting
@@ -79,7 +83,7 @@ jobs:
 
       -
         name: Install composer dependencies
-        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
 
       -
         name: Unit Testing
@@ -114,11 +118,11 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: intl, mbstring, pdo_sqlite
 
-      -
-        name: Setup GraphicsMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphicsmagick
+      # -
+      #   name: Setup GraphicsMagick
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y graphicsmagick
 
       - name: Get composer cache directory
         id: composer-cache
@@ -136,7 +140,7 @@ jobs:
 
       -
         name: Install composer dependencies
-        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress --no-suggest
+        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
 
       -
         name: Functional testing
