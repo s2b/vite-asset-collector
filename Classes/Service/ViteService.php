@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Service;
 
+use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -79,13 +80,7 @@ class ViteService
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
-        $entrypoints = [];
-        foreach ($manifest as $entrypoint => $assetData) {
-            if (!empty($assetData['isEntry'])) {
-                $entrypoints[] = $entrypoint;
-            }
-        }
-
+        $entrypoints = $manifest->getValidEntrypoints();
         if (count($entrypoints) !== 1) {
             throw new ViteException(sprintf(
                 'Appropriate vite entrypoint could not be determined automatically. Expected 1 entrypoint in "%s", found %d.',
@@ -93,8 +88,8 @@ class ViteService
                 count($entrypoints)
             ), 1683552723);
         }
-
-        return $entrypoints[0];
+        $onlyEntrypoint = array_pop($entrypoints);
+        return $onlyEntrypoint->identifier;
     }
 
     public function addAssetsFromManifest(
@@ -111,7 +106,7 @@ class ViteService
         $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
-        if (!isset($manifest[$entry]) || empty($manifest[$entry]['isEntry'])) {
+        if (!$manifest->get($entry)?->isEntry) {
             throw new ViteException(sprintf(
                 'Invalid vite entry point "%s" in manifest file "%s".',
                 $entry,
@@ -122,23 +117,23 @@ class ViteService
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
         $this->assetCollector->addJavaScript(
             "vite:{$entry}",
-            $outputDir . $manifest[$entry]['file'],
+            $outputDir . $manifest->get($entry)->file,
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
 
         if ($addCss) {
-            if (!empty($manifest[$entry]['imports'])) {
-                foreach ($manifest[$entry]['imports'] as $import) {
-                    if (!empty($manifest[$import]['css'])) {
-                        $identifier = md5($import . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
-                        $this->addStyleSheetsFromManifest("vite:{$identifier}", $manifest[$import]['css'], $outputDir, $cssTagAttributes, $assetOptions);
-                    }
+            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+
+            foreach ($manifest->getImportsForEntrypoint($entry) as $import) {
+                $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
+                foreach ($import->css as $file) {
+                    $this->assetCollector->addStyleSheet("vite:{$identifier}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
                 }
             }
 
-            if (!empty($manifest[$entry]['css'])) {
-                $this->addStyleSheetsFromManifest("vite:{$entry}", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
+            foreach ($manifest->get($entry)->css as $file) {
+                $this->assetCollector->addStyleSheet("vite:{$entry}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
             }
         }
     }
@@ -152,7 +147,7 @@ class ViteService
 
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
-        if (!isset($manifest[$assetFile])) {
+        if (!$manifest->get($assetFile)) {
             throw new ViteException(sprintf(
                 'Invalid asset file "%s" in vite manifest file "%s".',
                 $assetFile,
@@ -160,7 +155,7 @@ class ViteService
             ), 1690735353);
         }
 
-        $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest[$assetFile]['file'];
+        $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest->get($assetFile)->file;
         return ($returnWebPath) ? PathUtility::getAbsoluteWebPath($assetPath) : $assetPath;
     }
 
@@ -184,27 +179,12 @@ class ViteService
         return $resolvedManifestFile;
     }
 
-    protected function parseManifestFile(string $manifestFile): array
+    protected function parseManifestFile(string $manifestFile): ViteManifest
     {
         $cacheIdentifier = md5($manifestFile);
         $manifest = $this->cache->get($cacheIdentifier);
         if ($manifest === false) {
-            $manifestContent = file_get_contents($manifestFile);
-            if ($manifestContent === false) {
-                throw new ViteException(sprintf(
-                    'Unable to open manifest file "%s".',
-                    $manifestFile
-                ), 1684256597);
-            }
-
-            $manifest = json_decode($manifestContent, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new ViteException(sprintf(
-                    'Invalid vite manifest file "%s": %s.',
-                    $manifestFile,
-                    json_last_error_msg()
-                ), 1683200523);
-            }
+            $manifest = ViteManifest::fromFile($manifestFile);
             $this->cache->set($cacheIdentifier, $manifest);
         }
         return $manifest;
@@ -255,23 +235,5 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
-    }
-
-    protected function addStyleSheetsFromManifest(
-        string $identifier,
-        array $files,
-        string $outputDir,
-        array $cssTagAttributes,
-        array $assetOptions
-    ): void {
-        $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
-        foreach ($files as $file) {
-            $this->assetCollector->addStyleSheet(
-                "{$identifier}:{$file}",
-                $outputDir . $file,
-                $cssTagAttributes,
-                $assetOptions
-            );
-        }
     }
 }
