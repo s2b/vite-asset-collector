@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       -
         name: Validate composer.json
@@ -16,7 +16,7 @@ jobs:
 
       -
         name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: composer
@@ -50,7 +50,7 @@ jobs:
     name: Unit Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
     steps:
       -
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       -
         name: Setup PHP
@@ -61,7 +61,7 @@ jobs:
 
       -
         name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
@@ -76,7 +76,7 @@ jobs:
 
       -
         name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-unit-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
           path: .Build/logs/clover.unit.xml
@@ -94,7 +94,7 @@ jobs:
     name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
     steps:
       -
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       -
         name: Setup PHP
@@ -111,7 +111,7 @@ jobs:
 
       -
         name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
@@ -126,7 +126,7 @@ jobs:
 
       -
         name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-functional-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
           path: .Build/logs/clover.functional.xml
@@ -139,16 +139,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       -
         name: Download unit test coverage reports
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-unit-8.2-12
 
       -
         name: Download functional test coverage reports
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-functional-8.2-12
 
