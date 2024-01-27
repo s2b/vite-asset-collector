@@ -132,13 +132,13 @@ class ViteService
                 foreach ($manifest[$entry]['imports'] as $import) {
                     if (!empty($manifest[$import]['css'])) {
                         $identifier = md5($import . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
-                        $this->addStyleSheetsFromManifest($identifier, $manifest[$import]['css'], $outputDir, $cssTagAttributes, $assetOptions);
+                        $this->addStyleSheetsFromManifest("vite:{$identifier}", $manifest[$import]['css'], $outputDir, $cssTagAttributes, $assetOptions);
                     }
                 }
             }
 
             if (!empty($manifest[$entry]['css'])) {
-                $this->addStyleSheetsFromManifest("vite:{$entry}:", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
+                $this->addStyleSheetsFromManifest("vite:{$entry}", $manifest[$entry]['css'], $outputDir, $cssTagAttributes, $assetOptions);
             }
         }
     }
