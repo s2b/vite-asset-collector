@@ -14,12 +14,16 @@ jobs:
         name: Validate composer.json
         run: composer validate
 
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
       -
         name: Cache composer dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
-          key: composer
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-
 
       -
         name: Install composer dependencies
@@ -59,12 +63,19 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: intl, mbstring, pdo_sqlite
 
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
       -
         name: Cache composer dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
-          key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+          restore-keys: |
+            composer-php-${{ matrix.php-versions }}-
+            composer-
 
       -
         name: Install composer dependencies
@@ -109,12 +120,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y graphicsmagick
 
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
       -
         name: Cache composer dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
-          key: php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
+          restore-keys: |
+            composer-php-${{ matrix.php-versions }}-
+            composer-
 
       -
         name: Install composer dependencies
