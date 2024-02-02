@@ -84,8 +84,13 @@ jobs:
             composer-php-${{ matrix.php-versions }}-
             composer-
 
+      - name: Install composer dependencies v13
+        if: matrix.typo3-versions == 13
+        run: composer require typo3/minimal:^13 doctrine/dbal:"4.0.0-RC2@rc" --prefer-dist --no-progress
+
       -
         name: Install composer dependencies
+        if: matrix.typo3-version != 13
         run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
 
       -
@@ -144,8 +149,13 @@ jobs:
             composer-php-${{ matrix.php-versions }}-
             composer-
 
+      - name: Install composer dependencies v13
+        if: matrix.typo3-versions == 13
+        run: composer require typo3/minimal:^13 doctrine/dbal:"4.0.0-RC2@rc" --prefer-dist --no-progress
+
       -
         name: Install composer dependencies
+        if: matrix.typo3-version != 13
         run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
 
       -
