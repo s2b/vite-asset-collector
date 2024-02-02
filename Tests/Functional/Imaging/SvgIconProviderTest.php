@@ -8,6 +8,7 @@ use Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -52,7 +53,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
         $this->svgIconProvider = $this->get(SvgIconProvider::class);
         $this->icon = GeneralUtility::makeInstance(Icon::class);
         $this->icon->setIdentifier('typo3-logo');
-        $this->icon->setSize(Icon::SIZE_SMALL);
+        $this->icon->setSize(class_exists(IconSize::class) ? IconSize::SMALL : Icon::SIZE_SMALL);
     }
 
     /**
