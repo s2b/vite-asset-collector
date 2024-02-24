@@ -1,0 +1,73 @@
+name: Unit/Functional Tests
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        required: true
+        type: number
+      typo3-version:
+        required: true
+        type: string
+      unit-coverage-name:
+        description: Artifact name of unit test coverage report
+        required: true
+        type: string
+      functional-coverage-name:
+        description: Artifact name of functional test coverage report
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v4
+
+      -
+        name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          extensions: intl, mbstring, pdo_sqlite
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      -
+        name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-php-${{ inputs.php-version }}-typo3-${{ inputs.typo3-version }}
+          restore-keys: |
+            composer-php-${{ inputs.php-version }}-
+            composer-
+
+      -
+        name: Install composer dependencies
+        run: composer require typo3/minimal "^${{ inputs.typo3-version }}" --prefer-dist --no-progress
+
+      -
+        name: Unit Testing
+        run: composer coverage:unit
+
+      -
+        name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.unit-coverage-name }}
+          path: .Build/logs/clover.unit.xml
+
+      -
+        name: Functional testing
+        run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
+
+      -
+        name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.functional-coverage-name }}
+          path: .Build/logs/clover.functional.xml

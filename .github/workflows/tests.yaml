@@ -1,10 +1,6 @@
 name: tests
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: [ push, pull_request ]
 
 jobs:
   lint:
@@ -46,149 +42,46 @@ jobs:
         run: composer lint:phpstan
 
 
-  test-unit:
-    runs-on: ubuntu-latest
+  test:
+    name: Testing (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }})
+    needs: lint
 
     strategy:
-      max-parallel: 2
+      fail-fast: false
       matrix:
-        php-versions: [8.2, 8.1]
-        typo3-versions: [11, 12]
-        include:
-          - php-versions: 8.2
-            typo3-versions: 13
+        php-version: [8.3, 8.2, 8.1]
+        typo3-version: [12, 13, 11]
+        exclude:
+          - php-version: 8.1
+            typo3-version: 13
 
-    name: Unit Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
-    steps:
-      -
-        uses: actions/checkout@v4
-
-      -
-        name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: intl, mbstring, pdo_sqlite
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      -
-        name: Cache composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
-          restore-keys: |
-            composer-php-${{ matrix.php-versions }}-
-            composer-
-
-      - name: Install composer dependencies v13
-        if: matrix.typo3-versions == 13
-        run: composer require typo3/minimal:^13 doctrine/dbal:"4.0.0-RC2@rc" --prefer-dist --no-progress
-
-      -
-        name: Install composer dependencies
-        if: matrix.typo3-version != 13
-        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
-
-      -
-        name: Unit Testing
-        run: composer coverage:unit
-
-      -
-        name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-unit-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
-          path: .Build/logs/clover.unit.xml
-
-
-  test-functional:
-    runs-on: ubuntu-latest
-
-    strategy:
-      max-parallel: 2
-      matrix:
-        php-versions: [8.2, 8.1]
-        typo3-versions: [11, 12]
-        include:
-          - php-versions: 8.2
-            typo3-versions: 13
-
-    name: Functional Testing (PHP ${{ matrix.php-versions }}, TYPO3 ${{ matrix.typo3-versions }})
-    steps:
-      -
-        uses: actions/checkout@v4
-
-      -
-        name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: intl, mbstring, pdo_sqlite
-
-      # -
-      #   name: Setup GraphicsMagick
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y graphicsmagick
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      -
-        name: Cache composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-php-${{ matrix.php-versions }}-typo3-${{ matrix.typo3-versions }}
-          restore-keys: |
-            composer-php-${{ matrix.php-versions }}-
-            composer-
-
-      - name: Install composer dependencies v13
-        if: matrix.typo3-versions == 13
-        run: composer require typo3/minimal:^13 doctrine/dbal:"4.0.0-RC2@rc" --prefer-dist --no-progress
-
-      -
-        name: Install composer dependencies
-        if: matrix.typo3-version != 13
-        run: composer require typo3/minimal "^${{ matrix.typo3-versions }}" --prefer-dist --no-progress
-
-      -
-        name: Functional testing
-        run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
-
-      -
-        name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-functional-${{ matrix.php-versions }}-${{ matrix.typo3-versions }}
-          path: .Build/logs/clover.functional.xml
+    uses: ./.github/workflows/_test.yaml
+    with:
+      php-version: ${{ matrix.php-version }}
+      typo3-version: ${{ matrix.typo3-version }}
+      unit-coverage-name: coverage-unit-${{ matrix.php-version }}-${{ matrix.typo3-version }}
+      functional-coverage-name: coverage-functional-${{ matrix.php-version }}-${{ matrix.typo3-version }}
 
   coverage:
     needs:
-      - test-unit
-      - test-functional
+      - test
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       -
         uses: actions/checkout@v4
+
       -
         name: Download unit test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-unit-8.2-12
+          name: coverage-unit-8.3-12
 
       -
         name: Download functional test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-functional-8.2-12
+          name: coverage-functional-8.3-12
 
       -
         name: Upload coverage results to Coveralls
