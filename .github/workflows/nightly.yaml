@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    name: Testing (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }})
+    needs: lint
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php-version: [8.3]
+        typo3-version: [main, 12]
+
+    uses: ./.github/workflows/_test.yaml
+    with:
+      php-version: ${{ matrix.php-version }}
+      typo3-version: ${{ matrix.typo3-version }}
+      unit-coverage-name: coverage-unit-${{ matrix.php-version }}-${{ matrix.typo3-version }}
+      functional-coverage-name: coverage-functional-${{ matrix.php-version }}-${{ matrix.typo3-version }}
