@@ -50,10 +50,10 @@ jobs:
       fail-fast: false
       matrix:
         php-version: [8.3, 8.2, 8.1]
-        typo3-version: [12, 13, 11]
+        typo3-version: ['^12', '^13', '^11']
         exclude:
           - php-version: 8.1
-            typo3-version: 13
+            typo3-version: '^13'
 
     uses: ./.github/workflows/_test.yaml
     with:
@@ -75,13 +75,13 @@ jobs:
         name: Download unit test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-unit-8.3-12
+          name: coverage-unit-8.3-^12
 
       -
         name: Download functional test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-functional-8.3-12
+          name: coverage-functional-8.3-^12
 
       -
         name: Upload coverage results to Coveralls

@@ -1,5 +1,3 @@
-name: Unit/Functional Tests
-
 on:
   workflow_call:
     inputs:
@@ -11,11 +9,18 @@ on:
         type: string
       unit-coverage-name:
         description: Artifact name of unit test coverage report
-        required: true
+        default: coverage-unit
+        required: false
         type: string
       functional-coverage-name:
         description: Artifact name of functional test coverage report
-        required: true
+        default: coverage-functional
+        required: false
+        type: string
+      stability:
+        description: Value of minimum-stability in composer.json
+        default: stable
+        required: false
         type: string
 
 jobs:
@@ -41,14 +46,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-php-${{ inputs.php-version }}-typo3-${{ inputs.typo3-version }}
+          key: composer-php-${{ inputs.php-version }}-typo3-${{ inputs.typo3-version }}-${{ inputs.stability }}
           restore-keys: |
+            composer-php-${{ inputs.php-version }}-typo3-${{ inputs.typo3-version }}
             composer-php-${{ inputs.php-version }}-
             composer-
 
       -
+        name: Set composer minimum-stability
+        run: composer config minimum-stability ${{ inputs.stability }}
+
+      -
         name: Install composer dependencies
-        run: composer require typo3/minimal "^${{ inputs.typo3-version }}" --prefer-dist --no-progress
+        run: composer require typo3/minimal "${{ inputs.typo3-version }}" --prefer-dist --no-progress
 
       -
         name: Unit Testing
