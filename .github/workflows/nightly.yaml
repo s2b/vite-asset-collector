@@ -15,6 +15,7 @@ jobs:
       stability: dev
       unit-coverage-name: coverage-unit-main
       functional-coverage-name: coverage-functional-main
+      composer-remove: phpstan/phpstan saschaegerer/phpstan-typo3
 
   test-lts:
     name: Nightly Testing (current LTS)
