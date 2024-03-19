@@ -41,6 +41,7 @@ jobs:
         with:
           php-version: ${{ inputs.php-version }}
           extensions: intl, mbstring, pdo_sqlite
+          ini-file: development
 
       - name: Get composer cache directory
         id: composer-cache
