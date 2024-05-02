@@ -6,14 +6,20 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers\Resource;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * This ViewHelper extracts asset uris from a vite manifest file
+ * This ViewHelper creates an uri to a specific asset file
  */
 final class ViteViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
+
+    /**
+     * @var RenderingContext
+     */
+    protected $renderingContext;
 
     public function initializeArguments(): void
     {
@@ -25,13 +31,20 @@ final class ViteViewHelper extends AbstractViewHelper
         $this->registerArgument(
             'file',
             'string',
-            'Asset file for which uri should be extracted',
+            'Asset file for which uri should be created',
             true
         );
     }
 
     public function render(): string
     {
+        if ($this->viteService->useDevServer()) {
+            return $this->viteService->getAssetPathFromDevServer(
+                $this->viteService->determineDevServer($this->renderingContext->getRequest()),
+                $this->arguments['file']
+            );
+        }
+
         return $this->viteService->getAssetPathFromManifest(
             $this->getManifest(),
             $this->arguments['file']
