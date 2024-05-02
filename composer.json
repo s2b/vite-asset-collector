@@ -61,8 +61,14 @@
 			"@test:unit",
 			"@test:functional"
 		],
-		"test:unit": "phpunit -c Build/Testing/UnitTests.xml",
-		"test:functional": "phpunit -c Build/Testing/FunctionalTests.xml",
+		"test:unit": [
+			"@putenv TYPO3_CONTEXT=Testing",
+			"phpunit -c Build/Testing/UnitTests.xml"
+		],
+		"test:functional": [
+			"@putenv TYPO3_CONTEXT=Testing",
+			"phpunit -c Build/Testing/FunctionalTests.xml"
+		],
 
 		"coverage": [
 			"@coverage:unit",
