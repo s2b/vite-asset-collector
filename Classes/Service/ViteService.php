@@ -75,6 +75,14 @@ class ViteService
         );
     }
 
+    public function getAssetPathFromDevServer(
+        UriInterface $devServerUri,
+        string $assetFile,
+    ): string {
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
+        return (string)$devServerUri->withPath($assetFile);
+    }
+
     public function determineEntrypointFromManifest(string $manifestFile): string
     {
         $manifestFile = $this->resolveManifestFile($manifestFile);

@@ -528,6 +528,27 @@ final class ViteServiceTest extends UnitTestCase
         $this->createViteService()->addAssetsFromManifest($manifestFile, $entry);
     }
 
+    public static function getAssetPathFromDevServerDataProvider(): array
+    {
+        return [
+            ['path/to/file.jpg', 'https://localhost:5173/path/to/file.jpg'],
+            ['EXT:test_extension/Resources/Private/Assets/test.txt', 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/Assets/test.txt'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('getAssetPathFromDevServerDataProvider')]
+    public function getAssetPathFromDevServer(string $file, string $expected): void
+    {
+        self::assertEquals(
+            $expected,
+            $this->createViteService()->getAssetPathFromDevServer(
+                new Uri('https://localhost:5173'),
+                $file
+            )
+        );
+    }
+
     #[Test]
     public function getAssetPathFromManifest(): void
     {
@@ -596,6 +617,10 @@ final class ViteServiceTest extends UnitTestCase
                 [
                     'EXT:test_extension/Resources/Private/JavaScript/Main.js',
                     $fixtureDir . 'test_extension/Resources/Private/JavaScript/Main.js',
+                ],
+                [
+                    'EXT:test_extension/Resources/Private/Assets/test.txt',
+                    $fixtureDir . 'test_extension/Resources/Private/Assets/test.txt',
                 ],
                 [
                     'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',

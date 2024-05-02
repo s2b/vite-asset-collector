@@ -62,6 +62,23 @@ final class ViteViewHelperTest extends FunctionalTestCase
     }
 
     #[Test]
+    public function renderWithDevServer(): void
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '1',
+            'devServerUri' => 'https://localhost:5173',
+        ]);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vac:resource.vite file="path/to/file.jpg" />');
+
+        self::assertEquals(
+            'https://localhost:5173/path/to/file.jpg',
+            (new TemplateView($context))->render(),
+        );
+    }
+
+    #[Test]
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
