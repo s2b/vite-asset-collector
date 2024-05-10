@@ -27,6 +27,11 @@ on:
         default: ''
         required: false
         type: string
+      composer-require:
+        description: List of composer packages that should be required before test (mostly relevant for nightly on dev-main)
+        default: ''
+        required: false
+        type: string
 
 jobs:
   test:
@@ -64,8 +69,13 @@ jobs:
 
       -
         name: Remove selected composer packages
-        run: composer remove --no-install ${{ inputs.composer-remove }}
+        run: composer remove --no-update ${{ inputs.composer-remove }}
         if: inputs.composer-remove != ''
+
+      -
+        name: Require selected composer packages
+        run: composer require --no-update ${{ inputs.composer-require }}
+        if: inputs.composer-require != ''
 
       -
         name: Install composer dependencies

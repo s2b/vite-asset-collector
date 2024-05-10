@@ -11,11 +11,11 @@ jobs:
     uses: ./.github/workflows/_test.yaml
     with:
       php-version: 8.3
-      typo3-version: dev-main
-      stability: dev
+      typo3-version: dev-main@dev
       unit-coverage-name: coverage-unit-main
       functional-coverage-name: coverage-functional-main
       composer-remove: phpstan/phpstan saschaegerer/phpstan-typo3
+      composer-require: 'typo3/cms-backend:"dev-main@dev" typo3/cms-core:"dev-main@dev" typo3/cms-extbase:"dev-main@dev" typo3/cms-filelist:"dev-main@dev" typo3/cms-fluid:"dev-main@dev" typo3/cms-frontend:"dev-main@dev"'
 
   test-lts:
     name: Nightly Testing (current LTS)
