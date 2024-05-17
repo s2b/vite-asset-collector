@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional\Imaging;
 
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -56,9 +57,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
         $this->icon->setSize(class_exists(IconSize::class) ? IconSize::SMALL : Icon::SIZE_SMALL);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLogoIconMarkup(): void
     {
         $this->svgIconProvider->prepareIconMarkup($this->icon, ['source' => 'typo3.svg']);
@@ -68,9 +67,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLogoIconMarkupInline(): void
     {
         $this->svgIconProvider->prepareIconMarkup($this->icon, ['source' => 'typo3.svg']);
@@ -88,9 +85,7 @@ SVG_MARKUP;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getIconReturnsCorrectMarkupIfIconIsRegisteredAsLogoIcon(): void
     {
         $iconMarkup = $this->subject->getIcon($this->registeredIconIdentifier)->render();

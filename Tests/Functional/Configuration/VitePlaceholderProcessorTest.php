@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional\Configuration;
 
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,9 +28,7 @@ final class VitePlaceholderProcessorTest extends FunctionalTestCase
         ],
     ];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function placeholdersInYamlFile(): void
     {
         $yamlLoader = GeneralUtility::makeInstance(YamlFileLoader::class);
@@ -52,9 +51,7 @@ final class VitePlaceholderProcessorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidPlaceholdersInYamlFile(): void
     {
         $this->expectException(ViteException::class);

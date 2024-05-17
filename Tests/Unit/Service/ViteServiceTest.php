@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
@@ -16,9 +18,7 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ViteServiceTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getDefaultManifestFile(): void
     {
         self::assertEquals('myDefaultManifest.json', $this->createViteService(defaultManifest: 'myDefaultManifest.json')->getDefaultManifestFile());
@@ -33,10 +33,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider useDevServerDataProvider
-     */
+    #[Test]
+    #[DataProvider('useDevServerDataProvider')]
     public function useDevServer(string $useDevServer, bool $expected): void
     {
         self::assertEquals($expected, $this->createViteService(useDevServer: $useDevServer)->useDevServer());
@@ -50,10 +48,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider determineDevServerDataProvider
-     */
+    #[Test]
+    #[DataProvider('determineDevServerDataProvider')]
     public function determineDevServer(string $devServerUri, string $expected): void
     {
         $request = new ServerRequest(new Uri('https://localhost/path/to/file'));
@@ -63,9 +59,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function determineEntrypointFromManifest(): void
     {
         self::assertEquals(
@@ -76,9 +70,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function determineEntrypointFromManifestWithMultipleEntries(): void
     {
         $this->expectException(ViteException::class);
@@ -88,9 +80,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function determineEntrypointFromManifestWithNoEntries(): void
     {
         $this->expectException(ViteException::class);
@@ -174,10 +164,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider addAssetsFromDevServerDataProvider
-     */
+    #[Test]
+    #[DataProvider('addAssetsFromDevServerDataProvider')]
     public function addAssetsFromDevServer(string $entry, array $options, array $javaScripts, array $priorityJavaScripts): void
     {
         $assetCollector = new AssetCollector();
@@ -390,10 +378,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider addAssetsFromManifestDataProvider
-     */
+    #[Test]
+    #[DataProvider('addAssetsFromManifestDataProvider')]
     public function addAssetsFromManifest(
         string $manifestFile,
         string $entry,
@@ -432,9 +418,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addAssetsFromManifestPreventDuplicateCss(): void
     {
         $assetCollector = new AssetCollector();
@@ -467,9 +451,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addAssetsFromManifestAddDuplicateCssWithDifferentSettings(): void
     {
         $assetCollector = new AssetCollector();
@@ -534,10 +516,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider addAssetsFromManifestFileErrorHandlingDataProvider
-     */
+    #[Test]
+    #[DataProvider('addAssetsFromManifestFileErrorHandlingDataProvider')]
     public function addAssetsFromManifestFileErrorHandling(
         string $manifestFile,
         string $entry,
@@ -548,9 +528,7 @@ final class ViteServiceTest extends UnitTestCase
         $this->createViteService()->addAssetsFromManifest($manifestFile, $entry);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAssetPathFromManifest(): void
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
@@ -561,9 +539,7 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAssetWithExtPathFromManifest(): void
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
@@ -594,10 +570,8 @@ final class ViteServiceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider getAssetPathFromManifestErrorHandlingDataProvider
-     */
+    #[Test]
+    #[DataProvider('getAssetPathFromManifestErrorHandlingDataProvider')]
     public function getAssetPathFromManifestErrorHandling(string $manifestFile, string $entry, int $exceptionCode): void
     {
         $this->expectException(ViteException::class);
