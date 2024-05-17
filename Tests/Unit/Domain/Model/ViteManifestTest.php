@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifestItem;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ViteManifestTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getValidEntrypoints(): void
     {
         $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/manifest.json');
@@ -33,10 +33,8 @@ final class ViteManifestTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider getItemDataProvider
-     */
+    #[Test]
+    #[DataProvider('getItemDataProvider')]
     public function getItem(string $identifier, mixed $expected): void
     {
         $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/manifest.json');
@@ -54,10 +52,8 @@ final class ViteManifestTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider getImportsForEntrypointDataProvider
-     */
+    #[Test]
+    #[DataProvider('getImportsForEntrypointDataProvider')]
     public function getImportsForEntrypoint(string $entrypoint, mixed $expected): void
     {
         $manifestPath = realpath(__DIR__ . '/../../../Fixtures/ImportJs/manifest.json');

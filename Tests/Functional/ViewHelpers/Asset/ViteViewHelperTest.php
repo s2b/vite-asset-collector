@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
@@ -176,10 +178,8 @@ final class ViteViewHelperTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider renderDataProvider
-     */
+    #[Test]
+    #[DataProvider('renderDataProvider')]
     public function render(
         string $template,
         array $javaScripts,
@@ -211,9 +211,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderWithDevServer(): void
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
@@ -244,9 +242,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
