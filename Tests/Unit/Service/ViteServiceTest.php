@@ -231,12 +231,13 @@ final class ViteServiceTest extends UnitTestCase
                 false,
             ],
             'withInlineCss' => [
-                $manifestFile,
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'Main.js',
                 [],
-                true,
+                'inline',
                 [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'assets/Main-4483b920.js',
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => [],
                     ],
@@ -409,12 +410,11 @@ final class ViteServiceTest extends UnitTestCase
         string $manifestFile,
         string $entry,
         array $options,
-        bool $addCss,
+        bool|string $addCss,
         array $javaScripts,
         array $priorityJavaScripts,
         array $styleSheets,
-        array $priorityStyleSheets,
-        bool $inlineCss
+        array $priorityStyleSheets
     ): void {
         $assetCollector = new AssetCollector();
         $this->createViteService($assetCollector)->addAssetsFromManifest(
@@ -424,7 +424,6 @@ final class ViteServiceTest extends UnitTestCase
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
             ['media' => 'print', 'disabled' => true],
-            $inlineCss
         );
 
         self::assertEquals(
@@ -435,7 +434,7 @@ final class ViteServiceTest extends UnitTestCase
             $priorityJavaScripts,
             $assetCollector->getJavaScripts(true)
         );
-        if ($inlineCss) {
+        if (is_string($addCss) && strtolower($addCss) === 'inline') {
             self::assertEquals(
                 $styleSheets,
                 $assetCollector->getInlineStyleSheets(false)

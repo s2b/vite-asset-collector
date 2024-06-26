@@ -78,7 +78,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'inlineCss' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" inlineCss="1" />',
+                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="inline" />',
                 [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -239,11 +239,11 @@ final class ViteViewHelperTest extends FunctionalTestCase
         );
         self::assertEquals(
             [],
-            $this->assetCollector->getInlineStyleSheets(false)
+            $assetCollector->getInlineStyleSheets(false)
         );
         self::assertEquals(
             $inlineStyleSheets,
-            $this->assetCollector->getInlineStyleSheets(true)
+            $assetCollector->getInlineStyleSheets(true)
         );
     }
 

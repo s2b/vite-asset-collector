@@ -103,11 +103,10 @@ class ViteService
     public function addAssetsFromManifest(
         string $manifestFile,
         string $entry,
-        bool $addCss = true,
+        bool|int|string $addCss = true,
         array $assetOptions = [],
         array $scriptTagAttributes = [],
-        array $cssTagAttributes = [],
-        bool $inlineCss = false
+        array $cssTagAttributes = []
     ): void {
         $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
 
@@ -133,16 +132,17 @@ class ViteService
 
         if ($addCss) {
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+            $inlineCss = is_string($addCss) && strtolower($addCss) === 'inline';
 
             foreach ($manifest->getImportsForEntrypoint($entry) as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
                 foreach ($import->css as $file) {
-                    $this->addStyleSheet("vite:{$identifier}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
+                    $this->addStyleSheet("vite:{$identifier}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions, $inlineCss);
                 }
             }
 
             foreach ($manifest->get($entry)->css as $file) {
-                $this->addStyleSheet("vite:{$entry}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
+                $this->addStyleSheet("vite:{$entry}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions, $inlineCss);
             }
         }
     }

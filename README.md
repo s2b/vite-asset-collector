@@ -186,9 +186,7 @@ in HTML
 
 * `useNonce` (type: `bool`, default: `false`): Whether to use the global nonce value
 
-* `addCss` (type: `bool`, default: `true`): If set to `false`, CSS files associated
-with the entry point won't be added to the asset collector
-* `inlineCss` (type: `bool`, default: `false`): If set to `true`, CSS files associated with the entry point will be inlined
+* `addCss` (type: `bool|string`, default: `true`): If set to `true`, CSS files will be added to the asset collector; if set to `false`, CSS files won't be added; if set to `'inline'`, CSS will be added inline.
 
 </details>
 
