@@ -29,7 +29,7 @@ final class ViteManifest
      */
     public function getValidEntrypoints(): array
     {
-        return array_filter($this->items, fn (ViteManifestItem $entry) => $entry->isEntry);
+        return array_filter($this->items, fn(ViteManifestItem $entry) => $entry->isEntry);
     }
 
     /**

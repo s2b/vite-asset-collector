@@ -205,6 +205,7 @@ final class ViteServiceTest extends UnitTestCase
                 [],
                 [],
                 [],
+                false,
             ],
             'withCss' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
@@ -227,6 +228,30 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 [],
+                false,
+            ],
+            'withInlineCss' => [
+                $fixtureDir . 'ValidManifest/manifest.json',
+                'Main.js',
+                [],
+                'inline',
+                [
+                    'vite:Main.js' => [
+                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+                [],
+                [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".test {color: #000;}\n",
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => ['priority' => true],
+                    ],
+                ],
+                true,
             ],
             'withCssAndPriority' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
@@ -249,6 +274,7 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['priority' => true],
                     ],
                 ],
+                false,
             ],
             'withExtPath' => [
                 $fixtureDir . 'ExtPathManifest/manifest.json',
@@ -384,7 +410,7 @@ final class ViteServiceTest extends UnitTestCase
         string $manifestFile,
         string $entry,
         array $options,
-        bool $addCss,
+        bool|string $addCss,
         array $javaScripts,
         array $priorityJavaScripts,
         array $styleSheets,
@@ -397,7 +423,7 @@ final class ViteServiceTest extends UnitTestCase
             $addCss,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
-            ['media' => 'print', 'disabled' => true]
+            ['media' => 'print', 'disabled' => true],
         );
 
         self::assertEquals(
@@ -408,14 +434,25 @@ final class ViteServiceTest extends UnitTestCase
             $priorityJavaScripts,
             $assetCollector->getJavaScripts(true)
         );
-        self::assertEquals(
-            $styleSheets,
-            $assetCollector->getStyleSheets(false)
-        );
-        self::assertEquals(
-            $priorityStyleSheets,
-            $assetCollector->getStyleSheets(true)
-        );
+        if (is_string($addCss) && strtolower($addCss) === 'inline') {
+            self::assertEquals(
+                $styleSheets,
+                $assetCollector->getInlineStyleSheets(false)
+            );
+            self::assertEquals(
+                $priorityStyleSheets,
+                $assetCollector->getInlineStyleSheets(true)
+            );
+        } else {
+            self::assertEquals(
+                $styleSheets,
+                $assetCollector->getStyleSheets(false)
+            );
+            self::assertEquals(
+                $priorityStyleSheets,
+                $assetCollector->getStyleSheets(true)
+            );
+        }
     }
 
     #[Test]
