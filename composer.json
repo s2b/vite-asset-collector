@@ -7,14 +7,17 @@
 	],
 	"require": {
 		"php": ">=8.1",
-		"typo3/cms-core": "^11.5 || ^12.4"
+		"typo3/cms-core": "^11.5 || ^12.4 || ^13.0 || dev-main",
+		"typo3/cms-fluid": "^11.5 || ^12.4 || ^13.0 || dev-main",
+		"symfony/console": "^5.4 || ^6.4 || ^7.0"
 	},
 	"require-dev": {
-		"typo3/coding-standards": "^0.7.1",
+		"typo3/coding-standards": "^0.8.x-dev",
 		"editorconfig-checker/editorconfig-checker": "^10.3",
-		"typo3/testing-framework": "^8.0 || ^7.0",
+		"typo3/testing-framework": "^8.0 || ^7.0 || dev-main",
 		"phpstan/phpstan": "^1.10",
-		"saschaegerer/phpstan-typo3": "^1.8"
+		"saschaegerer/phpstan-typo3": "^1.8",
+		"phpunit/phpunit": "^11.1 || ^10.5"
 	},
 	"autoload": {
 		"psr-4": {
@@ -59,8 +62,14 @@
 			"@test:unit",
 			"@test:functional"
 		],
-		"test:unit": "phpunit -c Build/Testing/UnitTests.xml",
-		"test:functional": "phpunit -c Build/Testing/FunctionalTests.xml",
+		"test:unit": [
+			"@putenv TYPO3_CONTEXT=Testing",
+			"phpunit -c Build/Testing/UnitTests.xml"
+		],
+		"test:functional": [
+			"@putenv TYPO3_CONTEXT=Testing",
+			"phpunit -c Build/Testing/FunctionalTests.xml"
+		],
 
 		"coverage": [
 			"@coverage:unit",

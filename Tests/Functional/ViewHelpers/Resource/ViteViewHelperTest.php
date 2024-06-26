@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Resource;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
+use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 final class ViteViewHelperTest extends FunctionalTestCase
 {
@@ -20,8 +27,6 @@ final class ViteViewHelperTest extends FunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
     ];
 
-    private ?StandaloneView $view;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -29,18 +34,6 @@ final class ViteViewHelperTest extends FunctionalTestCase
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/manifest.json',
         ]);
-
-        $this->view = GeneralUtility::makeInstance(StandaloneView::class);
-        $this->view->getViewHelperResolver()->addNamespace(
-            'vac',
-            'Praetorius\\ViteAssetCollector\\ViewHelpers'
-        );
-    }
-
-    public function tearDown(): void
-    {
-        $this->view = null;
-        parent::tearDown();
     }
 
     public static function renderDataProvider(): array
@@ -57,33 +50,61 @@ final class ViteViewHelperTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider renderDataProvider
-     */
+    #[Test]
+    #[DataProvider('renderDataProvider')]
     public function render(
         string $template,
         string $assetUri
     ): void {
-        $this->view->setTemplateSource($template);
-        self::assertEquals($assetUri, $this->view->render());
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource($template);
+        self::assertEquals($assetUri, (new TemplateView($context))->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
+    public function renderWithDevServer(): void
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '1',
+            'devServerUri' => 'https://localhost:5173',
+        ]);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vac:resource.vite file="path/to/file.jpg" />');
+
+        self::assertEquals(
+            'https://localhost:5173/path/to/file.jpg',
+            (new TemplateView($context))->render(),
+        );
+    }
+
+    #[Test]
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'defaultManifest' => '',
         ]);
 
-        $this->view->setTemplateSource(
-            '<vac:resource.vite file="Default.js" />'
-        );
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vac:resource.vite file="Default.js" />');
 
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
-        $this->view->render();
+        (new TemplateView($context))->render();
+    }
+
+    protected function createRenderingContext(): RenderingContextInterface
+    {
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
+        $context->setRequest(
+            // TODO remove the ExtBase request when support for TYPO3 v11 is dropped
+            new Request(
+                (new ServerRequest())
+                    ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+                    ->withAttribute('extbase', new ExtbaseRequestParameters())
+            )
+        );
+        return $context;
     }
 }

@@ -1,0 +1,20 @@
+{
+	"_Shared-To-v4Zbq.js": {
+		"file": "assets/Shared-To-v4Zbq.js"
+	},
+	"Main.css": {
+		"file": "assets/Main-973bb662.css",
+		"src": "Main.css"
+	},
+	"Main.js": {
+		"css": [
+			"assets/Main-973bb662.css"
+		],
+		"file": "assets/Main-4483b920.js",
+		"imports": [
+			"_Shared-To-v4Zbq.js"
+		],
+		"isEntry": true,
+		"src": "Main.js"
+	}
+}

@@ -17,4 +17,9 @@ parameters:
 		-
 			message: '#Variable \$_EXTKEY might not be defined.#'
 			path: ../../ext_emconf.php
-
+		-
+			message: '#Variable \$_EXTKEY might not be defined.#'
+			path: ../../Tests/Fixtures/test_extension/ext_emconf.php
+		-
+			message: '#Variable \$_EXTKEY might not be defined.#'
+			path: ../../Tests/Fixtures/symlink_extension/ext_emconf.php

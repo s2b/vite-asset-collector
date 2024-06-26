@@ -7,10 +7,11 @@
 [![TYPO3 versions](https://typo3-badges.dev/badge/vite_assetcollector/typo3/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
 [![Latest version](https://typo3-badges.dev/badge/vite_assetcollector/version/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
 
-This TYPO3 extension uses TYPO3's AssetCollector API to embed frontend assets
-generated with [vite](https://vitejs.dev/). This means that you can use
-vite's hot reloading and hot module replacement features (and many others)
-in your TYPO3 project.
+Bundle your TYPO3 frontend assets with **[vite](https://vitejs.dev/)**, a modern
+and flexible frontend tool. This TYPO3 extension provides a future-proof
+integration for vite using TYPO3's AssetCollector API.
+This means that you can use vite's hot reloading and hot module replacement features
+(and many others) in your TYPO3 projects.
 
 This extension is inspired by
 [typo3-vite-demo](https://github.com/fgeierst/typo3-vite-demo) which was created
@@ -18,53 +19,61 @@ by [Florian Geierstanger](https://github.com/fgeierst/).
 
 ## Installation
 
-The extension can be installed via composer:
+Vite AssetCollector can be installed with composer:
 
 ```sh
 composer req praetorius/vite-asset-collector
 ```
 
-## Usage
+vite can be installed with the frontend package manager of your choice:
 
-### Vite Configuration
-
-First, you need to make sure that vite:
-
-* generates a `manifest.json` file and
-* outputs assets to a publicly accessible directory
-
-Example **vite.config.js**:
-
-```js
-import { defineConfig } from 'vite'
-
-export default defineConfig({
-    publicDir: false,
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: 'path/to/sitepackage/Resources/Private/JavaScript/Main.js',
-            output: {
-                entryFileNames: "[name].js",
-                assetFileNames: "[name][extname]",
-            },
-        },
-        outDir: 'path/to/sitepackage/Resources/Public/Vite/',
-    },
-})
+```sh
+npm install --save-dev vite vite-plugin-auto-origin
 ```
 
-Note that you should not use `resolve(__dirname, ...)` for `input` because the
-value is both a path and an identifier.
+*[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin)
+is recommended as it simplifies configuration and daily usage of vite with TYPO3.*
 
-### Fluid Usage
+## Getting Started
 
-Then you can use the included ViewHelper to embed your assets. Note that the
-`entry` value is both a path and an identifier, which is why we cannot
-use `EXT:` here. This also means that this path needs to be consistent between
-your development and your production environment.
+### 1. Vite Setup
 
-Example **Layouts/Default.html**:
+To get things started, the extension provides a console command that generates a
+ready-to-use `vite.config.js` file:
+
+```sh
+vendor/bin/typo3 vite:config --entry 'EXT:sitepackage/Resources/Private/Main.entry.js' --outputfile ./vite.config.js
+```
+
+The generated configuration makes sure that vite
+
+* knows the location of your main JavaScript file, also known as *entrypoint*
+* generates a `manifest.json` file
+* outputs assets to a publicly accessible directory
+
+Note that the console command is only intended as a kickstarter for your initial
+vite configuration file.
+
+<details>
+    <summary><i>More Options</i></summary>
+
+* You can define multiple `--entry` options.
+* You can add `--glob` to enable pattern matching for your entrypoint paths
+([fast-glob](https://www.npmjs.com/package/fast-glob) required).
+* If you omit `--outputfile`, the file content will be outputted instead.
+* Add `--no-auto-origin` if you don't want to use
+[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin).
+Note that you need to specify `VITE_DEV_ORIGIN` manually then.
+* `--help` shows all available options.
+
+</details>
+
+### 2. TYPO3 Setup
+
+Then you can use the included ViewHelper to embed your assets. If you use the default
+configuration, you only need to specify your entrypoint.
+
+**Layouts/Default.html**:
 
 ```xml
 <html
@@ -74,13 +83,10 @@ Example **Layouts/Default.html**:
 
 ...
 
-<vac:asset.vite
-    manifest="EXT:sitepackage/Resources/Public/Vite/manifest.json"
-    entry="path/to/sitepackage/Resources/Private/JavaScript/Main.js"
-/>
+<vac:asset.vite entry="EXT:sitepackage/Resources/Private/Main.entry.js" />
 ```
 
-### Setup development environment
+### 3. Start Developing
 
 Development environments can be highly individual. However, if ddev is your
 tool of choice for local development, a few steps can get you started with
@@ -89,6 +95,13 @@ a ready-to-use development environment with vite, composer and TYPO3.
 [Instructions for DDEV](./Documentation/DdevSetup.md)
 
 ## Configuration
+
+If you use the setup as described above, no configuration should be necessary.
+However, you can customize almost everything to create your individual development
+setup:
+
+<details>
+    <summary><i>Adjust vite dev server</i></summary>
 
 The extension has two configuration options to setup the vite dev server.
 By default, both are set to `auto`, which means:
@@ -106,44 +119,86 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['useDevServer'
 $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['devServerUri'] = (string) getenv('TYPO3_VITE_DEV_SERVER');
 ```
 
-You can also specify a default manifest file in the extension configuration.
-If specified, the `manifest` parameter of the ViewHelper can be omitted.
+</details>
+
+<details>
+    <summary><i>Change location of default manifest.json</i></summary>
+
+You can specify a default manifest file in the extension configuration.
+By default, this is set to `_assets/vite/.vite/manifest.json`, so it will run
+out-of-the-box with vite 5 if you generated your vite configuration with this
+extension. If you still use vite < 5, you should to change this to
+`_assets/vite/manifest.json`.
+
+If you change the path here, please be aware that you may need to adjust your
+the `outDir` in your `vite.config.js` as well:
 
 ```php
-$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/manifest.json';
+$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json';
 ```
 
-## ViewHelper Arguments
+If you use the `vite.config.js` provided by the extension:
 
-### asset.vite ViewHelper
+```js
+// Output path for generated assets
+const VITE_OUTPUT_PATH = 'packages/sitepackage/Resources/Public/Vite/';
+```
+
+If you use your own `vite.config.js`:
+
+```js
+export default defineConfig({
+    // ...
+    outDir: 'path/to/sitepackage/Resources/Public/Vite/',
+})
+```
+
+</details>
+
+## ViewHelper Reference
+
+### asset.vite ViteHelper
 
 The `asset.vite` ViewHelper embeds all JavaScript and CSS belonging to the
 specified vite `entry` using TYPO3's AssetCollector API.
 
+<details>
+    <summary><i>Arguments</i></summary>
+
 * `manifest` (type: `string`): Path to your manifest.json file. If omitted,
 default manifest from extension configuration will be used instead.
-* `entry` (type: `string`): Identifier of the desired vite entry point;
+
+* `entry` (type: `string`): Identifier of the desired vite entrypoint;
 this is the value specified as `input` in the vite configuration file. Can be
-omitted if manifest file exists and only one entry point is present.
+omitted if manifest file exists and only one entrypoint is present.
+
 * `devTagAttributes` (type: `array`): HTML attributes that should be added to
 script tags that point to the vite dev server
+
 * `scriptTagAttributes` (type: `array`): HTML attributes that should be added
 to script tags for built JavaScript assets
+
 * `cssTagAttributes` (type: `array`): HTML attributes that should be added to
 css link tags for built CSS assets
+
 * `priority` (type: `bool`, default: `false`): Include assets before other assets
 in HTML
+
 * `useNonce` (type: `bool`, default: `false`): Whether to use the global nonce value
+
 * `addCss` (type: `bool`, default: `true`): If set to `false`, CSS files associated
 with the entry point won't be added to the asset collector
 * `inlineCss` (type: `bool`, default: `false`): If set to `true`, CSS files associated with the entry point will be inlined
 
-Example:
+</details>
+
+<details>
+    <summary><i>Example</i></summary>
 
 ```xml
 <vac:asset.vite
-    manifest="EXT:sitepackage/Resources/Public/Vite/manifest.json"
-    entry="path/to/sitepackage/Resources/Private/JavaScript/Main.js"
+    manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
+    entry="EXT:sitepackage/Resources/Private/JavaScript/Main.js"
     scriptTagAttributes="{
         type: 'text/javascript',
         async: 1
@@ -155,15 +210,27 @@ Example:
 />
 ```
 
+</details>
+
+
 ### resource.vite ViteHelper
 
 The `resource.vite` ViewHelper extracts the uri to one specific asset file from a vite
 manifest file.
 
+<details>
+    <summary><i>Arguments</i></summary>
+
 * `manifest` (type: `string`): Path to your manifest.json file. If omitted,
 default manifest from extension configuration will be used instead.
+
 * `file` (type: `string`): Identifier of the desired asset file for which a uri
 should be generated
+
+</details>
+
+<details>
+    <summary><i>Example</i></summary>
 
 This can be used to preload certain assets in the HTML `<head>` tag:
 
@@ -171,10 +238,51 @@ This can be used to preload certain assets in the HTML `<head>` tag:
 <f:section name="HeaderAssets">
     <link
         rel="preload"
-        href="{vac:resource.vite(file: 'path/to/sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+        href="{vac:resource.vite(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
         as="font"
         type="font/woff2"
         crossorigin
     />
 </f:section>
 ```
+
+</details>
+
+## Vite Assets in Yaml Files
+
+Besides ViewHelpers, the extension includes a processor for Yaml files, which allows you
+to use assets generated by vite in your configuration files. This is especially useful for
+[custom RTE presets](https://docs.typo3.org/c/typo3/cms-rte-ckeditor/main/en-us/Configuration/Examples.html):
+
+```yaml
+editor:
+    config:
+        contentsCss:
+            # Using the default manifest file
+            - "%vite('EXT:sitepackage/Resources/Private/Css/Rte.css')%"
+
+            # Using another manifest.json
+            - "%vite('EXT:sitepackage/Resources/Private/Css/Rte.css', 'path/to/manifest.json')%"
+```
+
+## TYPO3 Icon API
+
+The extension includes a custom `SvgIconProvider` for the
+[TYPO3 Icon API](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Icon/Index.html),
+which allows you to register SVG icon files generated by vite. This works both in frontend
+and backend context.
+
+To register a new icon, add the following to the `Configuration/Icons.php` file:
+
+```php
+return [
+    'site-logo' => [
+        'provider' => \Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider::class,
+        'source' => 'assets/Image/Icon/typo3.svg',
+        'manifest' => 'path/to/manifest.json', // optional, defaults to defaultManifest
+    ],
+];
+```
+
+Then you can use the [core:icon ViewHelper](https://docs.typo3.org/other/typo3/view-helper-reference/main/en-us/typo3/core/latest/Icon.html)
+to use the icon in your templates.

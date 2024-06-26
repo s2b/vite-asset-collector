@@ -1,0 +1,6 @@
+{
+	"name": "praetorius/vite-asset-collector-test-extension",
+	"description": "Test extension for vite-asset-collector",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-extension"
+}

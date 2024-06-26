@@ -6,10 +6,6 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
-use Psr\Http\Message\UriInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -19,8 +15,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 final class ViteViewHelper extends AbstractViewHelper
 {
-    protected ExtensionConfiguration $extensionConfiguration;
-
     protected ViteService $viteService;
 
     /**
@@ -67,9 +61,9 @@ final class ViteViewHelper extends AbstractViewHelper
         $entry = $this->arguments['entry'];
         $entry ??= $this->viteService->determineEntrypointFromManifest($manifest);
 
-        if ($this->useDevServer()) {
+        if ($this->viteService->useDevServer()) {
             $this->viteService->addAssetsFromDevServer(
-                $this->getDevServerUri(),
+                $this->viteService->determineDevServer($this->renderingContext->getRequest()),
                 $entry,
                 $assetOptions,
                 $this->arguments['devTagAttributes']
@@ -90,8 +84,7 @@ final class ViteViewHelper extends AbstractViewHelper
 
     private function getManifest(): string
     {
-        $manifest = $this->arguments['manifest'];
-        $manifest ??= $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
+        $manifest = $this->arguments['manifest'] ?? $this->viteService->getDefaultManifestFile();
 
         if (!is_string($manifest) || $manifest === '') {
             throw new ViteException(
@@ -106,31 +99,8 @@ final class ViteViewHelper extends AbstractViewHelper
         return $manifest;
     }
 
-    private function useDevServer(): bool
-    {
-        $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
-        if ($useDevServer === 'auto') {
-            return Environment::getContext()->isDevelopment();
-        }
-        return (bool)$useDevServer;
-    }
-
-    private function getDevServerUri(): UriInterface
-    {
-        $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
-        if ($devServerUri === 'auto') {
-            return $this->viteService->determineDevServer($this->renderingContext->getRequest());
-        }
-        return new Uri($devServerUri);
-    }
-
     public function injectViteService(ViteService $viteService): void
     {
         $this->viteService = $viteService;
-    }
-
-    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
-    {
-        $this->extensionConfiguration = $extensionConfiguration;
     }
 }

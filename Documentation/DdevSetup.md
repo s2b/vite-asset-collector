@@ -20,7 +20,7 @@ Next, you can setup the vite process in your ddev environment with
 ddev get torenware/ddev-viteserve
 ```
 
-You should check the created `.ddev/.env file for the correct configuration,
+You should check the created `.ddev/.env` file for the correct configuration,
 for example:
 
 ```sh
@@ -41,13 +41,7 @@ ddev vite-serve start
 
 ## Configure vite and set up the extension
 
-Install vite via npm:
-
-```sh
-ddev npm install -D vite
-```
-
-After that, follow the instructions in the [extension documentation](../README.md).
+See [extension documentation](../README.md).
 
 ## Switch between development and production
 
