@@ -12,7 +12,7 @@
 		"symfony/console": "^5.4 || ^6.4 || ^7.0"
 	},
 	"require-dev": {
-		"typo3/coding-standards": "^0.8.x-dev",
+		"typo3/coding-standards": "^0.7 || ^0.8",
 		"editorconfig-checker/editorconfig-checker": "^10.3",
 		"typo3/testing-framework": "^8.0 || ^7.0 || dev-main",
 		"phpstan/phpstan": "^1.10",
