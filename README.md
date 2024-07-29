@@ -10,7 +10,7 @@
 Bundle your TYPO3 frontend assets with **[vite](https://vitejs.dev/)**, a modern
 and flexible frontend tool. This TYPO3 extension provides a future-proof
 integration for vite using TYPO3's AssetCollector API.
-This means that you can use vite's hot reloading and hot module replacement features
+It allows you to use vite's hot reloading and hot module replacement features
 (and many others) in your TYPO3 projects.
 
 This extension is inspired by
@@ -25,50 +25,43 @@ Vite AssetCollector can be installed with composer:
 composer req praetorius/vite-asset-collector
 ```
 
-vite can be installed with the frontend package manager of your choice:
+vite and the TYPO3 plugin can be installed with the frontend package manager
+of your choice:
 
 ```sh
-npm install --save-dev vite vite-plugin-auto-origin
+npm install --save-dev vite vite-plugin-typo3
 ```
-
-*[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin)
-is recommended as it simplifies configuration and daily usage of vite with TYPO3.*
 
 ## Getting Started
 
 ### 1. Vite Setup
 
-To get things started, the extension provides a console command that generates a
-ready-to-use `vite.config.js` file:
+To get things started, you need to create a `vite.config.js` to activate
+the TYPO3 plugin:
 
-```sh
-vendor/bin/typo3 vite:config --entry 'EXT:sitepackage/Resources/Private/Main.entry.js' --outputfile ./vite.config.js
+```js
+import { defineConfig } from "vite";
+import typo3 from "vite-plugin-typo3";
+
+export default defineConfig({
+    plugins: [typo3()],
+});
 ```
 
-The generated configuration makes sure that vite
-
-* knows the location of your main JavaScript file, also known as *entrypoint*
-* generates a `manifest.json` file
-* outputs assets to a publicly accessible directory
-
-Note that the console command is only intended as a kickstarter for your initial
-vite configuration file.
-
-<details>
-    <summary><i>More Options</i></summary>
-
-* You can define multiple `--entry` options.
-* You can add `--glob` to enable pattern matching for your entrypoint paths
-([fast-glob](https://www.npmjs.com/package/fast-glob) required).
-* If you omit `--outputfile`, the file content will be outputted instead.
-* Add `--no-auto-origin` if you don't want to use
-[vite-plugin-auto-origin](https://www.npmjs.com/package/vite-plugin-auto-origin).
-Note that you need to specify `VITE_DEV_ORIGIN` manually then.
-* `--help` shows all available options.
-
-</details>
+For more information and options about the vite plugin, please refer to its
+[documentation](https://github.com/s2b/vite-plugin-typo3/blob/main/README.md).
 
 ### 2. TYPO3 Setup
+
+For each extension, you can define one or multiple vite entrypoints in a json file:
+
+**sitepackage/Configuration/ViteEntrypoints.json**:
+
+```json
+[
+    "../Resources/Private/Main.entry.js"
+]
+```
 
 Then you can use the included ViewHelper to embed your assets. If you use the default
 configuration, you only need to specify your entrypoint.
@@ -131,20 +124,13 @@ extension. If you still use vite < 5, you should to change this to
 `_assets/vite/manifest.json`.
 
 If you change the path here, please be aware that you may need to adjust your
-the `outDir` in your `vite.config.js` as well:
+the `outDir` in your `vite.config.js` as well.
 
 ```php
 $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['vite_asset_collector']['defaultManifest'] = 'EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json';
 ```
 
-If you use the `vite.config.js` provided by the extension:
-
-```js
-// Output path for generated assets
-const VITE_OUTPUT_PATH = 'packages/sitepackage/Resources/Public/Vite/';
-```
-
-If you use your own `vite.config.js`:
+In your `vite.config.js`:
 
 ```js
 export default defineConfig({
