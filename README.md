@@ -36,8 +36,8 @@ npm install --save-dev vite vite-plugin-typo3
 
 ### 1. Vite Setup
 
-To get things started, you need to create a `vite.config.js` to activate
-the TYPO3 plugin:
+To get things started, you need to create a `vite.config.js` in the root of
+your project to activate the TYPO3 plugin:
 
 ```js
 import { defineConfig } from "vite";
