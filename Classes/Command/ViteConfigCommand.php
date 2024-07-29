@@ -15,6 +15,9 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
+/**
+ * @deprecated will be removed with v2; Use vite-plugin-typo3 instead.
+ */
 class ViteConfigCommand extends Command
 {
     protected const TEMPLATE_SEPARATOR = "// ------------------------------------------------------\n";
