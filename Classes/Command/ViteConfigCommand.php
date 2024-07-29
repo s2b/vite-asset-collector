@@ -97,7 +97,7 @@ const VITE_OUTPUT_PATH = %4$s;
 
     protected function prepareEntrypoints(array $entrypoints, string $rootPath): array
     {
-        return array_map(function($entrypoint) use ($rootPath) {
+        return array_map(function ($entrypoint) use ($rootPath) {
             $entrypoint = $this->partialRealpath($this->getAbsoluteInputPath($entrypoint));
             $entrypointRelativeToRoot = PathUtility::getRelativePath($rootPath, PathUtility::dirname($entrypoint));
             return $entrypointRelativeToRoot . PathUtility::basename($entrypoint);
