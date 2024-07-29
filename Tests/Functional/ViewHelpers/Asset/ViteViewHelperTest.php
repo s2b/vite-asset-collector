@@ -61,6 +61,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     ],
                 ],
                 [],
+                [],
             ],
             'withoutCss' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
@@ -74,6 +75,27 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
                 [],
                 [],
+                [],
+            ],
+            'inlineCss' => [
+                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="inline" />',
+                [
+                    'vite:Main.js' => [
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => false, 'useNonce' => false],
+                    ],
+                ],
+                [],
+                [],
+                [],
+                [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".test {color: #000;}\n",
+                        'attributes' => [],
+                        'options' => ['priority' => true, 'useNonce' => false],
+                    ],
+                ],
             ],
             'defaultManifest' => [
                 '<vac:asset.vite entry="Default.js" />',
@@ -93,6 +115,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     ],
                 ],
                 [],
+                [],
             ],
             'autoEntry' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
@@ -111,6 +134,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                         'options' => ['priority' => false, 'useNonce' => false],
                     ],
                 ],
+                [],
                 [],
             ],
             'withAttributes' => [
@@ -136,6 +160,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     ],
                 ],
                 [],
+                [],
             ],
             'withPriority' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
@@ -155,6 +180,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                         'options' => ['priority' => true, 'useNonce' => false],
                     ],
                 ],
+                [],
             ],
             'withNonce' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
@@ -174,6 +200,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     ],
                 ],
                 [],
+                [],
             ],
         ];
     }
@@ -185,7 +212,8 @@ final class ViteViewHelperTest extends FunctionalTestCase
         array $javaScripts,
         array $priorityJavaScripts,
         array $styleSheets,
-        array $priorityStyleSheets
+        array $priorityStyleSheets,
+        array $inlineStyleSheets
     ): void {
         $assetCollector = $this->get(AssetCollector::class);
 
@@ -208,6 +236,14 @@ final class ViteViewHelperTest extends FunctionalTestCase
         self::assertEquals(
             $priorityStyleSheets,
             $assetCollector->getStyleSheets(true)
+        );
+        self::assertEquals(
+            [],
+            $assetCollector->getInlineStyleSheets(false)
+        );
+        self::assertEquals(
+            $inlineStyleSheets,
+            $assetCollector->getInlineStyleSheets(true)
         );
     }
 

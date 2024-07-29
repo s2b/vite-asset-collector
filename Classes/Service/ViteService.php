@@ -103,7 +103,7 @@ class ViteService
     public function addAssetsFromManifest(
         string $manifestFile,
         string $entry,
-        bool $addCss = true,
+        bool|int|string $addCss = true,
         array $assetOptions = [],
         array $scriptTagAttributes = [],
         array $cssTagAttributes = []
@@ -132,16 +132,17 @@ class ViteService
 
         if ($addCss) {
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+            $inlineCss = is_string($addCss) && strtolower($addCss) === 'inline';
 
             foreach ($manifest->getImportsForEntrypoint($entry) as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes) . '|' . serialize($assetOptions));
                 foreach ($import->css as $file) {
-                    $this->assetCollector->addStyleSheet("vite:{$identifier}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
+                    $this->addStyleSheet("vite:{$identifier}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions, $inlineCss);
                 }
             }
 
             foreach ($manifest->get($entry)->css as $file) {
-                $this->assetCollector->addStyleSheet("vite:{$entry}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions);
+                $this->addStyleSheet("vite:{$entry}:{$file}", $outputDir . $file, $cssTagAttributes, $assetOptions, $inlineCss);
             }
         }
     }
@@ -243,5 +244,23 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    protected function addStyleSheet(string $identifier, string $source, array $attributes = [], array $options = [], $inlineCss = false): void
+    {
+        if ($inlineCss) {
+            $styleSheetContent = file_get_contents($source);
+
+            if ($styleSheetContent === false) {
+                throw new ViteException(sprintf(
+                    'Unable to open stylesheet file "%s".',
+                    $source
+                ), 1684256597);
+            }
+
+            $this->assetCollector->addInlineStyleSheet($identifier, $styleSheetContent, $attributes, array_merge($options, ['priority' => true]));
+        } else {
+            $this->assetCollector->addStyleSheet($identifier, $source, $attributes, $options);
+        }
     }
 }

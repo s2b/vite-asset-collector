@@ -36,7 +36,7 @@ final class ViteViewHelper extends AbstractViewHelper
         );
         $this->registerArgument('devTagAttributes', 'array', 'Additional attributes for dev server script tags.', false, []);
         $this->registerArgument('scriptTagAttributes', 'array', 'Additional attributes for script tags.', false, []);
-        $this->registerArgument('addCss', 'boolean', 'Define whether css assets should be included.', false, true);
+        $this->registerArgument('addCss', 'boolean|string', 'Define whether to add CSS (true), skip adding CSS (false), or add CSS inline (\'inline\').', false, true);
         $this->registerArgument('cssTagAttributes', 'array', 'Additional attributes for css link tags.', false, []);
         $this->registerArgument(
             'priority',
@@ -74,7 +74,7 @@ final class ViteViewHelper extends AbstractViewHelper
                 $this->arguments['addCss'],
                 $assetOptions,
                 $this->arguments['scriptTagAttributes'],
-                $this->arguments['cssTagAttributes']
+                $this->arguments['cssTagAttributes'],
             );
         }
         return '';
