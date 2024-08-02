@@ -32,4 +32,10 @@ final class ViteManifestItem
             (array)($item['dynamicImports'] ?? []),
         );
     }
+
+
+    public function isCss()
+    {
+        return preg_match('/\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/', $this->file) === 1;
+    }
 }

@@ -130,13 +130,20 @@ class ViteService
             ), 1683200524);
         }
 
-        $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
-        $this->assetCollector->addJavaScript(
-            "vite:{$entry}",
-            $outputDir . $manifest->get($entry)->file,
-            ['type' => 'module', ...$scriptTagAttributes],
-            $assetOptions
-        );
+        $entryPoint = $manifest->get($entry);
+
+        if ($entryPoint->isCss()) {
+            $this->assetCollector->addStyleSheet("vite:{$entry}", $outputDir . $entryPoint->file, $cssTagAttributes, $assetOptions);
+        } else {
+            $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
+
+            $this->assetCollector->addJavaScript(
+                "vite:{$entry}",
+                $outputDir . $entryPoint->file,
+                ['type' => 'module', ...$scriptTagAttributes],
+                $assetOptions
+            );
+        }
 
         if ($addCss) {
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
