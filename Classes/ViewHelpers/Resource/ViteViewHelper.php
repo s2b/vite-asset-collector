@@ -10,7 +10,30 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * This ViewHelper creates an uri to a specific asset file
+ * The `resource.vite` ViewHelper extracts the uri to one specific asset file from a vite
+ * manifest file. If the dev server is used, the dev server uri to the resource is returned.
+ *
+ * Example
+ * =======
+ *
+ * This can be used to preload certain assets in the HTML `<head>` tag:
+ *
+ * ..  code-block:: html
+ *
+ *     <html
+ *         data-namespace-typo3-fluid="true"
+ *         xmlns:vac="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+ *     >
+ *
+ *     <f:section name="HeaderAssets">
+ *         <link
+ *             rel="preload"
+ *             href="{vac:resource.vite(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+ *             as="font"
+ *             type="font/woff2"
+ *             crossorigin
+ *         />
+ *     </f:section>
  */
 final class ViteViewHelper extends AbstractViewHelper
 {
@@ -26,12 +49,12 @@ final class ViteViewHelper extends AbstractViewHelper
         $this->registerArgument(
             'manifest',
             'string',
-            'Path to vite manifest file; if omitted, default manifest from extension configuration will be used instead.'
+            'Path to vite manifest file; if omitted, default manifest from extension configuration will be used instead'
         );
         $this->registerArgument(
             'file',
             'string',
-            'Asset file for which uri should be created',
+            'Identifier of the desired asset file for which a uri should be generated',
             true
         );
     }

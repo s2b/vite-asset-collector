@@ -1,0 +1,5 @@
+{
+	"name": "ViteAssetCollector",
+	"namespaceAlias": "vite",
+	"targetNamespace": "http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+}

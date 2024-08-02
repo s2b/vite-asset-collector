@@ -11,7 +11,8 @@
         ".DS_Store",
         ".xsd",
         ".php-cs-fixer.cache",
-        "LICENSE"
+        "LICENSE",
+        "ViteAssetCollector.json"
     ],
     "AllowedContentTypes": [],
     "PassedFiles": [],

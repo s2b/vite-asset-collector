@@ -19,6 +19,9 @@
 		"saschaegerer/phpstan-typo3": "^1.8",
 		"phpunit/phpunit": "^11.1 || ^10.5"
 	},
+	"suggest": {
+		"t3docs/fluid-documentation-generator": "To update ViewHelper documentation with doc:viewhelpers"
+	},
 	"autoload": {
 		"psr-4": {
 			"Praetorius\\ViteAssetCollector\\": "Classes/"
@@ -78,6 +81,8 @@
 		],
 		"coverage:unit": "phpunit -c Build/Testing/UnitTests.xml --coverage-clover .Build/logs/clover.unit.xml --coverage-php .Build/logs/clover.unit.cov",
 		"coverage:functional": "phpunit -c Build/Testing/FunctionalTests.xml --coverage-clover .Build/logs/clover.functional.xml --coverage-php .Build/logs/clover.functional.cov",
-		"coverage:report": "phpcov merge --html .Build/logs/report .Build/logs"
+		"coverage:report": "phpcov merge --html .Build/logs/report .Build/logs",
+
+		"doc:viewhelpers": "fluidDocumentation generate Build/Documentation/ViewHelpers.json && cp fluidDocumentationOutput/ViteAssetCollector.json Documentation/Reference/ViewHelpers/"
 	}
 }

@@ -3,3 +3,5 @@
 /.php-cs-fixer.cache
 /var
 /Build/Testing/.phpunit.cache
+/Documentation-GENERATED-temp
+/fluidDocumentationOutput
