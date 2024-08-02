@@ -12,7 +12,7 @@ to build your TYPO3 project's frontend assets.
 
 ## Documentation
 
-**[Documentation on docs.typo3.org](https://docs.typo3.org/p/praetorius/vite-asset-collector/main/)**
+**[Documentation on docs.typo3.org](https://docs.typo3.org/p/praetorius/vite-asset-collector/main/en-us/)**
 
 ### tl;dr
 
