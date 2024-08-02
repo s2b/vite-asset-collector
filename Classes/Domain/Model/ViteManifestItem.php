@@ -18,9 +18,9 @@ final class ViteManifestItem
         public readonly array $dynamicImports,
     ) {}
 
-    public static function fromArray(array $item, string $identifier): static
+    public static function fromArray(array $item, string $identifier): self
     {
-        return new static(
+        return new self(
             $identifier,
             $item['src'] ?? null,
             $item['file'],
@@ -33,8 +33,7 @@ final class ViteManifestItem
         );
     }
 
-
-    public function isCss()
+    public function isCss(): bool
     {
         return preg_match('/\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/', $this->file) === 1;
     }

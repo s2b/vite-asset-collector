@@ -29,7 +29,7 @@ final class ViteManifest
      */
     public function getValidEntrypoints(): array
     {
-        return array_filter($this->items, fn(ViteManifestItem $entry) => $entry->isEntry);
+        return array_filter($this->items, fn(ViteManifestItem $entry): bool => $entry->isEntry);
     }
 
     /**
@@ -61,7 +61,7 @@ final class ViteManifest
         return $manifest;
     }
 
-    public static function fromFile(string $path): static
+    public static function fromFile(string $path): self
     {
         $manifestJson = file_get_contents($path);
         if ($manifestJson === false) {
@@ -70,6 +70,6 @@ final class ViteManifest
                 $path
             ), 1684256597);
         }
-        return new ViteManifest($manifestJson, $path);
+        return new self($manifestJson, $path);
     }
 }
