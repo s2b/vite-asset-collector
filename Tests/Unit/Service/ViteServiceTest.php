@@ -43,20 +43,59 @@ final class ViteServiceTest extends UnitTestCase
     public static function determineDevServerDataProvider(): array
     {
         return [
-            'auto' => ['auto', 'https://localhost:5173'],
-            'uri' => ['https://devserver.localhost:5173', 'https://devserver.localhost:5173'],
+            'auto with no env' => [
+                'auto',
+                [],
+                'https://some.ddev.site:5173',
+            ],
+            'auto with uri provided as env' => [
+                'auto',
+                ['VITE_SERVER_URI' => 'https://example.com:1234'],
+                'https://example.com:1234',
+            ],
+            'auto with port provided as env' => [
+                'auto',
+                ['VITE_PRIMARY_PORT' => '5174'],
+                'https://some.ddev.site:5174',
+            ],
+            'auth with both uri and port provided as env' => [
+                'auto',
+                [
+                    'VITE_SERVER_URI' => 'https://example.com:1234',
+                    'VITE_PRIMARY_PORT' => '5174',
+                ],
+                'https://example.com:1234',
+            ],
+            'manual' => [
+                'https://devserver.localhost:5173',
+                [],
+                'https://devserver.localhost:5173',
+            ],
         ];
     }
 
     #[Test]
     #[DataProvider('determineDevServerDataProvider')]
-    public function determineDevServer(string $devServerUri, string $expected): void
+    public function determineDevServer(string $configOption, array $envVars, string $expected): void
     {
-        $request = new ServerRequest(new Uri('https://localhost/path/to/file'));
+        $request = new ServerRequest(new Uri('https://some.ddev.site/path/to/file'));
+
+        // Set environment variables
+        $originalVariables = [];
+        foreach ($envVars as $name => $value) {
+            $originalVariables[$name] = getenv($name);
+            putenv($name . '=' . $value);
+        }
+
         self::assertEquals(
             $expected,
-            (string)$this->createViteService(devServerUri: $devServerUri)->determineDevServer($request)
+            (string)$this->createViteService(devServerUri: $configOption)->determineDevServer($request)
         );
+
+        // Unset environment variables
+        foreach ($originalVariables as $name => $value) {
+            putenv($name . '=' . (string)$value);
+        }
     }
 
     #[Test]
