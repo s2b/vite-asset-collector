@@ -228,6 +228,32 @@ final class ViteServiceTest extends UnitTestCase
                 ],
                 [],
             ],
+            'onlyCss' => [
+                $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'Main.scss',
+                [],
+                true,
+                [],
+                [],
+                [
+                    'vite:Main.scss' => [
+                        'source' =>  $fixtureDir . 'OnlyCssManifest/assets/Main-4483b920.css',
+                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => [],
+                    ],
+                ],
+                [],
+            ],
+            'onlyCssFlagDisabled' => [
+                $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'Main.scss',
+                [],
+                false,
+                [],
+                [],
+                [],
+                [],
+            ],
             'withCssAndPriority' => [
                 $fixtureDir . 'ValidManifest/manifest.json',
                 'Main.js',
