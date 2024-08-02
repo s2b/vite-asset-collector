@@ -103,7 +103,7 @@ alongside the normal webserver. On production systems, this is no longer necessa
 First, TYPO3 needs to run in `Development` context for the extension to recognize the
 correct mode automatically.
 
-There are several options to do this:
+You have several options to run the dev server:
 
 ..  tabs::
 
