@@ -162,6 +162,7 @@ There are several options to do this:
         .. code-block:: sh
 
             ddev get torenware/ddev-viteserve
+            ddev restart
 
         Then you can start the server inside DDEV:
 
@@ -171,4 +172,11 @@ There are several options to do this:
 
         .. .. code-block:: sh
 
-        ..     ddev get ddev-vite-sidecar
+        ..     ddev get s2b/ddev-vite-sidecar
+        ..     ddev restart
+
+        .. Then you can start the server inside DDEV:
+
+        .. ..  code-block:: sh
+
+        ..     ddev vite
