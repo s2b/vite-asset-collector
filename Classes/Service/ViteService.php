@@ -46,6 +46,14 @@ class ViteService
     {
         $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
         if ($devServerUri === 'auto') {
+            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
+            $serverUri = getenv('VITE_SERVER_URI');
+            if ($serverUri) {
+                return new Uri($serverUri);
+            }
+
+            // This constant is used by ddev-viteserve and contains only the port that can be
+            // combined with any ddev domain of the current project
             $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
             return $request->getUri()->withPath('')->withPort((int)$vitePort);
         }
