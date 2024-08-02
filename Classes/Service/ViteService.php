@@ -132,9 +132,7 @@ class ViteService
 
         $entryPoint = $manifest->get($entry);
 
-        if ($entryPoint->isCss()) {
-            $this->assetCollector->addStyleSheet("vite:{$entry}", $outputDir . $entryPoint->file, $cssTagAttributes, $assetOptions);
-        } else {
+        if (!$entryPoint->isCss()) {
             $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
 
             $this->assetCollector->addJavaScript(
@@ -146,6 +144,10 @@ class ViteService
         }
 
         if ($addCss) {
+            if ($entryPoint->isCss()) {
+                $this->assetCollector->addStyleSheet("vite:{$entry}", $outputDir . $entryPoint->file, $cssTagAttributes, $assetOptions);
+            }
+
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
 
             foreach ($manifest->getImportsForEntrypoint($entry) as $import) {
