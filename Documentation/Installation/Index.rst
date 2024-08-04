@@ -164,6 +164,14 @@ You have several options to run the dev server:
             ddev get torenware/ddev-viteserve
             ddev restart
 
+        After installing, you have to tell it where to look for your `vite.config.js`. Open the file `.ddev/.env` and change the `VITE_PROJECT_DIR` to your project-root:
+
+        .. code-block:: sh
+
+            VITE_PROJECT_DIR=.
+            VITE_PRIMARY_PORT=5173
+            VITE_SECONDARY_PORT=5273
+
         Then you can start the server inside DDEV:
 
         ..  code-block:: sh
