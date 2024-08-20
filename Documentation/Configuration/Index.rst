@@ -57,6 +57,9 @@ your `vite.config.js` as well:
 
     export default defineConfig({
         // ...
-        outDir: 'path/to/sitepackage/Resources/Public/Vite/',
+        build: {
+            // ...
+            outDir: 'path/to/sitepackage/Resources/Public/Vite/',
+        }
     })
 
