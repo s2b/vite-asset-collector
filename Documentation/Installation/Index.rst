@@ -77,6 +77,8 @@ For each extension, you can define one or multiple vite entrypoints in a json fi
     ]
 
 
+It is also possible to define a glob pattern like this: `"../Resources/Private/*.entry.{js,ts}"`.
+
 Then you can use the included ViewHelper to embed your assets. If you use the default
 configuration, you only need to specify your entrypoint.
 
