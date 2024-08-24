@@ -109,6 +109,23 @@ You have several options to run the dev server:
 
 ..  tabs::
 
+    ..  group-tab:: in DDEV
+
+        Prerequisite is an add-on for DDEV called `ddev-vite-sidecar`:
+
+        .. code-block:: sh
+
+            ddev get s2b/ddev-vite-sidecar
+            ddev restart
+
+        Then you can start the server inside DDEV:
+
+        ..  code-block:: sh
+
+            ddev vite
+
+        For more information about the add-on, have a look at its `dedicated documentation <https://github.com/s2b/ddev-vite-sidecar/blob/main/README.md>`__.
+
     ..  group-tab:: npm (locally)
 
         Prerequisite is a local node setup and installed dependencies outside of Docker setups. Also,
@@ -156,37 +173,3 @@ You have several options to run the dev server:
         ..  code-block:: sh
 
             yarn exec vite
-
-    ..  group-tab:: in DDEV
-
-        Prerequisite is one of the available vite add-ons for DDEV, for example:
-
-        .. code-block:: sh
-
-            ddev get torenware/ddev-viteserve
-            ddev restart
-
-        After installing, you have to tell it where to look for your `vite.config.js`. Open the file `.ddev/.env` and change the `VITE_PROJECT_DIR` to your project-root:
-
-        .. code-block:: sh
-
-            VITE_PROJECT_DIR=.
-            VITE_PRIMARY_PORT=5173
-            VITE_SECONDARY_PORT=5273
-
-        Then you can start the server inside DDEV:
-
-        ..  code-block:: sh
-
-            ddev vite-serve start
-
-        .. .. code-block:: sh
-
-        ..     ddev get s2b/ddev-vite-sidecar
-        ..     ddev restart
-
-        .. Then you can start the server inside DDEV:
-
-        .. ..  code-block:: sh
-
-        ..     ddev vite
