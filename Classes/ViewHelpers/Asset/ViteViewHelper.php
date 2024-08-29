@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -85,7 +86,7 @@ final class ViteViewHelper extends AbstractViewHelper
 
         if ($this->viteService->useDevServer()) {
             $this->viteService->addAssetsFromDevServer(
-                $this->viteService->determineDevServer($this->renderingContext->getRequest()),
+                $this->viteService->determineDevServer($this->getRequest()),
                 $entry,
                 $assetOptions,
                 $this->arguments['devTagAttributes']
@@ -118,6 +119,19 @@ final class ViteViewHelper extends AbstractViewHelper
         }
 
         return $manifest;
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        // This is a fallback for TYPO3 < 13.3
+        if (
+            !method_exists($this->renderingContext, 'getAttribute') ||
+            !method_exists($this->renderingContext, 'hasAttribute') ||
+            !$this->renderingContext->hasAttribute(ServerRequestInterface::class)
+        ) {
+            return $this->renderingContext->getRequest();
+        }
+        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
 
     public function injectViteService(ViteService $viteService): void
