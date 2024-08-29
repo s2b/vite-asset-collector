@@ -97,7 +97,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
     {
         $context = $this->get(RenderingContextFactory::class)->create();
         $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
-        $context->setRequest(
+        @$context->setRequest(
             // TODO remove the ExtBase request when support for TYPO3 v11 is dropped
             new Request(
                 (new ServerRequest())
