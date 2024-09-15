@@ -31,7 +31,7 @@ Vite AssetCollector
 
 ----
 
-Vite AssetCollector allows you to use the modern frontend bundler `vite <https://vitejs.dev/>`__
+Vite AssetCollector allows you to use the modern frontend bundler `Vite <https://vitejs.dev/>`__
 to build your TYPO3 project's frontend assets.
 
 ----
@@ -44,6 +44,7 @@ to build your TYPO3 project's frontend assets.
 
     Introduction/Index
     Installation/Index
+    BestPractices/Index
     Configuration/Index
     Reference/Index
 

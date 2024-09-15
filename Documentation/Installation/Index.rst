@@ -12,7 +12,7 @@ Vite AssetCollector can be installed with composer:
 
     composer req praetorius/vite-asset-collector
 
-vite and the TYPO3 plugin can be installed with the frontend package manager
+Vite and the TYPO3 plugin can be installed with the frontend package manager
 of your choice:
 
 ..  tabs::
@@ -41,7 +41,7 @@ of your choice:
 Getting Started
 ===============
 
-Follow these steps to get a basic vite setup for your frontend assets in a
+Follow these steps to get a basic Vite setup for your frontend assets in a
 `sitepackage` extension.
 
 ..  _vite-setup:
@@ -62,12 +62,14 @@ your project to activate the TYPO3 plugin:
         plugins: [typo3()],
     });
 
+For more information about the Vite plugin, have a look at its `dedicated documentation <https://github.com/s2b/vite-plugin-typo3/blob/main/README.md>`__.
+
 ..  _typo3-setup:
 
 TYPO3 Setup
 -----------
 
-For each extension, you can define one or multiple vite entrypoints in a json file:
+For each extension, you can define one or multiple Vite entrypoints in a json file:
 
 ..  code-block:: json
     :caption: sitepackage/Configuration/ViteEntrypoints.json
@@ -99,7 +101,7 @@ configuration, you only need to specify your entrypoint.
 Start Vite Server
 -----------------
 
-For local development, you need a running vite server that serves your frontend assets
+For local development, you need a running Vite server that serves your frontend assets
 alongside the normal webserver. On production systems, this is no longer necessary.
 
 First, TYPO3 needs to run in `Development` context for the extension to recognize the
@@ -173,3 +175,30 @@ You have several options to run the dev server:
         ..  code-block:: sh
 
             yarn exec vite
+
+..  _build_for_production:
+
+Build for Production
+--------------------
+
+During deployment, the following command builds static asset files that can be used in Production:
+
+..  tabs::
+
+    ..  group-tab:: npm
+
+        ..  code-block:: sh
+
+            npm exec vite build
+
+    ..  group-tab:: pnpm
+
+        ..  code-block:: sh
+
+            pnpm exec vite build
+
+    ..  group-tab:: yarn
+
+        ..  code-block:: sh
+
+            yarn exec vite -- build
