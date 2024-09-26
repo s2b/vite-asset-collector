@@ -28,3 +28,8 @@ services:
 
   Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
     public: true
+
+  Praetorius\ViteAssetCollector\ContentSecurityPolicy\EventListener\MutatePolicy:
+    tags:
+      - name: event.listener
+        identifier: 'praetorius/vite-asset-collector'
