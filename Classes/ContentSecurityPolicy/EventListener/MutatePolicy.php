@@ -27,10 +27,10 @@ final class MutatePolicy
 
         $viteServerUri = $this->viteService->determineDevServer($GLOBALS['TYPO3_REQUEST']);
         $uris = [
-            #SourceKeyword::strictDynamic,
+            // SourceKeyword::strictDynamic,
             SourceKeyword::unsafeInline,
             new UriValue((string)$viteServerUri),
-            new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort())
+            new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
         ];
 
         // Allow viteServer url in CSP
