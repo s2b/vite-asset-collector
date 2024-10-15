@@ -27,8 +27,6 @@ final class MutatePolicy
 
         $viteServerUri = $this->viteService->determineDevServer($GLOBALS['TYPO3_REQUEST']);
         $uris = [
-            // SourceKeyword::strictDynamic,
-            SourceKeyword::unsafeInline,
             new UriValue((string)$viteServerUri),
             new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
         ];
@@ -53,16 +51,6 @@ final class MutatePolicy
         $event->getCurrentPolicy()->extend(
             Directive::ImgSrc,
             ...$uris,
-        );
-
-        // remove nonce is currently necessary to allow 'unsafe inline' for viteServer
-        $event->getCurrentPolicy()->reduce(
-            Directive::ScriptSrc,
-            SourceKeyword::nonceProxy
-        );
-        $event->getCurrentPolicy()->reduce(
-            Directive::StyleSrcElem,
-            SourceKeyword::nonceProxy
         );
     }
 }
