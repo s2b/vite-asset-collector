@@ -8,6 +8,7 @@ use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 
 final class MutateContentSecurityPolicy
@@ -35,7 +36,7 @@ final class MutateContentSecurityPolicy
             ...$uris,
         );
         $event->getCurrentPolicy()->extend(
-            Directive::ScriptSrc,
+            Directive::ScriptSrcElem,
             ...$uris,
         );
         $event->getCurrentPolicy()->extend(
@@ -49,6 +50,16 @@ final class MutateContentSecurityPolicy
         $event->getCurrentPolicy()->extend(
             Directive::ImgSrc,
             ...$uris,
+        );
+
+        // Ensure that nonces are allowed for script and style tags
+        $event->getCurrentPolicy()->extend(
+            Directive::ScriptSrcElem,
+            SourceKeyword::nonceProxy
+        );
+        $event->getCurrentPolicy()->extend(
+            Directive::StyleSrcElem,
+            SourceKeyword::nonceProxy
         );
     }
 }
