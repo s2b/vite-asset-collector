@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\ContentSecurityPolicy\EventListener;
+namespace Praetorius\ViteAssetCollector\EventListener;
 
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
-use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 
-final class MutatePolicy
+final class MutateContentSecurityPolicy
 {
     public function __construct(
         private readonly ViteService $viteService,
@@ -18,14 +18,12 @@ final class MutatePolicy
 
     public function __invoke(PolicyMutatedEvent $event): void
     {
-        if ($event->scope->type->isBackend()) {
-            return;
-        }
         if (!$this->viteService->useDevServer()) {
             return;
         }
 
-        $viteServerUri = $this->viteService->determineDevServer($GLOBALS['TYPO3_REQUEST']);
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? new ServerRequest();
+        $viteServerUri = $this->viteService->determineDevServer($request);
         $uris = [
             new UriValue((string)$viteServerUri),
             new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),

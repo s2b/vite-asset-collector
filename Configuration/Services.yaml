@@ -29,7 +29,8 @@ services:
   Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
     public: true
 
-  Praetorius\ViteAssetCollector\ContentSecurityPolicy\EventListener\MutatePolicy:
+  Praetorius\ViteAssetCollector\EventListener\MutateContentSecurityPolicy:
     tags:
       - name: event.listener
-        identifier: 'praetorius/vite-asset-collector'
+        identifier: 'praetorius/vite-asset-collector-csp'
+        event: TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent

@@ -13,6 +13,10 @@ parameters:
 		- ../../.Build/
 		- ../../Build/
 
+	typo3:
+		requestGetAttributeMapping:
+			nonce: TYPO3\CMS\Core\Domain\ConsumableString
+
 	ignoreErrors:
 		-
 			message: '#Variable \$_EXTKEY might not be defined.#'
