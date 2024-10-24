@@ -43,7 +43,7 @@ You can specify the path to Vite's `manifest.json` in the extension configuratio
 By default, this is set to `_assets/vite/.vite/manifest.json`, so it will run
 out-of-the-box with Vite 5 and the Vite TYPO3 plugin.
 
-If you still use Vite < 5, you should to change this to `_assets/vite/manifest.json`.
+If you still use Vite < 5, you should change this to `_assets/vite/manifest.json`.
 
 ..  code-block:: php
     :caption: config/system/additional.php
