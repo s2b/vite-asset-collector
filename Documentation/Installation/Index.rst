@@ -117,7 +117,7 @@ You have several options to run the dev server:
 
         .. code-block:: sh
 
-            ddev get s2b/ddev-vite-sidecar
+            ddev add-on get s2b/ddev-vite-sidecar
             ddev restart
 
         Then you can start the server inside DDEV:
