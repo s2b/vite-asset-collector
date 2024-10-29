@@ -102,7 +102,7 @@ More complex expressions are also possible, like negative patterns:
     // Import everything except Slider
     import.meta.glob([
         "Components/**/*.{css,js}",
-        '!**/Organism/Slider/*'
+        "!**/Organism/Slider/*"
     ], { eager: true })
 
 ..  _css-preprocessors:
