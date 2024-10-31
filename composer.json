@@ -7,17 +7,17 @@
 	],
 	"require": {
 		"php": ">=8.2",
-		"typo3/cms-core": "^12.4 || ^13.4 || dev-main",
-		"typo3/cms-fluid": "^12.4 || ^13.4 || dev-main",
-		"symfony/console": "^5.4 || ^6.4 || ^7.0"
+		"typo3/cms-core": "^13.4 || ^12.4 || dev-main",
+		"typo3/cms-fluid": "^13.4 || ^12.4 || dev-main",
+		"symfony/console": "^6.4 || ^7.0"
 	},
 	"require-dev": {
-		"typo3/coding-standards": "^0.7 || ^0.8",
-		"editorconfig-checker/editorconfig-checker": "^10.3",
-		"typo3/testing-framework": "^8.0 || ^7.0 || dev-main",
-		"phpstan/phpstan": "^1.10",
-		"saschaegerer/phpstan-typo3": "^1.8",
-		"phpunit/phpunit": "^11.1 || ^10.5"
+		"typo3/coding-standards": "^0.8",
+		"editorconfig-checker/editorconfig-checker": "^10.6",
+		"typo3/testing-framework": "^8.0 || dev-main",
+		"phpstan/phpstan": "^1.12",
+		"saschaegerer/phpstan-typo3": "^1.10",
+		"phpunit/phpunit": "^11.4 || ^10.5"
 	},
 	"suggest": {
 		"t3docs/fluid-documentation-generator": "To update ViewHelper documentation with doc:viewhelpers"
