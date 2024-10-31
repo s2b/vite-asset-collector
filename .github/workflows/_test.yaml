@@ -69,7 +69,7 @@ jobs:
 
       -
         name: Remove selected composer packages
-        run: composer remove --no-update ${{ inputs.composer-remove }}
+        run: composer remove --no-update --dev ${{ inputs.composer-remove }}
         if: inputs.composer-remove != ''
 
       -
