@@ -41,7 +41,11 @@ final class ViteViewHelperTest extends FunctionalTestCase
 
     public static function renderDataProvider(): array
     {
-        $manifestDir = self::getInstancePath() . '/fileadmin/Fixtures/';
+        $manifestDir = 'fileadmin/Fixtures/';
+        // TODO remove this when support for TYPO3 v12 is dropped
+        if (!self::useExternalFlag()) {
+            $manifestDir = self::getInstancePath() . '/' . $manifestDir;
+        }
         return [
             'basic' => [
                 '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
@@ -49,7 +53,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -57,7 +61,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -68,7 +72,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -81,7 +85,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Default.js' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -89,7 +93,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -100,7 +104,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -108,7 +112,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -124,7 +128,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -132,7 +136,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => false, 'useNonce' => false],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -144,7 +148,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'useNonce' => false],
+                        'options' => ['priority' => true, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -152,7 +156,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => true, 'useNonce' => false],
+                        'options' => ['priority' => true, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
             ],
@@ -162,7 +166,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => true],
+                        'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -170,7 +174,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => true],
+                        'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
                 [],
@@ -230,12 +234,12 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                 ],
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                 ],
             ],
             $assetCollector->getJavaScripts(false)
@@ -274,5 +278,11 @@ final class ViteViewHelperTest extends FunctionalTestCase
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;
+    }
+
+    protected static function useExternalFlag(): bool
+    {
+        // TODO remove this when support for TYPO3 v12 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() >= 13;
     }
 }
