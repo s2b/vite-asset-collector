@@ -57,8 +57,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [8.3, 8.2]
-        typo3-version: ['^12', '^13']
+        php-version: [8.3, 8.2, 8.4]
+        typo3-version: ['^13', '^12']
 
     uses: ./.github/workflows/_test.yaml
     with:
@@ -93,17 +93,17 @@ jobs:
         name: Download unit test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-unit-8.3-^12
+          name: coverage-unit-8.3-^13
 
       -
         name: Download functional test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-functional-8.3-^12
+          name: coverage-functional-8.3-^13
 
       -
         name: Upload coverage results to Coveralls
-        uses: paambaati/codeclimate-action@v5.0.0
+        uses: paambaati/codeclimate-action@v9.0.0
         env:
           CC_TEST_REPORTER_ID: 32807026fddd031a98d1371e6a9360c6bd30f7be0d4bb9a5516a93cd748d9b34
         with:
