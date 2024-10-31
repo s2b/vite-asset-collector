@@ -157,3 +157,23 @@ preprocessors:
             '@sitepackage/Resources/.../MyFont.eot'
         );
     }
+
+..  _functional-tests:
+
+Configuration for Functional Tests
+==================================
+
+If you use the extension in a project that utilizes `TYPO3's testing framework <https://github.com/TYPO3/testing-framework>`__
+to validate the HTML output for certain pages, the following adjustments need to be made:
+
+*   Make sure that `vite_asset_collector` is loaded in your testing setup by adding it to the list in
+    :php:`$testExtensionsToLoad`
+*   To get a consistent frontend output, it is recommended to use the dev server configuration. Because tests
+    are run in `TYPO3_CONTEXT=Testing`, it might be necessary to specify this option explicitly within your testing
+    setup:
+
+..  code-block:: php
+
+    $this->get(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->set('vite_asset_collector', [
+        'useDevServer' => '1',
+    ]);
