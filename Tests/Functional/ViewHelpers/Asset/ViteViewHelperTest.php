@@ -7,12 +7,12 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
-use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -261,14 +261,18 @@ final class ViteViewHelperTest extends FunctionalTestCase
     {
         $context = $this->get(RenderingContextFactory::class)->create();
         $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
-        @$context->setRequest(
-            // TODO remove the ExtBase request when support for TYPO3 v11 is dropped
-            new Request(
-                (new ServerRequest())
-                    ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-                    ->withAttribute('extbase', new ExtbaseRequestParameters())
-            )
-        );
+
+        $request = (new ServerRequest())
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+            ->withAttribute('extbase', new ExtbaseRequestParameters());
+
+        // TODO remove this when support for TYPO3 v12 is dropped
+        if (method_exists($context, 'setRequest')) {
+            @$context->setRequest($request);
+        }
+
+        $context->setAttribute(ServerRequestInterface::class, $request);
+
         return $context;
     }
 }
