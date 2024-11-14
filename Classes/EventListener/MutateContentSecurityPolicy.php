@@ -23,7 +23,7 @@ final class MutateContentSecurityPolicy
             return;
         }
 
-        $request = $GLOBALS['TYPO3_REQUEST'] ?? new ServerRequest();
+        $request = $event->request ?? $GLOBALS['TYPO3_REQUEST'] ?? new ServerRequest();
         $viteServerUri = $this->viteService->determineDevServer($request);
         $uris = [
             new UriValue((string)$viteServerUri),
