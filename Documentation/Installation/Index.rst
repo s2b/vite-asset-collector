@@ -113,11 +113,19 @@ You have several options to run the dev server:
 
     ..  group-tab:: in DDEV
 
-        Prerequisite is an add-on for DDEV called `ddev-vite-sidecar`:
+        Prerequisite is an add-on for DDEV called `ddev-vite-sidecar`.
+        For DDEV v1.23.5 or above run:
 
         .. code-block:: sh
 
             ddev add-on get s2b/ddev-vite-sidecar
+            ddev restart
+
+        For earlier versions of DDEV run:
+
+        .. code-block:: sh
+
+            ddev get s2b/ddev-vite-sidecar
             ddev restart
 
         Then you can start the server inside DDEV:
