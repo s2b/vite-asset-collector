@@ -26,6 +26,7 @@ final class MutateContentSecurityPolicy
         $request = $event->request ?? $GLOBALS['TYPO3_REQUEST'] ?? new ServerRequest();
         $viteServerUri = $this->viteService->determineDevServer($request);
         $uris = [
+            new UriValue('http://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
             new UriValue('https://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
             new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
         ];
