@@ -144,9 +144,14 @@ libraries as well. No further configuration is necessary.
 Referencing Assets in CSS
 =========================
 
-If you use the Vite plugin, it automatically registers an alias for each TYPO3 extension, which allows you
+If you use the Vite plugin, it automatically registers aliases for each TYPO3 extension, which allows you
 to reference other assets (like webfonts, svg images...) easily in your CSS files. This also works for CSS
-preprocessors:
+preprocessors. Each extension gets an `EXT:` alias as well as an `@` alias, for example:
+
+*   `EXT:my_extension`
+*   `@my_extension`
+
+These can be used both in CSS files and in JavaScript import statements.
 
 ..  code-block:: css
     :caption: _Fonts.scss
@@ -154,7 +159,7 @@ preprocessors:
     @font-face {
         font-family: 'MyFont';
         src: url(
-            '@sitepackage/Resources/.../MyFont.eot'
+            'EXT:sitepackage/Resources/.../MyFont.eot'
         );
     }
 
