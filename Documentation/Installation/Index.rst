@@ -23,17 +23,23 @@ of your choice:
 
             npm install --save-dev vite vite-plugin-typo3
 
+        Make sure to execute this inside of your DDEV container if you want to use the DDEV add-on afterwards.
+
     ..  group-tab:: pnpm
 
         ..  code-block:: sh
 
             pnpm add --save-dev vite vite-plugin-typo3
 
+        Make sure to execute this inside of your DDEV container if you want to use the DDEV add-on afterwards.
+
     ..  group-tab:: yarn
 
         ..  code-block:: sh
 
             yarn add --dev vite vite-plugin-typo3
+
+        Make sure to execute this inside of your DDEV container if you want to use the DDEV add-on afterwards.
 
 
 ..  _getting-started:
@@ -69,7 +75,8 @@ For more information about the Vite plugin, have a look at its `dedicated docume
 TYPO3 Setup
 -----------
 
-For each extension, you can define one or multiple Vite entrypoints in a json file:
+Vite uses so-called entrypoints, which are your frontend source files you want to process and
+bundle with vite. For each extension, you can define one or multiple Vite entrypoints in a json file:
 
 ..  code-block:: json
     :caption: sitepackage/Configuration/ViteEntrypoints.json
@@ -79,7 +86,8 @@ For each extension, you can define one or multiple Vite entrypoints in a json fi
     ]
 
 
-It is also possible to define a glob pattern like this: `"../Resources/Private/*.entry.{js,ts}"`.
+It is also possible to define a glob pattern like this: `"../Resources/Private/*.entry.{js,ts}"`. Inside
+of each `entrypoint file <entrypoint-files>`_ you can import all frontend assets you want to bundle.
 
 Then you can use the included ViewHelper to embed your assets. If you use the default
 configuration, you only need to specify your entrypoint.
@@ -95,6 +103,7 @@ configuration, you only need to specify your entrypoint.
     ...
 
     <vac:asset.vite entry="EXT:sitepackage/Resources/Private/Main.entry.js" />
+
 
 ..  _start-vite-server:
 
