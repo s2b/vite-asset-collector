@@ -70,15 +70,16 @@ class ViteService
         $assetOptions = ['external' => $this->useExternalFlag(), ...$assetOptions];
 
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
+        $originalPath = rtrim($devServerUri->getPath(), '/') . '/';
         $this->assetCollector->addJavaScript(
             'vite',
-            (string)$devServerUri->withPath('@vite/client'),
+            (string)$devServerUri->withPath($originalPath . '@vite/client'),
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
         $this->assetCollector->addJavaScript(
             "vite:{$entry}",
-            (string)$devServerUri->withPath($entry),
+            (string)$devServerUri->withPath($originalPath . $entry),
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
@@ -89,7 +90,8 @@ class ViteService
         string $assetFile,
     ): string {
         $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
-        return (string)$devServerUri->withPath($assetFile);
+        $originalPath = rtrim($devServerUri->getPath(), '/') . '/';
+        return (string)$devServerUri->withPath($originalPath . $assetFile);
     }
 
     public function determineEntrypointFromManifest(string $manifestFile): string
