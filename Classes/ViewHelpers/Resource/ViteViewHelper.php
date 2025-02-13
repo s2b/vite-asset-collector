@@ -17,24 +17,38 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * Example
  * =======
  *
- * This can be used to preload certain assets in the HTML `<head>` tag:
+ * This can be used to preload certain assets in the HTML `<head>` tag.
+ *
+ * First, add a Fluid template to your TypoScript setup, for example:
+ *
+ * ..  code-block:: typoscript
+ *
+ *     page.headerData {
+ *         10 = FLUIDTEMPLATE
+ *         10 {
+ *             file = EXT:sitepackage/Resources/Private/Templates/HeaderData.html
+ *         }
+ *     }
+ *
+ * Then create the HeaderData template:
  *
  * ..  code-block:: html
+ *     :caption: EXT:sitepackage/Resources/Private/Templates/HeaderData.html
  *
  *     <html
  *         data-namespace-typo3-fluid="true"
  *         xmlns:vac="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
  *     >
  *
- *     <f:section name="HeaderAssets">
- *         <link
- *             rel="preload"
- *             href="{vac:resource.vite(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
- *             as="font"
- *             type="font/woff2"
- *             crossorigin
- *         />
- *     </f:section>
+ *     <link
+ *         rel="preload"
+ *         href="{vac:resource.vite(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+ *         as="font"
+ *         type="font/woff2"
+ *         crossorigin
+ *     />
+ *
+ *     </html>
  */
 final class ViteViewHelper extends AbstractViewHelper
 {
