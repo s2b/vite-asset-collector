@@ -691,7 +691,7 @@ final class ViteServiceTest extends UnitTestCase
         $assetCollector ??= new AssetCollector();
 
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $packageManager = $this->createStub(PackageManager::class);
+        $packageManager = self::createStub(PackageManager::class);
         $packageManager
             ->method('resolvePackagePath')
             ->willReturnMap([
@@ -713,7 +713,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ]);
 
-        $extensionConfiguration = $this->createStub(ExtensionConfiguration::class);
+        $extensionConfiguration = self::createStub(ExtensionConfiguration::class);
         $extensionConfiguration
             ->method('get')
             ->willReturnMap([
