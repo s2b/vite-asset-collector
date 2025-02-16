@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Resource;
+namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +17,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
 
-final class ViteViewHelperTest extends FunctionalTestCase
+final class UriViewHelperTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
         'typo3conf/ext/vite_asset_collector',
@@ -40,11 +40,11 @@ final class ViteViewHelperTest extends FunctionalTestCase
     {
         return [
             'basic' => [
-                '<vac:resource.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" file="Main.css" />',
+                '<vite:uri manifest="fileadmin/Fixtures/ValidManifest/manifest.json" file="Main.css" />',
                 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
             ],
             'defaultManifest' => [
-                '<vac:resource.vite file="Default.css" />',
+                '<vite:uri file="Default.css" />',
                 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
             ],
         ];
@@ -70,7 +70,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         ]);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vac:resource.vite file="path/to/file.jpg" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:uri file="path/to/file.jpg" />');
 
         self::assertEquals(
             'https://localhost:5173/path/to/file.jpg',
@@ -86,7 +86,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         ]);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vac:resource.vite file="Default.js" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:uri file="Default.js" />');
 
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
@@ -96,7 +96,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
     protected function createRenderingContext(): RenderingContextInterface
     {
         $context = $this->get(RenderingContextFactory::class)->create();
-        $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
+        $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
 
         $request = (new ServerRequest())
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
