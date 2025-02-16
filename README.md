@@ -23,7 +23,7 @@ npm install --save-dev vite vite-plugin-typo3
 
 * Include PlugIn in vite config
 * Add `Configuration/ViteEntrypoints.json` to extension(s)
-* Add `<vac:asset.vite />` to template
+* Add `<vite:asset />` to template
 * Run vite server
 * Have fun!
 

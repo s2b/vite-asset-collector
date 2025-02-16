@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
+namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
@@ -11,7 +11,7 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * The `asset.vite` ViewHelper embeds all JavaScript and CSS belonging to the
+ * The `vite:asset` ViewHelper embeds all JavaScript and CSS belonging to the
  * specified vite `entry` using TYPO3's AssetCollector API.
  *
  * Example
@@ -21,10 +21,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  *     <html
  *         data-namespace-typo3-fluid="true"
- *         xmlns:vac="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+ *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
  *     >
  *
- *     <vac:asset.vite
+ *     <vite:asset
  *         manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
  *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.js"
  *         scriptTagAttributes="{
@@ -37,7 +37,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *         priority="1"
  *     />
  */
-final class ViteViewHelper extends AbstractViewHelper
+final class AssetViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
 

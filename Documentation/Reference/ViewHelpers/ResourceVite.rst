@@ -1,4 +1,4 @@
-:navigation-title: resource.vite
+:navigation-title: resource.vite (alias)
 
 ..  include:: /Includes.rst.txt
 
@@ -8,5 +8,8 @@
 Resource.vite ViewHelper `<vite:resource.vite>`
 ===============================================
 
-..  typo3:viewhelper:: resource.vite
-    :source: ./ViteAssetCollector.json
+..  note::
+    This is an alias of the :ref:`<vite:uri> ViewHelper <viewhelper-uri>`.
+    The new name has been introduced with version 1.14. While the
+    old name will continue to work, it is recommended to switch to the new name
+    for improved naming clarity.
