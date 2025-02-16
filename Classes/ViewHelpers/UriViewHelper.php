@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\ViewHelpers\Resource;
+namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
@@ -11,7 +11,7 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * The `resource.vite` ViewHelper extracts the uri to one specific asset file from a vite
+ * The `vite:uri` ViewHelper extracts the uri to one specific asset file from a vite
  * manifest file. If the dev server is used, the dev server uri to the resource is returned.
  *
  * Example
@@ -37,12 +37,12 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  *     <html
  *         data-namespace-typo3-fluid="true"
- *         xmlns:vac="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+ *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
  *     >
  *
  *     <link
  *         rel="preload"
- *         href="{vac:resource.vite(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+ *         href="{vite:uri(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
  *         as="font"
  *         type="font/woff2"
  *         crossorigin
@@ -50,7 +50,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  *     </html>
  */
-final class ViteViewHelper extends AbstractViewHelper
+final class UriViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
 

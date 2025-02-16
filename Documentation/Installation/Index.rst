@@ -97,12 +97,12 @@ configuration, you only need to specify your entrypoint.
 
     <html
         data-namespace-typo3-fluid="true"
-        xmlns:vac="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+        xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
     >
 
     ...
 
-    <vac:asset.vite entry="EXT:sitepackage/Resources/Private/Main.entry.js" />
+    <vite:asset entry="EXT:sitepackage/Resources/Private/Main.entry.js" />
 
 
 ..  _start-vite-server:

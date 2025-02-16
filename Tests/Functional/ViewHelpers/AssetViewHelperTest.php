@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
+namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,7 +18,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
 
-final class ViteViewHelperTest extends FunctionalTestCase
+final class AssetViewHelperTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
         'typo3conf/ext/vite_asset_collector',
@@ -48,7 +48,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         }
         return [
             'basic' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
+                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
                 [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -67,7 +67,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'withoutCss' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
+                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
                 [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -80,7 +80,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'defaultManifest' => [
-                '<vac:asset.vite entry="Default.js" />',
+                '<vite:asset entry="Default.js" />',
                 [
                     'vite:Default.js' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
@@ -99,7 +99,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'autoEntry' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
+                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
                 [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -118,7 +118,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'withAttributes' => [
-                '<vac:asset.vite
+                '<vite:asset
                     manifest="fileadmin/Fixtures/ValidManifest/manifest.json"
                     entry="Main.js"
                     scriptTagAttributes="{async: 1}"
@@ -142,7 +142,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 [],
             ],
             'withPriority' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
+                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
                 [],
                 [
                     'vite:Main.js' => [
@@ -161,7 +161,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'withNonce' => [
-                '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
+                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
                 [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -226,7 +226,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />');
         (new TemplateView($context))->render();
 
         self::assertEquals(
@@ -254,7 +254,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
         ]);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vac:asset.vite entry="Default.js" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset entry="Default.js" />');
 
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
@@ -264,7 +264,7 @@ final class ViteViewHelperTest extends FunctionalTestCase
     protected function createRenderingContext(): RenderingContextInterface
     {
         $context = $this->get(RenderingContextFactory::class)->create();
-        $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
+        $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
 
         $request = (new ServerRequest())
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
