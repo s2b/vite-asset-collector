@@ -25,8 +25,22 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *     >
  *
  *     <vite:asset
+ *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
+ *     />
+ *
+ * Advanced Example
+ * ================
+ *
+ * ..  code-block:: html
+ *
+ *     <html
+ *         data-namespace-typo3-fluid="true"
+ *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+ *     >
+ *
+ *     <vite:asset
  *         manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
- *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.js"
+ *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
  *         scriptTagAttributes="{
  *             type: 'text/javascript',
  *             async: 1
