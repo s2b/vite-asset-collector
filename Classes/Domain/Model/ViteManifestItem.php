@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Domain\Model;
 
+use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
+
 final class ViteManifestItem
 {
     public function __construct(
@@ -35,6 +37,6 @@ final class ViteManifestItem
 
     public function isCss(): bool
     {
-        return preg_match('/\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/', $this->file) === 1;
+        return VitePathUtility::isCssFile($this->file);
     }
 }
