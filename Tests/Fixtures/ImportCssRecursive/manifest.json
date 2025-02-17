@@ -1,0 +1,25 @@
+{
+	"_Shared-To-v4Zbq.js": {
+		"css": [
+			"assets/Shared-pjWofKK4.css"
+		],
+		"file": "assets/Shared-To-v4Zbq.js",
+		"imports": [
+			"_Nested-abcdef.js"
+		]
+	},
+	"_Nested-abcdef.js": {
+		"css": [
+			"assets/Nested-defghi.css"
+		],
+		"file": "assets/Nested-abcdef.js"
+	},
+	"Main.js": {
+		"file": "assets/Main-4483b920.js",
+		"imports": [
+			"_Shared-To-v4Zbq.js"
+		],
+		"isEntry": true,
+		"src": "Main.js"
+	}
+}

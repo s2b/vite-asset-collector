@@ -46,20 +46,77 @@ final class ViteManifestTest extends UnitTestCase
 
     public static function getImportsForEntrypointDataProvider(): array
     {
+        $fixtureDir = realpath(__DIR__ . '/../../../Fixtures') . '/';
         return [
-            ['Main.js', ['_Shared-To-v4Zbq.js' => new ViteManifestItem('_Shared-To-v4Zbq.js', null, 'assets/Shared-To-v4Zbq.js', false, false, [], [], [], [])]],
-            ['Undefined.js', []],
+            [
+                $fixtureDir . 'ImportJs/manifest.json',
+                'Main.js',
+                false,
+                ['_Shared-To-v4Zbq.js' => new ViteManifestItem('_Shared-To-v4Zbq.js', null, 'assets/Shared-To-v4Zbq.js', false, false, [], [], [], [])],
+            ],
+            [
+                $fixtureDir . 'ImportJs/manifest.json',
+                'Undefined.js',
+                false,
+                [],
+            ],
+            [
+                $fixtureDir . 'ImportCssRecursive/manifest.json',
+                'Main.js',
+                false,
+                [
+                    '_Shared-To-v4Zbq.js' => new ViteManifestItem(
+                        '_Shared-To-v4Zbq.js',
+                        null,
+                        'assets/Shared-To-v4Zbq.js',
+                        false,
+                        false,
+                        [],
+                        ['assets/Shared-pjWofKK4.css'],
+                        ['_Nested-abcdef.js'],
+                        [],
+                    ),
+                ],
+            ],
+            [
+                $fixtureDir . 'ImportCssRecursive/manifest.json',
+                'Main.js',
+                true,
+                [
+                    '_Shared-To-v4Zbq.js' => new ViteManifestItem(
+                        '_Shared-To-v4Zbq.js',
+                        null,
+                        'assets/Shared-To-v4Zbq.js',
+                        false,
+                        false,
+                        [],
+                        ['assets/Shared-pjWofKK4.css'],
+                        ['_Nested-abcdef.js'],
+                        [],
+                    ),
+                    '_Nested-abcdef.js' => new ViteManifestItem(
+                        '_Nested-abcdef.js',
+                        null,
+                        'assets/Nested-abcdef.js',
+                        false,
+                        false,
+                        [],
+                        ['assets/Nested-defghi.css'],
+                        [],
+                        [],
+                    ),
+                ],
+            ],
         ];
     }
 
     #[Test]
     #[DataProvider('getImportsForEntrypointDataProvider')]
-    public function getImportsForEntrypoint(string $entrypoint, mixed $expected): void
+    public function getImportsForEntrypoint(string $manifestFile, string $entrypoint, bool $recursive, mixed $expected): void
     {
-        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/ImportJs/manifest.json');
         self::assertEquals(
             $expected,
-            (ViteManifest::fromFile($manifestPath))->getImportsForEntrypoint($entrypoint)
+            (ViteManifest::fromFile($manifestFile))->getImportsForEntrypoint($entrypoint, $recursive)
         );
     }
 }
