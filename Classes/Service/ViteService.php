@@ -164,7 +164,7 @@ class ViteService
 
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
 
-            foreach ($manifest->getImportsForEntrypoint($entry) as $import) {
+            foreach ($manifest->getImportsForEntrypoint($entry, true) as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes));
                 foreach ($import->css as $file) {
                     $this->assetCollector->addStyleSheet(
