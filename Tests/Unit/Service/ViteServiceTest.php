@@ -148,6 +148,8 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 [],
+                [],
+                [],
             ],
             'withPriority' => [
                 'path/to/Main.js',
@@ -165,6 +167,8 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['priority' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
+                [],
+                [],
             ],
             'withExtPath' => [
                 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
@@ -181,6 +185,8 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
+                [],
+                [],
                 [],
             ],
             'withSymlinkedExtPath' => [
@@ -199,20 +205,69 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 [],
+                [],
+                [],
+            ],
+            'withCssEntrypoint' => [
+                'path/to/Main.css',
+                [],
+                [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => ['external' => self::useExternalFlag()],
+                    ],
+                ],
+                [],
+                [
+                    'vite:path/to/Main.css' => [
+                        'source' => 'https://localhost:5173/path/to/Main.css',
+                        'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
+                        'options' => ['external' => self::useExternalFlag()],
+                    ],
+                ],
+                [],
+            ],
+            'withCssEntrypointAndPriority' => [
+                'path/to/Main.css',
+                ['priority' => true],
+                [],
+                [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => ['priority' => true, 'external' => self::useExternalFlag()],
+                    ],
+                ],
+                [],
+                [
+                    'vite:path/to/Main.css' => [
+                        'source' => 'https://localhost:5173/path/to/Main.css',
+                        'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
+                        'options' => ['priority' => true, 'external' => self::useExternalFlag()],
+                    ],
+                ],
             ],
         ];
     }
 
     #[Test]
     #[DataProvider('addAssetsFromDevServerDataProvider')]
-    public function addAssetsFromDevServer(string $entry, array $options, array $javaScripts, array $priorityJavaScripts): void
-    {
+    public function addAssetsFromDevServer(
+        string $entry,
+        array $options,
+        array $javaScripts,
+        array $priorityJavaScripts,
+        array $styleSheets,
+        array $priorityStyleSheets
+    ): void {
         $assetCollector = new AssetCollector();
         $this->createViteService($assetCollector)->addAssetsFromDevServer(
             new Uri('https://localhost:5173'),
             $entry,
             $options,
-            ['async' => true, 'otherAttribute' => 'otherValue']
+            ['async' => true, 'otherAttribute' => 'otherValue'],
+            ['media' => 'screen', 'otherAttribute' => 'otherValue'],
         );
 
         self::assertEquals(
@@ -222,6 +277,14 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             $priorityJavaScripts,
             $assetCollector->getJavaScripts(true)
+        );
+        self::assertEquals(
+            $styleSheets,
+            $assetCollector->getStyleSheets(false)
+        );
+        self::assertEquals(
+            $priorityStyleSheets,
+            $assetCollector->getStyleSheets(true)
         );
     }
 

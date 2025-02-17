@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\Service;
 
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
+use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -64,7 +65,8 @@ class ViteService
         UriInterface $devServerUri,
         string $entry,
         array $assetOptions = [],
-        array $scriptTagAttributes = []
+        array $scriptTagAttributes = [],
+        array $cssTagAttributes = [],
     ): void {
         $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
         $assetOptions = ['external' => $this->useExternalFlag(), ...$assetOptions];
@@ -76,12 +78,21 @@ class ViteService
             ['type' => 'module', ...$scriptTagAttributes],
             $assetOptions
         );
-        $this->assetCollector->addJavaScript(
-            "vite:{$entry}",
-            (string)$devServerUri->withPath($entry),
-            ['type' => 'module', ...$scriptTagAttributes],
-            $assetOptions
-        );
+        if (VitePathUtility::isCssFile($entry)) {
+            $this->assetCollector->addStyleSheet(
+                "vite:{$entry}",
+                (string)$devServerUri->withPath($entry),
+                $cssTagAttributes,
+                $assetOptions
+            );
+        } else {
+            $this->assetCollector->addJavaScript(
+                "vite:{$entry}",
+                (string)$devServerUri->withPath($entry),
+                ['type' => 'module', ...$scriptTagAttributes],
+                $assetOptions
+            );
+        }
     }
 
     public function getAssetPathFromDevServer(
