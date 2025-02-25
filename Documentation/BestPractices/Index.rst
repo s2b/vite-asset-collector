@@ -69,6 +69,9 @@ one bundle:
 
 ..  _glob-imports:
 
+An entrypoint file is usually a JavaScript or TypeScript file, which then imports other assets. However,
+it is also possible to use other file types as entrypoints, such as StyleSheets or even SVG images.
+
 Glob Imports
 ============
 
@@ -119,7 +122,7 @@ libraries as well. No further configuration is necessary.
 
         ..  code-block:: sh
 
-            npm install --save-dev sass
+            npm install --save-dev sass-embedded
             npm install --save-dev less
             npm install --save-dev stylus
 
@@ -127,7 +130,7 @@ libraries as well. No further configuration is necessary.
 
         ..  code-block:: sh
 
-            pnpm add --save-dev sass
+            pnpm add --save-dev sass-embedded
             pnpm add --save-dev less
             pnpm add --save-dev stylus
 
@@ -135,7 +138,7 @@ libraries as well. No further configuration is necessary.
 
         ..  code-block:: sh
 
-            yarn add --dev sass
+            yarn add --dev sass-embedded
             yarn add --dev less
             yarn add --dev stylus
 
