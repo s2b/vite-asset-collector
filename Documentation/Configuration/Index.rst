@@ -98,6 +98,7 @@ The manual Vite configuration could look something like this:
 
 ..  code-block:: javascript
     :caption: vite.config.js
+    :emphasize-lines: 5-15
 
     import { defineConfig } from "vite"
     import { dirname, resolve } from "node:path"

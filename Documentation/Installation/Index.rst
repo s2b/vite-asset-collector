@@ -82,11 +82,12 @@ bundle with vite. For each extension, you can define one or multiple Vite entryp
     :caption: sitepackage/Configuration/ViteEntrypoints.json
 
     [
+        "../Resources/Private/Styles.entry.css",
         "../Resources/Private/Main.entry.js"
     ]
 
 
-It is also possible to define a glob pattern like this: `"../Resources/Private/*.entry.{js,ts}"`. Inside
+It is also possible to define a glob pattern like this: `"../Resources/Private/*.entry.{js,ts,css,scss}"`. Inside
 of each `entrypoint file <entrypoint-files>`_ you can import all frontend assets you want to bundle.
 
 Then you can use the included ViewHelper to embed your assets. If you use the default
@@ -102,6 +103,7 @@ configuration, you only need to specify your entrypoint.
 
     ...
 
+    <vite:asset entry="EXT:sitepackage/Resources/Private/Styles.entry.css" />
     <vite:asset entry="EXT:sitepackage/Resources/Private/Main.entry.js" />
 
 
@@ -219,3 +221,23 @@ During deployment, the following command builds static asset files that can be u
         ..  code-block:: sh
 
             yarn exec vite -- build
+
+Next Steps
+==========
+
+..  card-grid::
+    :columns: 1
+    :columns-md: 2
+    :gap: 4
+    :class: pb-4
+    :card-height: 100
+
+    ..  card:: :ref:`_project-structure`
+
+        Learn about the ideal TYPO3 folder structure when using
+        Vite in your project
+
+    ..  card:: :ref:`_css-preprocessors`
+
+        Learn how to setup the CSS preprocessor of your choice
+        with Vite
