@@ -46,6 +46,7 @@ to build your TYPO3 project's frontend assets.
     Installation/Index
     BestPractices/Index
     Configuration/Index
+    BackendUsage/Index
     Reference/Index
 
 ..  Meta Menu
