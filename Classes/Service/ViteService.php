@@ -258,13 +258,15 @@ class ViteService
 
         $absolutePath = $this->packageManager->resolvePackagePath($identifier);
         $file = PathUtility::basename($absolutePath);
-        $dir = realpath(PathUtility::dirname($absolutePath));
-        if ($dir === false) {
+        $dir = PathUtility::dirname($absolutePath);
+
+        if (!file_exists($dir)) {
             throw new ViteException(sprintf(
                 'The specified extension path "%s" does not exist.',
                 $identifier
             ), 1696238083);
         }
+
         $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
 
         return $relativeDirToProjectRoot . $file;
