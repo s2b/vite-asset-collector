@@ -178,5 +178,5 @@ extension directory (e.g. packages/sitepackage) depending of the node package ma
     # Watch for file changes
     ddev pnpm exec vite --watch
 
-In all cases you have (of course) to add a dedicated package.json inside the extension and have to install 
+In all cases you have (of course) to add a dedicated package.json inside the extension and have to install
 all packages first!
