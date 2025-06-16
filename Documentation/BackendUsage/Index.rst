@@ -166,3 +166,17 @@ assets into files with predictable file names an then use those for example in T
 
     # Watch for file changes
     vite build --watch
+
+If you use DDEV together with the ddev-vite-sidecar add-on, you have to run the vite build command inside the
+extension directory (e.g. packages/sitepackage) depending of the node package manager of your choose (e.g. pnpm):
+
+..  code-block:: sh
+
+    # Build once
+    ddev pnpm exec vite
+
+    # Watch for file changes
+    ddev pnpm exec vite --watch
+
+In all cases you have (of course) to add a dedicated package.json inside the extension and have to install
+all packages first!
