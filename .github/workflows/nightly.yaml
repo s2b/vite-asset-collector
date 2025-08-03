@@ -10,7 +10,7 @@ jobs:
     name: Nightly Testing (dev-main)
     uses: ./.github/workflows/_test.yaml
     with:
-      php-version: 8.3
+      php-version: 8.4
       typo3-version: dev-main@dev
       unit-coverage-name: coverage-unit-main
       functional-coverage-name: coverage-functional-main
@@ -21,7 +21,7 @@ jobs:
     name: Nightly Testing (current LTS)
     uses: ./.github/workflows/_test.yaml
     with:
-      php-version: 8.3
+      php-version: 8.4
       typo3-version: '^13'
       unit-coverage-name: coverage-unit-lts
       functional-coverage-name: coverage-functional-lts
