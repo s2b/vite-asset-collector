@@ -79,34 +79,3 @@ jobs:
           mkdir -p Documentation-GENERATED-temp \
           && docker run --rm --pull always -v $(pwd):/project \
              ghcr.io/typo3-documentation/render-guides:latest --config=Documentation --no-progress --fail-on-log
-
-  coverage:
-    needs:
-      - test
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    steps:
-      -
-        uses: actions/checkout@v4
-
-      -
-        name: Download unit test coverage reports
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-unit-8.3-^13
-
-      -
-        name: Download functional test coverage reports
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-functional-8.3-^13
-
-      -
-        name: Upload coverage results to Coveralls
-        uses: paambaati/codeclimate-action@v9.0.0
-        env:
-          CC_TEST_REPORTER_ID: 32807026fddd031a98d1371e6a9360c6bd30f7be0d4bb9a5516a93cd748d9b34
-        with:
-          coverageLocations: |
-            clover.unit.xml:clover
-            clover.functional.xml:clover

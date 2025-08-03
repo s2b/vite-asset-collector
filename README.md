@@ -1,7 +1,5 @@
 # Vite AssetCollector for TYPO3
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/161b455fe0abc70be677/maintainability)](https://codeclimate.com/github/s2b/vite-asset-collector/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/161b455fe0abc70be677/test_coverage)](https://codeclimate.com/github/s2b/vite-asset-collector/test_coverage)
 [![tests](https://github.com/s2b/vite-asset-collector/actions/workflows/tests.yaml/badge.svg)](https://github.com/s2b/vite-asset-collector/actions/workflows/tests.yaml)
 [![Total downloads](https://typo3-badges.dev/badge/vite_assetcollector/downloads/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
 [![TYPO3 versions](https://typo3-badges.dev/badge/vite_assetcollector/typo3/shields.svg)](https://extensions.typo3.org/extension/vite_asset_collector)
