@@ -48,111 +48,98 @@ final class AssetViewHelperTest extends FunctionalTestCase
         }
         return [
             'basic' => [
-                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
-                [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'withoutCss' => [
-                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
-                [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'defaultManifest' => [
-                '<vite:asset entry="Default.js" />',
-                [
+                'template' => '<vite:asset entry="Default.js" />',
+                'javaScripts' => [
                     'vite:Default.js' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'autoEntry' => [
-                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
-                [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'withAttributes' => [
-                '<vite:asset
+                'template' => '<vite:asset
                     manifest="fileadmin/Fixtures/ValidManifest/manifest.json"
                     entry="Main.js"
                     scriptTagAttributes="{async: 1}"
                     cssTagAttributes="{media: \'print\'}"
                 />',
-                [
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'withPriority' => [
-                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
-                [],
-                [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
+                'priorityJavaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => true, 'useNonce' => false, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
@@ -161,23 +148,21 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'withNonce' => [
-                '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
-                [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
         ];
     }
@@ -186,10 +171,10 @@ final class AssetViewHelperTest extends FunctionalTestCase
     #[DataProvider('renderDataProvider')]
     public function render(
         string $template,
-        array $javaScripts,
-        array $priorityJavaScripts,
-        array $styleSheets,
-        array $priorityStyleSheets
+        array $javaScripts = [],
+        array $priorityJavaScripts = [],
+        array $styleSheets = [],
+        array $priorityStyleSheets = []
     ): void {
         $assetCollector = $this->get(AssetCollector::class);
 

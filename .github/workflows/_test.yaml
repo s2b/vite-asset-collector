@@ -79,7 +79,7 @@ jobs:
 
       -
         name: Install composer dependencies
-        run: composer require typo3/minimal "${{ inputs.typo3-version }}" --prefer-dist --no-progress
+        run: composer require typo3/cms-core "${{ inputs.typo3-version }}" --prefer-dist --no-progress
 
       -
         name: Unit Testing
