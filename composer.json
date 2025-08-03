@@ -15,10 +15,10 @@
 	"require-dev": {
 		"typo3/coding-standards": "^0.8",
 		"editorconfig-checker/editorconfig-checker": "^10.6",
-		"typo3/testing-framework": "^8.0 || dev-main",
+		"typo3/testing-framework": "^8.0 || ^9.0",
 		"phpstan/phpstan": "^1.12",
 		"saschaegerer/phpstan-typo3": "^1.10",
-		"phpunit/phpunit": "^11.4 || ^10.5"
+		"phpunit/phpunit": "^11"
 	},
 	"suggest": {
 		"t3docs/fluid-documentation-generator": "To update ViewHelper documentation with doc:viewhelpers"

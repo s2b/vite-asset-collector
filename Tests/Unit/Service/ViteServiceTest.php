@@ -133,9 +133,9 @@ final class ViteServiceTest extends UnitTestCase
     {
         return [
             'withoutPriority' => [
-                'path/to/Main.js',
-                [],
-                [
+                'entry' => 'path/to/Main.js',
+                'options' => [],
+                'javaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -147,15 +147,11 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withPriority' => [
-                'path/to/Main.js',
-                ['priority' => true],
-                [],
-                [
+                'entry' => 'path/to/Main.js',
+                'options' => ['priority' => true],
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -167,13 +163,11 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['priority' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
             ],
             'withExtPath' => [
-                'EXT:test_extension/Resources/Private/JavaScript/Main.js',
-                [],
-                [
+                'entry' => 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                'options' => [],
+                'javaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -185,14 +179,11 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withSymlinkedExtPath' => [
-                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                [],
-                [
+                'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                'options' => [],
+                'javaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -204,43 +195,36 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withCssEntrypoint' => [
-                'path/to/Main.css',
-                [],
-                [
+                'entry' => 'path/to/Main.css',
+                'options' => [],
+                'javaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:path/to/Main.css' => [
                         'source' => 'https://localhost:5173/path/to/Main.css',
                         'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'withCssEntrypointAndPriority' => [
-                'path/to/Main.css',
-                ['priority' => true],
-                [],
-                [
+                'entry' => 'path/to/Main.css',
+                'options' => ['priority' => true],
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['priority' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'priorityStyleSheets' => [
                     'vite:path/to/Main.css' => [
                         'source' => 'https://localhost:5173/path/to/Main.css',
                         'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
@@ -256,10 +240,10 @@ final class ViteServiceTest extends UnitTestCase
     public function addAssetsFromDevServer(
         string $entry,
         array $options,
-        array $javaScripts,
-        array $priorityJavaScripts,
-        array $styleSheets,
-        array $priorityStyleSheets
+        array $javaScripts = [],
+        array $priorityJavaScripts = [],
+        array $styleSheets = [],
+        array $priorityStyleSheets = []
     ): void {
         $assetCollector = new AssetCollector();
         $this->createViteService($assetCollector)->addAssetsFromDevServer(
@@ -293,84 +277,70 @@ final class ViteServiceTest extends UnitTestCase
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         return [
             'withoutCss' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
-                'Main.js',
-                [],
-                false,
-                [
+                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'entry' => 'Main.js',
+                'options' => [],
+                'addCss' => false,
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withCss' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
-                'Main.js',
-                [],
-                true,
-                [
+                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'entry' => 'Main.js',
+                'options' => [],
+                'addCss' => true,
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'onlyCss' => [
-                $fixtureDir . 'OnlyCssManifest/manifest.json',
-                'Main.scss',
-                [],
-                true,
-                [],
-                [],
-                [
+                'manifestFile' => $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'entry' => 'Main.scss',
+                'options' => [],
+                'addCss' => true,
+                'styleSheets' => [
                     'vite:Main.scss' => [
                         'source' =>  $fixtureDir . 'OnlyCssManifest/assets/Main-4483b920.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'onlyCssFlagDisabled' => [
-                $fixtureDir . 'OnlyCssManifest/manifest.json',
-                'Main.scss',
-                [],
-                false,
-                [],
-                [],
-                [],
-                [],
+                'manifestFile' => $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'entry' => 'Main.scss',
+                'options' => [],
+                'addCss' => false,
             ],
             'withCssAndPriority' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
-                'Main.js',
-                ['priority' => true],
-                true,
-                [],
-                [
+                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'entry' => 'Main.js',
+                'options' => ['priority' => true],
+                'addCss' => true,
+                'priorityJavaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['priority' => true, 'external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
@@ -379,73 +349,64 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withExtPath' => [
-                $fixtureDir . 'ExtPathManifest/manifest.json',
-                'EXT:test_extension/Resources/Private/JavaScript/Main.js',
-                [],
-                false,
-                [
+                'manifestFile' => $fixtureDir . 'ExtPathManifest/manifest.json',
+                'entry' => 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
+                'options' => [],
+                'addCss' => false,
+                'javaScripts' => [
                     'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
                         'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withSymlinkedExtPath' => [
-                $fixtureDir . 'ExtPathManifest/manifest.json',
-                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                [],
-                false,
-                [
+                'manifestFile' => $fixtureDir . 'ExtPathManifest/manifest.json',
+                'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                'options' => [],
+                'addCss' => false,
+                'javaScripts' => [
                     'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
                         'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
             'withImportedJs' => [
-                $fixtureDir . 'ImportJs/manifest.json',
-                'Main.js',
-                [],
-                true,
-                [
+                'manifestFile' => $fixtureDir . 'ImportJs/manifest.json',
+                'entry' => 'Main.js',
+                'options' => [],
+                'addCss' => true,
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' =>  $fixtureDir . 'ImportJs/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'withImportedJsAndCss' => [
-                $fixtureDir . 'ImportJsAndCss/manifest.json',
-                'Main.js',
-                [],
-                true,
-                [
+                'manifestFile' => $fixtureDir . 'ImportJsAndCss/manifest.json',
+                'entry' => 'Main.js',
+                'options' => [],
+                'addCss' => true,
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:6a181085b68130ba16f066fdaaf2da09:assets/Shared-pjWofKK4.css' => [
                         'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
@@ -457,67 +418,59 @@ final class ViteServiceTest extends UnitTestCase
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'vite5' => [
-                $fixtureDir . 'Vite5Manifest/.vite/manifest.json',
-                'Default.js',
-                [],
-                true,
-                [
+                'manifestFile' => $fixtureDir . 'Vite5Manifest/.vite/manifest.json',
+                'entry' => 'Default.js',
+                'options' => [],
+                'addCss' => true,
+                'javaScripts' => [
                     'vite:Default.js' => [
                         'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'vite5PathFallback' => [
-                $fixtureDir . 'DefaultManifest/.vite/manifest.json',
-                'Default.js',
-                [],
-                true,
-                [
+                'manifestFile' => $fixtureDir . 'DefaultManifest/.vite/manifest.json',
+                'entry' => 'Default.js',
+                'options' => [],
+                'addCss' => true,
+                'javaScripts' => [
                     'vite:Default.js' => [
                         'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
-                [
+                'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
                 ],
-                [],
             ],
             'overrideExternalFlag' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
-                'Main.js',
-                ['external' => true],
-                false,
-                [
+                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'entry' => 'Main.js',
+                'options' => ['external' => true],
+                'addCss' => false,
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
-                [],
-                [],
-                [],
             ],
         ];
     }
@@ -529,10 +482,10 @@ final class ViteServiceTest extends UnitTestCase
         string $entry,
         array $options,
         bool $addCss,
-        array $javaScripts,
-        array $priorityJavaScripts,
-        array $styleSheets,
-        array $priorityStyleSheets
+        array $javaScripts = [],
+        array $priorityJavaScripts = [],
+        array $styleSheets = [],
+        array $priorityStyleSheets = [],
     ): void {
         $assetCollector = new AssetCollector();
         $this->createViteService($assetCollector)->addAssetsFromManifest(
@@ -541,7 +494,7 @@ final class ViteServiceTest extends UnitTestCase
             $addCss,
             $options,
             ['async' => true, 'otherAttribute' => 'otherValue'],
-            ['media' => 'print', 'disabled' => true]
+            ['media' => 'print', 'disabled' => true],
         );
 
         self::assertEquals(
@@ -746,7 +699,7 @@ final class ViteServiceTest extends UnitTestCase
     }
 
     private function createViteService(
-        AssetCollector $assetCollector = null,
+        ?AssetCollector $assetCollector = null,
         string $defaultManifest = '_assets/vite/.vite/manifest.json',
         string $useDevServer = 'auto',
         string $devServerUri = 'auto'
