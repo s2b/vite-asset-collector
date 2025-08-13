@@ -12,6 +12,8 @@ Vite AssetCollector can be installed with composer:
 
     composer req praetorius/vite-asset-collector
 
+Make sure to run this command inside of your DDEV container if you're using DDEV.
+
 Vite and the TYPO3 plugin can be installed with the frontend package manager
 of your choice:
 
