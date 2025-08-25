@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Service;
 
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
+use Praetorius\ViteAssetCollector\Event\GetDevServerEvent;
+use Praetorius\ViteAssetCollector\Event\UseDevServerEvent;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -26,7 +29,8 @@ class ViteService
         private readonly FrontendInterface $cache,
         protected readonly AssetCollector $assetCollector,
         protected readonly PackageManager $packageManager,
-        protected readonly ExtensionConfiguration $extensionConfiguration
+        protected readonly ExtensionConfiguration $extensionConfiguration,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getDefaultManifestFile(): string
@@ -37,6 +41,9 @@ class ViteService
     public function useDevServer(): bool
     {
         $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
+        $event = new UseDevServerEvent($useDevServer);
+        $this->eventDispatcher->dispatch($event);
+        $useDevServer = $event->useDevServer;
         if ($useDevServer === 'auto') {
             return Environment::getContext()->isDevelopment();
         }
@@ -46,6 +53,9 @@ class ViteService
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
         $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
+        $event = new GetDevServerEvent($devServerUri);
+        $this->eventDispatcher->dispatch($event);
+        $devServerUri = $event->uri;
         if ($devServerUri === 'auto') {
             // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
             $serverUri = getenv('VITE_SERVER_URI');
