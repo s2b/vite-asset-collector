@@ -7,8 +7,11 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
+use Praetorius\ViteAssetCollector\Event\ModifyUseDevServerEvent;
+use Praetorius\ViteAssetCollector\Event\ModifyDevServerUriEvent;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -676,6 +679,39 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
+    #[Test]
+    public function callModifyEnabledEvent(): void
+    {
+        $expectation = new ModifyUseDevServerEvent('auto');
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with($expectation)
+            ->willReturnCallback(function (ModifyUseDevServerEvent $event) {
+                $event->setUseDevServer(false);
+            });
+        $enabled = $this->createViteService(eventDispatcher: $eventDispatcher)->useDevServer();
+        self::assertFalse($enabled);
+    }
+
+    #[Test]
+    public function callModifyUriEvent(): void
+    {
+        $request = new ServerRequest(new Uri('https://some.ddev.site/path/to/file'));
+        $expectation = new ModifyDevServerUriEvent('auto', $request);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with($expectation)
+            ->willReturnCallback(function (ModifyDevServerUriEvent $event) {
+                $event->setUri('https://test.localhost');
+            });
+        $uri = $this->createViteService(eventDispatcher: $eventDispatcher)->determineDevServer($request);
+        self::assertEquals('https://test.localhost', $uri);
+    }
+
     public static function getAssetPathFromManifestErrorHandlingDataProvider(): array
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
@@ -707,9 +743,11 @@ final class ViteServiceTest extends UnitTestCase
         ?AssetCollector $assetCollector = null,
         string $defaultManifest = '_assets/vite/.vite/manifest.json',
         string $useDevServer = 'auto',
-        string $devServerUri = 'auto'
+        string $devServerUri = 'auto',
+        ?EventDispatcherInterface $eventDispatcher = null,
     ) {
         $assetCollector ??= new AssetCollector();
+        $eventDispatcher ??= $this->createMock(EventDispatcherInterface::class);
 
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         $packageManager = self::createStub(PackageManager::class);
@@ -747,7 +785,8 @@ final class ViteServiceTest extends UnitTestCase
             new NullFrontend('manifest'),
             $assetCollector,
             $packageManager,
-            $extensionConfiguration
+            $extensionConfiguration,
+            $eventDispatcher,
         );
     }
 

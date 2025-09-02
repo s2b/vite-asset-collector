@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Service;
 
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
-use Praetorius\ViteAssetCollector\Event\GetDevServerEvent;
-use Praetorius\ViteAssetCollector\Event\UseDevServerEvent;
+use Praetorius\ViteAssetCollector\Event\ModifyDevServerUriEvent;
+use Praetorius\ViteAssetCollector\Event\ModifyUseDevServerEvent;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -41,9 +41,9 @@ class ViteService
     public function useDevServer(): bool
     {
         $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
-        $event = new UseDevServerEvent($useDevServer);
+        $event = new ModifyUseDevServerEvent($useDevServer);
         $this->eventDispatcher->dispatch($event);
-        $useDevServer = $event->useDevServer;
+        $useDevServer = $event->getUseDevServer();
         if ($useDevServer === 'auto') {
             return Environment::getContext()->isDevelopment();
         }
@@ -53,9 +53,9 @@ class ViteService
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
         $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
-        $event = new GetDevServerEvent($devServerUri);
+        $event = new ModifyDevServerUriEvent($devServerUri, $request);
         $this->eventDispatcher->dispatch($event);
-        $devServerUri = $event->uri;
+        $devServerUri = $event->getUri();
         if ($devServerUri === 'auto') {
             // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
             $serverUri = getenv('VITE_SERVER_URI');
