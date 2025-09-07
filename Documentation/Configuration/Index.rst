@@ -100,7 +100,7 @@ The manual Vite configuration could look something like this:
     :caption: vite.config.js
     :emphasize-lines: 5-15
 
-    import { defineConfig } from "vite"
+    import { defineConfig, defaultAllowedOrigins } from "vite"
     import { dirname, resolve } from "node:path"
     import { fileURLToPath } from "node:url"
     import autoOrigin from "vite-plugin-auto-origin"
@@ -120,10 +120,16 @@ The manual Vite configuration could look something like this:
     const rootPath = resolve(currentDir, VITE_TYPO3_ROOT);
     export default defineConfig({
         base: "",
+        server: {
+            allowedHosts: [".ddev.site"],
+            cors: {
+                origin: [defaultAllowedOrigins, /^https?:\/\/.*\.ddev\.site(:\d+)?$/],
+            },
+        },
         build: {
             manifest: true,
             rollupOptions: {
-            input: VITE_ENTRYPOINTS.map(entry => resolve(rootPath, entry)),
+                input: VITE_ENTRYPOINTS.map(entry => resolve(rootPath, entry)),
             },
             outDir: resolve(rootPath, VITE_OUTPUT_PATH),
         },
