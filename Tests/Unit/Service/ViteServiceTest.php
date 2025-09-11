@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
@@ -237,6 +238,7 @@ final class ViteServiceTest extends UnitTestCase
 
     #[Test]
     #[DataProvider('addAssetsFromDevServerDataProvider')]
+    #[IgnoreDeprecations]
     public function addAssetsFromDevServer(
         string $entry,
         array $options,
@@ -477,6 +479,7 @@ final class ViteServiceTest extends UnitTestCase
 
     #[Test]
     #[DataProvider('addAssetsFromManifestDataProvider')]
+    #[IgnoreDeprecations]
     public function addAssetsFromManifest(
         string $manifestFile,
         string $entry,
@@ -635,6 +638,7 @@ final class ViteServiceTest extends UnitTestCase
 
     #[Test]
     #[DataProvider('getAssetPathFromDevServerDataProvider')]
+    #[IgnoreDeprecations]
     public function getAssetPathFromDevServer(string $file, string $expected): void
     {
         self::assertEquals(
@@ -658,6 +662,7 @@ final class ViteServiceTest extends UnitTestCase
     }
 
     #[Test]
+    #[IgnoreDeprecations]
     public function getAssetWithExtPathFromManifest(): void
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';

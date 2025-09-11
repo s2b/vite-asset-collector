@@ -265,6 +265,7 @@ class ViteService
                 $identifier
             ), 1696238083);
         }
+        // TODO PathUtility::getRelativePath() is deprecated
         $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
 
         return $relativeDirToProjectRoot . $file;
