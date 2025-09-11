@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Functional\Command;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Command\ViteConfigCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -124,6 +125,7 @@ final class ViteConfigCommandTest extends FunctionalTestCase
 
     #[Test]
     #[DataProvider('outputConfigDataProvider')]
+    #[IgnoreDeprecations]
     public function outputConfig(string $workingDir, array $input, string $expectedResultFile): void
     {
         chdir($workingDir);
@@ -244,6 +246,7 @@ final class ViteConfigCommandTest extends FunctionalTestCase
 
     #[Test]
     #[DataProvider('writeConfigToFileDataProvider')]
+    #[IgnoreDeprecations]
     public function writeConfigToFile(string $workingDir, array $input, string $outputFile, string $expectedResultFile): void
     {
         chdir($workingDir);
@@ -263,6 +266,7 @@ final class ViteConfigCommandTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[IgnoreDeprecations]
     public function overwriteConfigFile(): void
     {
         chdir(self::getInstancePath());
