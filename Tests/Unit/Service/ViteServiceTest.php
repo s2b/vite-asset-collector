@@ -7,8 +7,8 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
-use Praetorius\ViteAssetCollector\Event\ModifyUseDevServerEvent;
 use Praetorius\ViteAssetCollector\Event\ModifyDevServerUriEvent;
+use Praetorius\ViteAssetCollector\Event\ModifyUseDevServerEvent;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -682,31 +682,31 @@ final class ViteServiceTest extends UnitTestCase
     #[Test]
     public function callModifyEnabledEvent(): void
     {
-        $expectation = new ModifyUseDevServerEvent('auto');
+        $expectation = new ModifyUseDevServerEvent('auto', false);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
             ->expects(self::once())
             ->method('dispatch')
             ->with($expectation)
             ->willReturnCallback(function (ModifyUseDevServerEvent $event) {
-                $event->setUseDevServer(false);
+                $event->setResolvedValue(true);
             });
         $enabled = $this->createViteService(eventDispatcher: $eventDispatcher)->useDevServer();
-        self::assertFalse($enabled);
+        self::assertTrue($enabled);
     }
 
     #[Test]
     public function callModifyUriEvent(): void
     {
         $request = new ServerRequest(new Uri('https://some.ddev.site/path/to/file'));
-        $expectation = new ModifyDevServerUriEvent('auto', $request);
+        $expectation = new ModifyDevServerUriEvent('auto', new Uri('https://some.ddev.site:5173'), $request);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
             ->expects(self::once())
             ->method('dispatch')
             ->with($expectation)
             ->willReturnCallback(function (ModifyDevServerUriEvent $event) {
-                $event->setUri('https://test.localhost');
+                $event->setResolvedValue(new Uri('https://test.localhost'));
             });
         $uri = $this->createViteService(eventDispatcher: $eventDispatcher)->determineDevServer($request);
         self::assertEquals('https://test.localhost', $uri);

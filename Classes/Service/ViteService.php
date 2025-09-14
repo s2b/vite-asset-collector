@@ -40,35 +40,22 @@ class ViteService
 
     public function useDevServer(): bool
     {
-        $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
-        $event = new ModifyUseDevServerEvent($useDevServer);
+        $configuration = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
+        $resolvedValue = $configuration === 'auto' ? Environment::getContext()->isDevelopment() : (bool)$configuration;
+
+        $event = new ModifyUseDevServerEvent($configuration, $resolvedValue);
         $this->eventDispatcher->dispatch($event);
-        $useDevServer = $event->getUseDevServer();
-        if ($useDevServer === 'auto') {
-            return Environment::getContext()->isDevelopment();
-        }
-        return (bool)$useDevServer;
+        return $event->getResolvedValue();
     }
 
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
-        $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
-        $event = new ModifyDevServerUriEvent($devServerUri, $request);
-        $this->eventDispatcher->dispatch($event);
-        $devServerUri = $event->getUri();
-        if ($devServerUri === 'auto') {
-            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
-            $serverUri = getenv('VITE_SERVER_URI');
-            if ($serverUri) {
-                return new Uri($serverUri);
-            }
+        $configuration = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
+        $resolvedValue = $this->resolveDevServerUri($configuration, $request);
 
-            // This constant is used by ddev-viteserve and contains only the port that can be
-            // combined with any ddev domain of the current project
-            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-            return $request->getUri()->withPath('')->withPort((int)$vitePort);
-        }
-        return new Uri($devServerUri);
+        $event = new ModifyDevServerUriEvent($configuration, $resolvedValue, $request);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getResolvedValue();
     }
 
     public function addAssetsFromDevServer(
@@ -317,5 +304,22 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    private function resolveDevServerUri(string $configuration, ServerRequestInterface $request): UriInterface
+    {
+        if ($configuration === 'auto') {
+            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
+            $serverUri = getenv('VITE_SERVER_URI');
+            if ($serverUri) {
+                return new Uri($serverUri);
+            }
+
+            // This constant is used by ddev-viteserve and contains only the port that can be
+            // combined with any ddev domain of the current project
+            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
+            return $request->getUri()->withPath('')->withPort((int)$vitePort);
+        }
+        return new Uri($configuration);
     }
 }

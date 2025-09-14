@@ -6,15 +6,23 @@ namespace Praetorius\ViteAssetCollector\Event;
 
 final class ModifyUseDevServerEvent
 {
-    public function __construct(private string|bool $useDevServer) {}
+    public function __construct(
+        private readonly string|bool $configuration,
+        private bool $resolvedValue,
+    ) {}
 
-    public function getUseDevServer(): string|bool
+    public function getConfiguration(): string|bool
     {
-        return $this->useDevServer;
+        return $this->configuration;
     }
 
-    public function setUseDevServer(string|bool $getUseDevServer): void
+    public function setResolvedValue(bool $resolvedValue)
     {
-        $this->useDevServer = $getUseDevServer;
+        $this->resolvedValue = $resolvedValue;
+    }
+
+    public function getResolvedValue(): bool
+    {
+        return $this->resolvedValue;
     }
 }

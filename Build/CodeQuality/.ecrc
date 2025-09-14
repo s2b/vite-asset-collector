@@ -12,7 +12,8 @@
         ".xsd",
         ".php-cs-fixer.cache",
         "LICENSE",
-        "ViteAssetCollector.json"
+        "ViteAssetCollector.json",
+        ".idea"
     ],
     "AllowedContentTypes": [],
     "PassedFiles": [],
