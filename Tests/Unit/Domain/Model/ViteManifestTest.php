@@ -15,7 +15,7 @@ final class ViteManifestTest extends UnitTestCase
     #[Test]
     public function getValidEntrypoints(): void
     {
-        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/manifest.json');
+        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/.vite/manifest.json');
         self::assertEquals(
             [
                 'Main.js' => new ViteManifestItem('Main.js', 'Main.js', 'assets/Main-4483b920.js', true, false, [], ['assets/Main-973bb662.css'], [], []),
@@ -37,7 +37,7 @@ final class ViteManifestTest extends UnitTestCase
     #[DataProvider('getItemDataProvider')]
     public function getItem(string $identifier, mixed $expected): void
     {
-        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/manifest.json');
+        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/.vite/manifest.json');
         self::assertEquals(
             $expected,
             (ViteManifest::fromFile($manifestPath))->get($identifier)
@@ -49,19 +49,19 @@ final class ViteManifestTest extends UnitTestCase
         $fixtureDir = realpath(__DIR__ . '/../../../Fixtures') . '/';
         return [
             [
-                $fixtureDir . 'ImportJs/manifest.json',
+                $fixtureDir . 'ImportJs/.vite/manifest.json',
                 'Main.js',
                 false,
                 ['_Shared-To-v4Zbq.js' => new ViteManifestItem('_Shared-To-v4Zbq.js', null, 'assets/Shared-To-v4Zbq.js', false, false, [], [], [], [])],
             ],
             [
-                $fixtureDir . 'ImportJs/manifest.json',
+                $fixtureDir . 'ImportJs/.vite/manifest.json',
                 'Undefined.js',
                 false,
                 [],
             ],
             [
-                $fixtureDir . 'ImportCssRecursive/manifest.json',
+                $fixtureDir . 'ImportCssRecursive/.vite/manifest.json',
                 'Main.js',
                 false,
                 [
@@ -79,7 +79,7 @@ final class ViteManifestTest extends UnitTestCase
                 ],
             ],
             [
-                $fixtureDir . 'ImportCssRecursive/manifest.json',
+                $fixtureDir . 'ImportCssRecursive/.vite/manifest.json',
                 'Main.js',
                 true,
                 [
