@@ -64,11 +64,6 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
             ->withAttribute('extbase', new ExtbaseRequestParameters());
 
-        // TODO remove this when support for TYPO3 v12 is dropped
-        if (method_exists($context, 'setRequest')) {
-            @$context->setRequest($request);
-        }
-
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;

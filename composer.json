@@ -7,8 +7,8 @@
 	],
 	"require": {
 		"php": ">=8.2",
-		"typo3/cms-core": "^13.4 || ^12.4 || dev-main",
-		"typo3/cms-fluid": "^13.4 || ^12.4 || dev-main",
+		"typo3/cms-core": "^13.4 || dev-main",
+		"typo3/cms-fluid": "^13.4 || dev-main",
 		"symfony/console": "^6.4 || ^7.0",
 		"typo3/class-alias-loader": "^1.0"
 	},

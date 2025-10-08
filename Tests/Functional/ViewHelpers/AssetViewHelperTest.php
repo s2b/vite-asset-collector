@@ -42,10 +42,6 @@ final class AssetViewHelperTest extends FunctionalTestCase
     public static function renderDataProvider(): array
     {
         $manifestDir = 'fileadmin/Fixtures/';
-        // TODO remove this when support for TYPO3 v12 is dropped
-        if (!self::useExternalFlag()) {
-            $manifestDir = self::getInstancePath() . '/' . $manifestDir;
-        }
         return [
             'basic' => [
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />',
@@ -53,14 +49,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -70,7 +66,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -80,14 +76,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Default.js' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -97,14 +93,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -119,14 +115,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -136,14 +132,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
                     ],
                 ],
             ],
@@ -153,14 +149,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => true, 'external' => self::useExternalFlag()],
+                        'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
                     ],
                 ],
             ],
@@ -219,12 +215,12 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                 ],
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(false)
@@ -255,19 +251,8 @@ final class AssetViewHelperTest extends FunctionalTestCase
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
             ->withAttribute('extbase', new ExtbaseRequestParameters());
 
-        // TODO remove this when support for TYPO3 v12 is dropped
-        if (method_exists($context, 'setRequest')) {
-            @$context->setRequest($request);
-        }
-
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;
-    }
-
-    protected static function useExternalFlag(): bool
-    {
-        // TODO remove this when support for TYPO3 v12 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() >= 13;
     }
 }

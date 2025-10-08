@@ -54,11 +54,6 @@ final class UriViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
 
-    /**
-     * @var RenderingContext
-     */
-    protected $renderingContext;
-
     public function initializeArguments(): void
     {
         $this->registerArgument(
@@ -108,14 +103,6 @@ final class UriViewHelper extends AbstractViewHelper
 
     private function getRequest(): ServerRequestInterface
     {
-        // This is a fallback for TYPO3 < 13.3
-        if (
-            !method_exists($this->renderingContext, 'getAttribute') ||
-            !method_exists($this->renderingContext, 'hasAttribute') ||
-            !$this->renderingContext->hasAttribute(ServerRequestInterface::class)
-        ) {
-            return $this->renderingContext->getRequest();
-        }
         return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
 
