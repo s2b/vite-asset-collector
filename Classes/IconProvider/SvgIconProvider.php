@@ -6,12 +6,14 @@ namespace Praetorius\ViteAssetCollector\IconProvider;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 
-class SvgIconProvider extends AbstractSvgIconProvider
+#[Autoconfigure(public: true)]
+final class SvgIconProvider extends AbstractSvgIconProvider
 {
     public function __construct(
         private readonly ViteService $viteService

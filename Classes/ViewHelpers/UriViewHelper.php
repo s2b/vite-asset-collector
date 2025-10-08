@@ -7,7 +7,6 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -52,7 +51,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 final class UriViewHelper extends AbstractViewHelper
 {
-    protected ViteService $viteService;
+    public function __construct(private readonly ViteService $viteService) {}
 
     public function initializeArguments(): void
     {
@@ -104,10 +103,5 @@ final class UriViewHelper extends AbstractViewHelper
     private function getRequest(): ServerRequestInterface
     {
         return $this->renderingContext->getAttribute(ServerRequestInterface::class);
-    }
-
-    public function injectViteService(ViteService $viteService): void
-    {
-        $this->viteService = $viteService;
     }
 }

@@ -13,22 +13,6 @@ services:
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
     arguments: ['viteassetcollector_manifest']
 
-  Praetorius\ViteAssetCollector\Service\ViteService:
-    arguments:
-      $cache: '@cache.viteassetcollector_manifest'
-
-  Praetorius\ViteAssetCollector\Configuration\VitePlaceholderProcessor:
-    public: true
-
-  Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider:
-    public: true
-
-  Praetorius\ViteAssetCollector\EventListener\MutateContentSecurityPolicy:
-    tags:
-      - name: event.listener
-        identifier: 'praetorius/vite-asset-collector-csp'
-        event: TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent
-
   # Register class aliases for deprecated ViewHelper names
   Praetorius\ViteAssetCollector\ViewHelpers\Asset\ViteViewHelper:
     class: Praetorius\ViteAssetCollector\ViewHelpers\AssetViewHelper
