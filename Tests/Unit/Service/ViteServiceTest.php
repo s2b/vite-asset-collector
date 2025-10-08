@@ -105,7 +105,7 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             'Main.js',
             $this->createViteService()->determineEntrypointFromManifest(
-                realpath(__DIR__ . '/../../Fixtures/ValidManifest/manifest.json')
+                realpath(__DIR__ . '/../../Fixtures/ValidManifest/.vite/manifest.json')
             )
         );
     }
@@ -116,7 +116,7 @@ final class ViteServiceTest extends UnitTestCase
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1683552723);
         $this->createViteService()->determineEntrypointFromManifest(
-            realpath(__DIR__ . '/../../Fixtures/MultipleEntries/manifest.json')
+            realpath(__DIR__ . '/../../Fixtures/MultipleEntries/.vite/manifest.json')
         );
     }
 
@@ -126,7 +126,7 @@ final class ViteServiceTest extends UnitTestCase
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1683552723);
         $this->createViteService()->determineEntrypointFromManifest(
-            realpath(__DIR__ . '/../../Fixtures/NoEntries/manifest.json')
+            realpath(__DIR__ . '/../../Fixtures/NoEntries/.vite/manifest.json')
         );
     }
 
@@ -279,7 +279,7 @@ final class ViteServiceTest extends UnitTestCase
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         return [
             'withoutCss' => [
-                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => [],
                 'addCss' => false,
@@ -292,7 +292,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withCss' => [
-                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => [],
                 'addCss' => true,
@@ -312,7 +312,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'onlyCss' => [
-                'manifestFile' => $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'OnlyCssManifest/.vite/manifest.json',
                 'entry' => 'Main.scss',
                 'options' => [],
                 'addCss' => true,
@@ -325,13 +325,13 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'onlyCssFlagDisabled' => [
-                'manifestFile' => $fixtureDir . 'OnlyCssManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'OnlyCssManifest/.vite/manifest.json',
                 'entry' => 'Main.scss',
                 'options' => [],
                 'addCss' => false,
             ],
             'withCssAndPriority' => [
-                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => ['priority' => true],
                 'addCss' => true,
@@ -351,7 +351,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withExtPath' => [
-                'manifestFile' => $fixtureDir . 'ExtPathManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
                 'entry' => 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
                 'options' => [],
                 'addCss' => false,
@@ -364,7 +364,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withSymlinkedExtPath' => [
-                'manifestFile' => $fixtureDir . 'ExtPathManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
                 'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
                 'options' => [],
                 'addCss' => false,
@@ -377,7 +377,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withImportedJs' => [
-                'manifestFile' => $fixtureDir . 'ImportJs/manifest.json',
+                'manifestFile' => $fixtureDir . 'ImportJs/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => [],
                 'addCss' => true,
@@ -397,7 +397,7 @@ final class ViteServiceTest extends UnitTestCase
                 ],
             ],
             'withImportedJsAndCss' => [
-                'manifestFile' => $fixtureDir . 'ImportJsAndCss/manifest.json',
+                'manifestFile' => $fixtureDir . 'ImportJsAndCss/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => [],
                 'addCss' => true,
@@ -421,48 +421,8 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
             ],
-            'vite5' => [
-                'manifestFile' => $fixtureDir . 'Vite5Manifest/.vite/manifest.json',
-                'entry' => 'Default.js',
-                'options' => [],
-                'addCss' => true,
-                'javaScripts' => [
-                    'vite:Default.js' => [
-                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => self::useExternalFlag()],
-                    ],
-                ],
-                'styleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-973bb662.css',
-                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => self::useExternalFlag()],
-                    ],
-                ],
-            ],
-            'vite5PathFallback' => [
-                'manifestFile' => $fixtureDir . 'DefaultManifest/.vite/manifest.json',
-                'entry' => 'Default.js',
-                'options' => [],
-                'addCss' => true,
-                'javaScripts' => [
-                    'vite:Default.js' => [
-                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => self::useExternalFlag()],
-                    ],
-                ],
-                'styleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-973bb662.css',
-                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => self::useExternalFlag()],
-                    ],
-                ],
-            ],
             'overrideExternalFlag' => [
-                'manifestFile' => $fixtureDir . 'ValidManifest/manifest.json',
+                'manifestFile' => $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'entry' => 'Main.js',
                 'options' => ['external' => true],
                 'addCss' => false,
@@ -525,7 +485,7 @@ final class ViteServiceTest extends UnitTestCase
         $viteService = $this->createViteService($assetCollector);
 
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $manifestFile = $fixtureDir . 'ImportJsAndCss/manifest.json';
+        $manifestFile = $fixtureDir . 'ImportJsAndCss/.vite/manifest.json';
         $viteService->addAssetsFromManifest($manifestFile, 'Main.js');
         $viteService->addAssetsFromManifest($manifestFile, 'Alternative.js');
 
@@ -558,7 +518,7 @@ final class ViteServiceTest extends UnitTestCase
         $viteService = $this->createViteService($assetCollector);
 
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $manifestFile = $fixtureDir . 'ImportJsAndCss/manifest.json';
+        $manifestFile = $fixtureDir . 'ImportJsAndCss/.vite/manifest.json';
         $viteService->addAssetsFromManifest($manifestFile, 'Main.js', cssTagAttributes: ['media' => 'print']);
         $viteService->addAssetsFromManifest($manifestFile, 'Alternative.js');
 
@@ -594,22 +554,22 @@ final class ViteServiceTest extends UnitTestCase
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         return [
             'invalidJson' => [
-                $fixtureDir . 'InvalidManifest/manifest.json',
+                $fixtureDir . 'InvalidManifest/.vite/manifest.json',
                 'Main.js',
                 1683200523,
             ],
             'nonExistentFile' => [
-                $fixtureDir . 'InvalidManifest/manifest123.json',
+                $fixtureDir . 'InvalidManifest/.vite/manifest123.json',
                 'Main.js',
                 1683200522,
             ],
             'invalidEntry' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
+                $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'Main.css',
                 1683200524,
             ],
             'nonExistentEntry' => [
-                $fixtureDir . 'ValidManifest/manifest.json',
+                $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'NonExistentEntry.js',
                 1683200524,
             ],
@@ -657,7 +617,7 @@ final class ViteServiceTest extends UnitTestCase
         $manifestDir = realpath(__DIR__ . '/../../Fixtures/ValidManifest') . '/';
         self::assertEquals(
             $manifestDir . 'assets/Main-973bb662.css',
-            $this->createViteService()->getAssetPathFromManifest($fixtureDir . 'ValidManifest/manifest.json', 'Main.css')
+            $this->createViteService()->getAssetPathFromManifest($fixtureDir . 'ValidManifest/.vite/manifest.json', 'Main.css')
         );
     }
 
@@ -670,7 +630,7 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             $manifestDir . 'assets/Main-4483b920.js',
             $this->createViteService()->getAssetPathFromManifest(
-                $fixtureDir . 'ExtPathManifest/manifest.json',
+                $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
                 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
             )
         );
@@ -681,12 +641,12 @@ final class ViteServiceTest extends UnitTestCase
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         return [
             [
-                $fixtureDir . 'ValidManifest/manifest.json',
+                $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'NonExistentEntry.css',
                 1690735353,
             ],
             [
-                $fixtureDir . 'ValidManifest/manifest.json',
+                $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
                 1696238083,
             ],

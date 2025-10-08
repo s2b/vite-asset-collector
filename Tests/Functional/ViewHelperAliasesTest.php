@@ -30,7 +30,7 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
     {
         $context = $this->createRenderingContext();
         $context->getTemplatePaths()->setTemplateSource(
-            '<vac:resource.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" file="Main.css" />'
+            '<vac:resource.vite manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" file="Main.css" />'
         );
         self::assertEquals(
             'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
@@ -45,7 +45,7 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
 
         $context = $this->createRenderingContext();
         $context->getTemplatePaths()->setTemplateSource(
-            '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />'
+            '<vac:asset.vite manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" addCss="0" />'
         );
         (new TemplateView($context))->render();
 

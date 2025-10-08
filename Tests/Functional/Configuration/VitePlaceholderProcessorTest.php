@@ -23,7 +23,7 @@ final class VitePlaceholderProcessorTest extends FunctionalTestCase
     protected array $configurationToUseInTestInstance = [
         'EXTENSIONS' => [
             'vite_asset_collector' => [
-                'defaultManifest' => 'EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/manifest.json',
+                'defaultManifest' => 'EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
             ],
         ],
     ];

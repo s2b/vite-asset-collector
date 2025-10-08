@@ -223,13 +223,6 @@ class ViteService
     {
         $resolvedManifestFile = GeneralUtility::getFileAbsFileName($manifestFile);
         if ($resolvedManifestFile === '' || !file_exists($resolvedManifestFile)) {
-            // Fallback to directory structure from vite < 5
-            $legacyManifestFile = $this->determineOutputDirFromManifestFile($manifestFile) . PathUtility::basename($manifestFile);
-            $resolvedLegacyManifestFile = GeneralUtility::getFileAbsFileName($legacyManifestFile);
-            if ($resolvedLegacyManifestFile !== '' && file_exists($resolvedLegacyManifestFile)) {
-                return $resolvedLegacyManifestFile;
-            }
-
             throw new ViteException(sprintf(
                 'Vite manifest file "%s" was resolved to "%s" and cannot be opened.',
                 $manifestFile,
@@ -273,11 +266,7 @@ class ViteService
 
     protected function determineOutputDirFromManifestFile(string $manifestFile): string
     {
-        $outputDir = PathUtility::dirname($manifestFile);
-        if (PathUtility::basename($outputDir) === '.vite') {
-            $outputDir = PathUtility::dirname($outputDir);
-        }
-        return $outputDir . '/';
+        return PathUtility::dirname(PathUtility::dirname($manifestFile)) . '/';
     }
 
     protected function prepareAssetPath(string $assetPath, bool $external): string
