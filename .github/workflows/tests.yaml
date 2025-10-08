@@ -58,7 +58,7 @@ jobs:
       fail-fast: false
       matrix:
         php-version: [8.4, 8.3, 8.2]
-        typo3-version: ['^13', '^12']
+        typo3-version: ['^13']
 
     uses: ./.github/workflows/_test.yaml
     with:
