@@ -6,9 +6,11 @@ namespace Praetorius\ViteAssetCollector\Configuration;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Processor\Placeholder\PlaceholderProcessorInterface;
 
-final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
+#[Autoconfigure(public: true)]
+final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInterface
 {
     /**
      * Regular expression to support the following syntax variants:

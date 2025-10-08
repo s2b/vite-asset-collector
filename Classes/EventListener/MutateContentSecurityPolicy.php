@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\EventListener;
 
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 
-final class MutateContentSecurityPolicy
+#[AsEventListener(
+    identifier: 'praetorius/vite-asset-collector-csp',
+)]
+final readonly class MutateContentSecurityPolicy
 {
     public function __construct(
         private readonly ViteService $viteService,

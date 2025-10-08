@@ -9,6 +9,7 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
@@ -18,15 +19,16 @@ use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-class ViteService
+readonly class ViteService
 {
     public const DEFAULT_PORT = 5173;
 
     public function __construct(
-        private readonly FrontendInterface $cache,
-        protected readonly AssetCollector $assetCollector,
-        protected readonly PackageManager $packageManager,
-        protected readonly ExtensionConfiguration $extensionConfiguration
+        #[Autowire(service: 'cache.viteassetcollector_manifest')]
+        private FrontendInterface $cache,
+        protected AssetCollector $assetCollector,
+        protected PackageManager $packageManager,
+        protected ExtensionConfiguration $extensionConfiguration
     ) {}
 
     public function getDefaultManifestFile(): string
