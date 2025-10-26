@@ -42,7 +42,7 @@ final class SvgIconProvider extends AbstractSvgIconProvider
             $manifest = $this->viteService->getDefaultManifestFile();
         }
 
-        if (!is_string($manifest) || $manifest === '') {
+        if ($manifest === '') {
             throw new ViteException(
                 sprintf(
                     'Unable to determine vite manifest from specified argument and default manifest: %s',

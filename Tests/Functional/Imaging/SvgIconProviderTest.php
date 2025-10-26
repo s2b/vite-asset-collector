@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\Imaging;
 
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -19,19 +20,20 @@ final class SvgIconProviderTest extends FunctionalTestCase
     protected SvgIconProvider $svgIconProvider;
     protected Icon $icon;
     protected string $registeredIconIdentifier = 'typo3-logo';
+    protected int $iconMtime = 0;
 
     protected array $testExtensionsToLoad = [
         'typo3conf/ext/vite_asset_collector',
     ];
 
     protected array $pathsToProvideInTestInstance = [
-        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
+        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'typo3temp/assets/Fixtures/',
     ];
 
     protected array $configurationToUseInTestInstance = [
         'EXTENSIONS' => [
             'vite_asset_collector' => [
-                'defaultManifest' => 'EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
+                'defaultManifest' => 'typo3temp/assets/Fixtures/DefaultManifest/.vite/manifest.json',
             ],
         ],
     ];
@@ -55,6 +57,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
         $this->icon = GeneralUtility::makeInstance(Icon::class);
         $this->icon->setIdentifier('typo3-logo');
         $this->icon->setSize(class_exists(IconSize::class) ? IconSize::SMALL : Icon::SIZE_SMALL);
+        $this->iconMtime = filemtime(Environment::getPublicPath() . '/typo3temp/assets/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg');
     }
 
     #[Test]
@@ -62,7 +65,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
     {
         $this->svgIconProvider->prepareIconMarkup($this->icon, ['source' => 'typo3.svg']);
         self::assertEquals(
-            '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="16" height="16" alt="" />',
+            '<img src="/typo3temp/assets/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg?' . $this->iconMtime . '" width="16" height="16" alt="" />',
             $this->icon->getMarkup()
         );
     }
@@ -95,7 +98,7 @@ SVG_MARKUP;
         );
 
         self::assertStringContainsString(
-            '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="32" height="32" alt="" />',
+            '<img src="/typo3temp/assets/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg?' . $this->iconMtime . '" width="32" height="32" alt="" />',
             $iconMarkup
         );
     }
