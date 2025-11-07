@@ -31,7 +31,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
             $options['source']
         );
 
-        return '<img src="' . htmlspecialchars($this->getPublicPath($source)) . '" width="' . $icon->getDimension()->getWidth() . '" height="' . $icon->getDimension()->getHeight() . '" alt="" />';
+        return '<img src="' . htmlspecialchars($source) . '" width="' . $icon->getDimension()->getWidth() . '" height="' . $icon->getDimension()->getHeight() . '" alt="" />';
     }
 
     private function getManifest(string $manifest): string
