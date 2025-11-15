@@ -9,8 +9,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TYPO3\CMS\Core\Domain\ConsumableString;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class AddCspNonceMetaTag implements MiddlewareInterface
@@ -22,7 +22,7 @@ final class AddCspNonceMetaTag implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $nonceAttribute = $request->getAttribute('nonce');
-        if (!$nonceAttribute instanceof ConsumableString) {
+        if (!$nonceAttribute instanceof ConsumableNonce) {
             return $handler->handle($request);
         }
 
