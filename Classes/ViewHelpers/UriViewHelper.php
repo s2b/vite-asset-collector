@@ -54,11 +54,6 @@ final class UriViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
 
-    /**
-     * @var RenderingContext
-     */
-    protected $renderingContext;
-
     public function initializeArguments(): void
     {
         $this->registerArgument(
@@ -114,7 +109,9 @@ final class UriViewHelper extends AbstractViewHelper
             !method_exists($this->renderingContext, 'hasAttribute') ||
             !$this->renderingContext->hasAttribute(ServerRequestInterface::class)
         ) {
-            return $this->renderingContext->getRequest();
+            /** @var RenderingContext */
+            $renderingContext = $this->renderingContext;
+            return $renderingContext->getRequest();
         }
         return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
