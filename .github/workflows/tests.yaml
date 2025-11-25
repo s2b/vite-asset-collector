@@ -57,13 +57,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [8.4, 8.3, 8.2]
-        typo3-version: ['^13', '^12']
+        php-version: [8.5, 8.4, 8.3, 8.2]
+        typo3-version: ['^14', '^13', '^12']
+        exclude:
+          - php-version: 8.5
+            typo3-version: '^12'
 
     uses: ./.github/workflows/_test.yaml
     with:
       php-version: ${{ matrix.php-version }}
       typo3-version: ${{ matrix.typo3-version }}
+      composer-remove: saschaegerer/phpstan-typo3
       unit-coverage-name: coverage-unit-${{ matrix.php-version }}-${{ matrix.typo3-version }}
       functional-coverage-name: coverage-functional-${{ matrix.php-version }}-${{ matrix.typo3-version }}
 
