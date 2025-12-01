@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Service;
 
 use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
+use Praetorius\ViteAssetCollector\Event\ModifyDevServerUriEvent;
+use Praetorius\ViteAssetCollector\Event\ModifyUseDevServerEvent;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -26,7 +29,8 @@ class ViteService
         private readonly FrontendInterface $cache,
         protected readonly AssetCollector $assetCollector,
         protected readonly PackageManager $packageManager,
-        protected readonly ExtensionConfiguration $extensionConfiguration
+        protected readonly ExtensionConfiguration $extensionConfiguration,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getDefaultManifestFile(): string
@@ -36,29 +40,22 @@ class ViteService
 
     public function useDevServer(): bool
     {
-        $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
-        if ($useDevServer === 'auto') {
-            return Environment::getContext()->isDevelopment();
-        }
-        return (bool)$useDevServer;
+        $configuration = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
+        $resolvedValue = $configuration === 'auto' ? Environment::getContext()->isDevelopment() : (bool)$configuration;
+
+        $event = new ModifyUseDevServerEvent($configuration, $resolvedValue);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getResolvedValue();
     }
 
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
-        $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
-        if ($devServerUri === 'auto') {
-            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
-            $serverUri = getenv('VITE_SERVER_URI');
-            if ($serverUri) {
-                return new Uri($serverUri);
-            }
+        $configuration = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
+        $resolvedValue = $this->resolveDevServerUri($configuration, $request);
 
-            // This constant is used by ddev-viteserve and contains only the port that can be
-            // combined with any ddev domain of the current project
-            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-            return $request->getUri()->withPath('')->withPort((int)$vitePort);
-        }
-        return new Uri($devServerUri);
+        $event = new ModifyDevServerUriEvent($configuration, $resolvedValue, $request);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getResolvedValue();
     }
 
     public function addAssetsFromDevServer(
@@ -307,5 +304,22 @@ class ViteService
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    private function resolveDevServerUri(string $configuration, ServerRequestInterface $request): UriInterface
+    {
+        if ($configuration === 'auto') {
+            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
+            $serverUri = getenv('VITE_SERVER_URI');
+            if ($serverUri) {
+                return new Uri($serverUri);
+            }
+
+            // This constant is used by ddev-viteserve and contains only the port that can be
+            // combined with any ddev domain of the current project
+            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
+            return $request->getUri()->withPath('')->withPort((int)$vitePort);
+        }
+        return new Uri($configuration);
     }
 }
