@@ -98,7 +98,8 @@ final class AssetViewHelper extends AbstractViewHelper
                 $this->viteService->determineDevServer($this->getRequest()),
                 $entry,
                 $assetOptions,
-                $this->arguments['devTagAttributes']
+                $this->arguments['devTagAttributes'],
+                $this->arguments['cssTagAttributes']
             );
         } else {
             $this->viteService->addAssetsFromManifest(
