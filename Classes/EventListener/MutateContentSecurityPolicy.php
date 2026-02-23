@@ -53,14 +53,19 @@ final class MutateContentSecurityPolicy
             ...$uris,
         );
 
-        // Ensure that nonces are allowed for script and style tags
-        $event->getCurrentPolicy()->extend(
-            Directive::ScriptSrcElem,
-            SourceKeyword::nonceProxy
-        );
-        $event->getCurrentPolicy()->extend(
-            Directive::StyleSrcElem,
-            SourceKeyword::nonceProxy
-        );
+        // Ensure that nonces are allowed for script and style tags; if unsafe-inline is already active,
+        // don't do anything because adding the nonce would break unsafe-inline
+        if (!$event->getCurrentPolicy()->containsDirective(Directive::ScriptSrcElem, SourceKeyword::unsafeInline)) {
+            $event->getCurrentPolicy()->extend(
+                Directive::ScriptSrcElem,
+                SourceKeyword::nonceProxy
+            );
+        }
+        if (!$event->getCurrentPolicy()->containsDirective(Directive::StyleSrcElem, SourceKeyword::unsafeInline)) {
+            $event->getCurrentPolicy()->extend(
+                Directive::StyleSrcElem,
+                SourceKeyword::nonceProxy
+            );
+        }
     }
 }
