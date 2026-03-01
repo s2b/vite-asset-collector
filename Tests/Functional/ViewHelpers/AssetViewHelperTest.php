@@ -201,7 +201,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function renderWithDevServer(): void
+    public function renderCssWithDevServer(): void
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '1',
@@ -211,7 +211,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/OnlyCssManifest/manifest.json" entry="Main.scss" cssTagAttributes="{media: \'print\'}" />');
         (new TemplateView($context))->render();
 
         self::assertEquals(
@@ -219,6 +219,43 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                ],
+            ],
+            $assetCollector->getJavaScripts(false)
+        );
+
+        self::assertEquals(
+            [
+                'vite:Main.js' => [
+                    'source' => 'https://localhost:5173/Main.scss',
+                    'attributes' => ['media' => 'print'],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                ],
+            ],
+            $assetCollector->getStyleSheets(false)
+        );
+    }
+
+    #[Test]
+    public function renderScriptWithDevServer(): void
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '1',
+            'devServerUri' => 'https://localhost:5173',
+        ]);
+
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" devTagAttributes="{foo: \'bar\'}" />');
+        (new TemplateView($context))->render();
+
+        self::assertEquals(
+            [
+                'vite' => [
+                    'source' => 'https://localhost:5173/@vite/client',
+                    'attributes' => ['type' => 'module', 'foo' => 'bar'],
                     'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
                 ],
                 'vite:Main.js' => [
