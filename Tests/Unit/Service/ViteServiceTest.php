@@ -676,6 +676,21 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
+    #[Test]
+    #[IgnoreDeprecations]
+    public function getAssetWithExtPathFromManifestInExtension(): void
+    {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ExtPathManifest') . '/';
+        self::assertEquals(
+            '_assets/03d460b5ce87638ece7044485cafe45b/Vite/assets/Main-4483b920.js',
+            $this->createViteService(null, 'EXT:symlink_extension/Resources/Public/Vite/.vite/manifest.json')->getAssetPathFromManifest(
+                $fixtureDir . 'symlink_extension/Resources/Public/Vite/.vite/manifest.json',
+                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
+            )
+        );
+    }
+
     public static function getAssetPathFromManifestErrorHandlingDataProvider(): array
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';

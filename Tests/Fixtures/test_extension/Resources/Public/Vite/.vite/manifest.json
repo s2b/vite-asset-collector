@@ -1,0 +1,8 @@
+{
+	"Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js": {
+		"css": [],
+		"file": "assets/Main-4483b920.js",
+		"isEntry": true,
+		"src": "Main.js"
+	}
+}
