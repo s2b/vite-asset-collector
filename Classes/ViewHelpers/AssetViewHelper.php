@@ -7,6 +7,7 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -26,6 +27,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  *     <vite:asset
  *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
+ *     />
+ *
+ *     <!-- as inline css for -->
+ *     <vite:asset
+ *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
+ *         inline="1"
+ *         identifier="my-css-identifier"
+ *         priority="1"
  *     />
  *
  * Advanced Example
@@ -55,6 +64,10 @@ final class AssetViewHelper extends AbstractViewHelper
 {
     protected ViteService $viteService;
 
+    public function __construct(
+        private readonly \TYPO3\CMS\Core\Page\AssetCollector $assetCollector
+    ) {}
+
     public function initializeArguments(): void
     {
         $this->registerArgument(
@@ -79,6 +92,8 @@ final class AssetViewHelper extends AbstractViewHelper
             false
         );
         $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
+        $this->registerArgument('inline', 'bool', 'Define whether or not the referenced file should be loaded as inline styles.', false, false);
+        $this->registerArgument('identifier', 'string', 'Use this identifier within templates to only inject your CSS once, even though it is added multiple times.', false);
     }
 
     public function render(): string
@@ -101,14 +116,31 @@ final class AssetViewHelper extends AbstractViewHelper
                 $this->arguments['devTagAttributes']
             );
         } else {
-            $this->viteService->addAssetsFromManifest(
-                $manifest,
-                $entry,
-                $this->arguments['addCss'],
-                $assetOptions,
-                $this->arguments['scriptTagAttributes'],
-                $this->arguments['cssTagAttributes']
-            );
+            if ($this->arguments['inline'] ?? false) {
+                $absolutePath = $this->viteService->getAssetPathFromManifest($manifest, $entry, false);
+
+                // inline only if file is a css - for now
+                if (file_exists($absolutePath) && pathinfo($absolutePath)['extension'] === 'css') {
+                    $content = @file_get_contents($absolutePath);
+                    if ($content !== false) {
+                        $this->assetCollector->addInlineStyleSheet(
+                            $this->arguments['identifier'] ?? md5($entry),
+                            $content,
+                            [],
+                            $assetOptions
+                        );
+                    }
+                }
+            } else {
+                $this->viteService->addAssetsFromManifest(
+                    $manifest,
+                    $entry,
+                    $this->arguments['addCss'],
+                    $assetOptions,
+                    $this->arguments['scriptTagAttributes'],
+                    $this->arguments['cssTagAttributes']
+                );
+            }
         }
         return '';
     }
