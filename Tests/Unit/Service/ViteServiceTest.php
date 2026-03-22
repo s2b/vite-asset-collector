@@ -190,8 +190,8 @@ final class ViteServiceTest extends UnitTestCase
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
-                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' => 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js',
+                    'vite:Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => 'https://localhost:5173/Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => self::useExternalFlag()],
                     ],
