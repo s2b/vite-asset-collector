@@ -58,16 +58,25 @@ jobs:
       fail-fast: false
       matrix:
         php-version: [8.5, 8.4, 8.3, 8.2]
-        typo3-version: ['^14', '^13', '^12']
-        exclude:
-          - php-version: 8.5
+        typo3-version: ['^14', '^13']
+        composer-ignore-insecure: [false]
+        include:
+          - php-version: 8.2
             typo3-version: '^12'
+            composer-ignore-insecure: true
+          - php-version: 8.3
+            typo3-version: '^12'
+            composer-ignore-insecure: true
+          - php-version: 8.4
+            typo3-version: '^12'
+            composer-ignore-insecure: true
 
     uses: ./.github/workflows/_test.yaml
     with:
       php-version: ${{ matrix.php-version }}
       typo3-version: ${{ matrix.typo3-version }}
       composer-remove: saschaegerer/phpstan-typo3
+      composer-ignore-insecure: ${{ matrix.composer-ignore-insecure }}
       unit-coverage-name: coverage-unit-${{ matrix.php-version }}-${{ matrix.typo3-version }}
       functional-coverage-name: coverage-functional-${{ matrix.php-version }}-${{ matrix.typo3-version }}
 
