@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\EventListener;
 
-use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Install\Service\Event\ModifyLanguagePacksEvent;
 
-#[AsEventListener('praetorius/vite-asset-collector/exclude-extension-from-language-update')]
 final readonly class ExcludeExtensionFromLanguageUpdate
 {
     public function __invoke(ModifyLanguagePacksEvent $event): void
