@@ -265,9 +265,7 @@ class ViteService
                 $identifier
             ), 1696238083);
         }
-        // TODO PathUtility::getRelativePath() is deprecated
-        $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
-
+        $relativeDirToProjectRoot = $this->stripProjectPath($dir);
         return $relativeDirToProjectRoot . $file;
     }
 
@@ -289,6 +287,18 @@ class ViteService
     {
         // TODO remove this when support for TYPO3 v12 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() >= 13;
+    }
+
+    /**
+     * @return string Given path without project prefix, with trailing slash
+     */
+    protected function stripProjectPath(string $path): string
+    {
+        $projectPath = Environment::getProjectPath() . '/';
+        if (str_starts_with($path, $projectPath)) {
+            $path = substr($path, strlen($projectPath));
+        }
+        return rtrim($path, '/') . '/';
     }
 
     protected function prepareScriptAttributes(array $attributes): array
