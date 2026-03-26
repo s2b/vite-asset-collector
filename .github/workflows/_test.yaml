@@ -27,6 +27,11 @@ on:
         default: ''
         required: false
         type: string
+      composer-block-insecure:
+        description: Block installation of insecure packages
+        default: true
+        required: true
+        type: boolean
 
 jobs:
   test:
@@ -63,13 +68,18 @@ jobs:
         run: composer config minimum-stability ${{ inputs.stability }}
 
       -
+        name: Ignore composer security checks
+        run: composer config audit.block-insecure false
+        if: inputs.composer-block-insecure == false
+
+      -
         name: Remove selected composer packages
         run: composer remove --no-update --dev ${{ inputs.composer-remove }}
         if: inputs.composer-remove != ''
 
       -
         name: Install composer dependencies
-        run: composer up --with typo3/cms-core:"${{ inputs.typo3-version }}" --with typo3/cms-fluid:"${{ inputs.typo3-version }}" --with typo3/cms-extbase:"${{ inputs.typo3-version }}" --with typo3/cms-backend:"${{ inputs.typo3-version }}" --with typo3/cms-frontend:"${{ inputs.typo3-version }}" --prefer-dist --no-progress
+        run: composer up --with typo3/cms-core:"${{ inputs.typo3-version }}" --with typo3/cms-fluid:"${{ inputs.typo3-version }}" --with typo3/cms-extbase:"${{ inputs.typo3-version }}" --with typo3/cms-backend:"${{ inputs.typo3-version }}" --with typo3/cms-frontend:"${{ inputs.typo3-version }}" --with typo3/cms-install:"${{ inputs.typo3-version }}" --prefer-dist --no-progress
 
       -
         name: Unit Testing
