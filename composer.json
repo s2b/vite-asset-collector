@@ -47,7 +47,10 @@
 			"web-dir": ".Build/web",
 			"extension-key": "vite_asset_collector",
 			"Package": {
-				"providesPackages": {}
+				"providesPackages": {
+					"symfony/console": "",
+					"typo3/class-alias-loader": ""
+				}
 			}
 		},
 		"typo3/class-alias-loader": {
