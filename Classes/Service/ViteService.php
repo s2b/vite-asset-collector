@@ -68,7 +68,7 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = [],
     ): void {
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry, false);
         $assetOptions = ['external' => $this->useExternalFlag(), ...$assetOptions];
 
         $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
@@ -99,7 +99,7 @@ class ViteService
         UriInterface $devServerUri,
         string $assetFile,
     ): string {
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile, false);
         return (string)$devServerUri->withPath($assetFile);
     }
 
@@ -128,18 +128,21 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = []
     ): void {
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
-
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
+        $originalEntry = $entry;
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry, false);
         if (!$manifest->get($entry)?->isEntry) {
-            throw new ViteException(sprintf(
-                'Invalid vite entry point "%s" in manifest file "%s".',
-                $entry,
-                $manifestFile
-            ), 1683200524);
+            $entry = $this->determineAssetIdentifierFromExtensionPath($originalEntry, true);
+            if (!$manifest->get($entry)?->isEntry) {
+                throw new ViteException(sprintf(
+                    'Invalid vite entry point "%s" in manifest file "%s".',
+                    $entry,
+                    $manifestFile
+                ), 1683200524);
+            }
         }
 
         // The "external" flag has been introduced with TYPO3 v13. It allows bypassing
@@ -203,16 +206,20 @@ class ViteService
         string $assetFile,
         bool $returnWebPath = true
     ): string {
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
-
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
+
+        $originalAssetFile = $assetFile;
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile, false);
         if (!$manifest->get($assetFile)) {
-            throw new ViteException(sprintf(
-                'Invalid asset file "%s" in vite manifest file "%s".',
-                $assetFile,
-                $manifestFile
-            ), 1690735353);
+            $assetFile = $this->determineAssetIdentifierFromExtensionPath($originalAssetFile, true);
+            if (!$manifest->get($assetFile)) {
+                throw new ViteException(sprintf(
+                    'Invalid asset file "%s" in vite manifest file "%s".',
+                    $assetFile,
+                    $manifestFile
+                ), 1690735353);
+            }
         }
 
         $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest->get($assetFile)->file;
@@ -250,7 +257,7 @@ class ViteService
         return $manifest;
     }
 
-    protected function determineAssetIdentifierFromExtensionPath(string $identifier): string
+    protected function determineAssetIdentifierFromExtensionPath(string $identifier, bool $resolveSymlinks = true): string
     {
         if (!PathUtility::isExtensionPath($identifier)) {
             return $identifier;
@@ -258,16 +265,17 @@ class ViteService
 
         $absolutePath = $this->packageManager->resolvePackagePath($identifier);
         $file = PathUtility::basename($absolutePath);
-        $dir = realpath(PathUtility::dirname($absolutePath));
-        if ($dir === false) {
-            throw new ViteException(sprintf(
-                'The specified extension path "%s" does not exist.',
-                $identifier
-            ), 1696238083);
+        $dir = PathUtility::dirname($absolutePath);
+        if ($resolveSymlinks) {
+            $dir = realpath($dir);
+            if ($dir === false) {
+                throw new ViteException(sprintf(
+                    'The specified extension path "%s" does not exist.',
+                    $identifier
+                ), 1696238083);
+            }
         }
-        // TODO PathUtility::getRelativePath() is deprecated
-        $relativeDirToProjectRoot = PathUtility::getRelativePath(Environment::getProjectPath(), $dir);
-
+        $relativeDirToProjectRoot = $this->stripProjectPath($dir);
         return $relativeDirToProjectRoot . $file;
     }
 
@@ -289,6 +297,18 @@ class ViteService
     {
         // TODO remove this when support for TYPO3 v12 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() >= 13;
+    }
+
+    /**
+     * @return string Given path without project prefix, with trailing slash
+     */
+    protected function stripProjectPath(string $path): string
+    {
+        $projectPath = Environment::getProjectPath() . '/';
+        if (str_starts_with($path, $projectPath)) {
+            $path = substr($path, strlen($projectPath));
+        }
+        return rtrim($path, '/') . '/';
     }
 
     protected function prepareScriptAttributes(array $attributes): array
