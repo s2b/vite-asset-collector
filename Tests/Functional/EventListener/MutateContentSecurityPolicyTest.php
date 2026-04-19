@@ -8,19 +8,27 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\EventListener\MutateContentSecurityPolicy;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Configuration\Behavior;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\DirectiveHashCollection;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Middleware\PolicyBag;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Policy;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Scope;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
-use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
+use TYPO3\CMS\Core\Type\Map;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-final class MutateContentSecurityPolicyTest extends UnitTestCase
+final class MutateContentSecurityPolicyTest extends FunctionalTestCase
 {
+    protected array $testExtensionsToLoad = [
+        'typo3conf/ext/vite_asset_collector',
+    ];
+
     public static function getDefaultManifestFileDataProvider(): iterable
     {
         //
@@ -232,9 +240,10 @@ final class MutateContentSecurityPolicyTest extends UnitTestCase
     #[DataProvider('getDefaultManifestFileDataProvider')]
     public function getDefaultManifestFile(bool $useDevServer, string $devServerUri, ConsumableNonce $nonce, Policy $currentPolicy, array $expectedPolicy): void
     {
-        $mockViteService = $this->createMock(ViteService::class);
-        $mockViteService->method('useDevServer')->willReturn($useDevServer);
-        $mockViteService->method('determineDevServer')->willReturn(new Uri($devServerUri));
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => $useDevServer,
+            'devServerUri' => $devServerUri,
+        ]);
 
         $event = new PolicyMutatedEvent(
             Scope::frontend(),
@@ -242,8 +251,17 @@ final class MutateContentSecurityPolicyTest extends UnitTestCase
             new Policy(),
             $currentPolicy,
         );
-        $subject = new MutateContentSecurityPolicy($mockViteService);
+        $subject = new MutateContentSecurityPolicy($this->get(ViteService::class));
         $subject($event);
-        self::assertEquals($expectedPolicy, explode('; ', $currentPolicy->compile($nonce)));
+        // TODO remove switch once support for TYPO3 v13 is dropped
+        if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13) {
+            $compiledPolicy = $currentPolicy->compile(
+                // @phpstan-ignore-next-line
+                new PolicyBag(Scope::frontend(), new Map(), new Behavior(), $nonce, $this->get(DirectiveHashCollection::class))
+            );
+        } else {
+            $compiledPolicy = $currentPolicy->compile($nonce);
+        }
+        self::assertEquals($expectedPolicy, explode('; ', $compiledPolicy));
     }
 }
