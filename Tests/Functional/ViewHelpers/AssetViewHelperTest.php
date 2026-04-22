@@ -130,6 +130,27 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     ],
                 ],
             ],
+            'withInlineCss' => [
+                'template' => '<vite:asset
+                    manifest="fileadmin/Fixtures/ValidManifest/manifest.json"
+                    entry="Main.js"
+                    cssTagAttributes="{inline: 1, media: \'print\'}"
+                />',
+                'javaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                    ],
+                ],
+                'inlineStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => '.main{color:red;}',
+                        'attributes' => ['media' => 'print'],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => self::useExternalFlag()],
+                    ],
+                ],
+            ],
             'withPriority' => [
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
                 'priorityJavaScripts' => [
@@ -174,7 +195,9 @@ final class AssetViewHelperTest extends FunctionalTestCase
         array $javaScripts = [],
         array $priorityJavaScripts = [],
         array $styleSheets = [],
-        array $priorityStyleSheets = []
+        array $priorityStyleSheets = [],
+        array $inlineStyleSheets = [],
+        array $priorityInlineStyleSheets = []
     ): void {
         $assetCollector = $this->get(AssetCollector::class);
 
@@ -197,6 +220,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
         self::assertEquals(
             $priorityStyleSheets,
             $assetCollector->getStyleSheets(true)
+        );
+        self::assertEquals(
+            $inlineStyleSheets,
+            $assetCollector->getInlineStyleSheets(false)
+        );
+        self::assertEquals(
+            $priorityInlineStyleSheets,
+            $assetCollector->getInlineStyleSheets(true)
         );
     }
 
