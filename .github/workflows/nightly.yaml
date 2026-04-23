@@ -20,7 +20,17 @@ jobs:
     name: Nightly Testing (current LTS)
     uses: ./.github/workflows/_test.yaml
     with:
-      php-version: 8.4
-      typo3-version: '^13'
+      php-version: 8.5
+      typo3-version: '^14'
       unit-coverage-name: coverage-unit-lts
       functional-coverage-name: coverage-functional-lts
+      composer-remove: saschaegerer/phpstan-typo3
+
+  test-13:
+    name: Nightly Testing (13.4)
+    uses: ./.github/workflows/_test.yaml
+    with:
+      php-version: 8.4
+      typo3-version: '^13'
+      unit-coverage-name: coverage-unit-13
+      functional-coverage-name: coverage-functional-13
