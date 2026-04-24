@@ -167,35 +167,39 @@ class ViteService
         }
 
         if ($addCss) {
+            $inlineCss = $this->shouldInlineCss($cssTagAttributes);
+            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
+
             if ($entryPoint->isCss()) {
-                $this->assetCollector->addStyleSheet(
+                $this->addCssAsset(
                     "vite:{$entry}",
-                    $this->prepareAssetPath($outputDir . $entryPoint->file, $assetOptions['external']),
+                    $outputDir . $entryPoint->file,
                     $cssTagAttributes,
-                    $assetOptions
+                    $assetOptions,
+                    $inlineCss
                 );
             }
-
-            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
 
             foreach ($manifest->getImportsForEntrypoint($entry, true) as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes));
                 foreach ($import->css as $file) {
-                    $this->assetCollector->addStyleSheet(
+                    $this->addCssAsset(
                         "vite:{$identifier}:{$file}",
-                        $this->prepareAssetPath($outputDir . $file, $assetOptions['external']),
+                        $outputDir . $file,
                         $cssTagAttributes,
-                        $assetOptions
+                        $assetOptions,
+                        $inlineCss
                     );
                 }
             }
 
             foreach ($manifest->get($entry)->css as $file) {
-                $this->assetCollector->addStyleSheet(
+                $this->addCssAsset(
                     "vite:{$entry}:{$file}",
-                    $this->prepareAssetPath($outputDir . $file, $assetOptions['external']),
+                    $outputDir . $file,
                     $cssTagAttributes,
-                    $assetOptions
+                    $assetOptions,
+                    $inlineCss
                 );
             }
         }
@@ -323,9 +327,50 @@ class ViteService
 
     protected function prepareCssAttributes(array $attributes): array
     {
+        unset($attributes['inline']);
         if ($attributes['disabled'] ?? false) {
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
+    }
+
+    protected function shouldInlineCss(array $attributes): bool
+    {
+        return (bool)($attributes['inline'] ?? false);
+    }
+
+    protected function addCssAsset(
+        string $identifier,
+        string $assetPath,
+        array $attributes,
+        array $assetOptions,
+        bool $inlineCss
+    ): void {
+        if ($inlineCss) {
+            $absoluteAssetPath = GeneralUtility::getFileAbsFileName($assetPath);
+            if ($absoluteAssetPath === '' || !is_file($absoluteAssetPath)) {
+                throw new ViteException(sprintf(
+                    'CSS asset file "%s" was resolved to "%s" and cannot be opened for inline rendering.',
+                    $assetPath,
+                    $absoluteAssetPath
+                ), 1745414701);
+            }
+
+            $cssSource = (string)file_get_contents($absoluteAssetPath);
+            $this->assetCollector->addInlineStyleSheet(
+                $identifier,
+                $cssSource,
+                $attributes,
+                [...$assetOptions, 'priority' => true]
+            );
+            return;
+        }
+
+        $this->assetCollector->addStyleSheet(
+            $identifier,
+            $this->prepareAssetPath($assetPath, $assetOptions['external']),
+            $attributes,
+            $assetOptions
+        );
     }
 }
