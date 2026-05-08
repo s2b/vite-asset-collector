@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,10 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 /**
  * @deprecated will be removed with v2; Use vite-plugin-typo3 instead.
  */
+#[AsCommand(
+    name: 'vite:config',
+    description: 'Generates a boilerplate vite config file',
+)]
 class ViteConfigCommand extends Command
 {
     protected const TEMPLATE_SEPARATOR = "// ------------------------------------------------------\n";
