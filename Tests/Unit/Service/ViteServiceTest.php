@@ -362,19 +362,6 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
             ],
-            'withSymlinkedExtPath' => [
-                'manifestFile' => $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
-                'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                'options' => [],
-                'addCss' => false,
-                'javaScripts' => [
-                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
-                    ],
-                ],
-            ],
             'withImportedJs' => [
                 'manifestFile' => $fixtureDir . 'ImportJs/.vite/manifest.json',
                 'entry' => 'Main.js',
@@ -480,6 +467,19 @@ final class ViteServiceTest extends UnitTestCase
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         return [
+            'withSymlinkedExtPath' => [
+                'manifestFile' => $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
+                'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
+                'options' => [],
+                'addCss' => false,
+                'javaScripts' => [
+                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'options' => ['external' => true],
+                    ],
+                ],
+            ],
             'vite4' => [
                 'manifestFile' => $fixtureDir . 'Vite4Manifest/manifest.json',
                 'entry' => 'Default.js',
@@ -695,6 +695,21 @@ final class ViteServiceTest extends UnitTestCase
             $manifestDir . 'assets/Main-4483b920.js',
             $this->createViteService()->getAssetPathFromManifest(
                 $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
+                'EXT:test_extension/Resources/Private/JavaScript/Main.js'
+            )
+        );
+    }
+
+    #[Test]
+    #[IgnoreDeprecations]
+    public function getAssetWithSymlinkedExtPathFromManifest(): void
+    {
+        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
+        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ExtPathManifest') . '/';
+        self::assertEquals(
+            $manifestDir . 'assets/Main-4483b920.js',
+            $this->createViteService()->getAssetPathFromManifest(
+                $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
                 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
             )
         );
@@ -748,6 +763,7 @@ final class ViteServiceTest extends UnitTestCase
                     'EXT:test_extension/Resources/Private/Assets/test.txt',
                     $fixtureDir . 'test_extension/Resources/Private/Assets/test.txt',
                 ],
+                // TODO remove when support for symlinks is dropped with v2
                 [
                     'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
                     $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
