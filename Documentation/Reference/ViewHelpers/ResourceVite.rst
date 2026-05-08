@@ -8,8 +8,7 @@
 Resource.vite ViewHelper `<vite:resource.vite>`
 ===============================================
 
-..  note::
+..  deprecated:: 1.17
     This is an alias of the :ref:`<vite:uri> ViewHelper <viewhelper-uri>`.
-    The new name has been introduced with version 1.14. While the
-    old name will continue to work, it is recommended to switch to the new name
-    for improved naming clarity.
+    The new name has been introduced with version 1.14. The alias will be removed
+    with v2, please switch to the new name for improved naming clarity.

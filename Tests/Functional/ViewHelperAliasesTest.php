@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
@@ -26,6 +27,7 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
     ];
 
     #[Test]
+    #[IgnoreDeprecations]
     public function resourceAliasViewHelperCanBeUsed(): void
     {
         $context = $this->createRenderingContext();
@@ -39,6 +41,7 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[IgnoreDeprecations]
     public function assetAliasViewHelperCanBeUsed(): void
     {
         $assetCollector = $this->get(AssetCollector::class);
