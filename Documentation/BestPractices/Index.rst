@@ -151,7 +151,7 @@ If you use the Vite plugin, it automatically registers aliases for each TYPO3 ex
 to reference other assets (like webfonts, svg images...) easily in your CSS files. This also works for CSS
 preprocessors. Each extension gets an `EXT:` alias as well as an `@` alias, for example:
 
-*   `EXT:my_extension`
+*   `EXT:my_extension` (recommended)
 *   `@my_extension`
 
 These can be used both in CSS files and in JavaScript import statements.
@@ -165,6 +165,16 @@ These can be used both in CSS files and in JavaScript import statements.
             'EXT:sitepackage/Resources/.../MyFont.eot'
         );
     }
+
+Since the `@` syntax can lead to conflicts with packages in the JavaScript ecosystem, `EXT:` should be
+preferred. Automatic `@` aliases can be disabled in the `vite.config.js`:
+
+..  code-block:: javascript
+    :caption: vite.config.js
+
+    export default defineConfig({
+        plugins: [typo3({ aliases: 'EXT' })],
+    });
 
 ..  _functional-tests:
 
