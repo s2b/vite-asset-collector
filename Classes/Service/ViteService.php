@@ -282,6 +282,10 @@ class ViteService
                     $identifier
                 ), 1696238083);
             }
+            trigger_error(
+                'Accessing symlinked vite entrypoints via their original path is deprecated in EXT:vite_asset_collector and will no longer work with v2. Switch to v3 of vite-plugin-typo3 or set "resolve.preserveSymlinks" to true in your vite config.',
+                E_USER_DEPRECATED,
+            );
         }
         $relativeDirToProjectRoot = $this->stripProjectPath($dir);
         return $relativeDirToProjectRoot . $file;
