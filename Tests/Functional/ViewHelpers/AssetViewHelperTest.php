@@ -47,14 +47,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
@@ -64,7 +64,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
@@ -74,14 +74,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset entry="Default.js" />',
                 'javaScripts' => [
                     'vite:Default.js' => [
-                        'source' => $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' => $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
@@ -91,14 +91,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
@@ -113,14 +113,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 />',
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
@@ -130,14 +130,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
                 'priorityJavaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
                     ],
@@ -147,14 +147,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' => $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
                     ],
@@ -254,5 +254,11 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;
+    }
+
+    protected static function rawAssetUriPrefix(): string
+    {
+        // TODO remove this when support for TYPO3 v13 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'URI:' : '';
     }
 }
