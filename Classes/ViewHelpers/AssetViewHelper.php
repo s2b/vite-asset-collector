@@ -7,7 +7,6 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -132,16 +131,6 @@ final class AssetViewHelper extends AbstractViewHelper
 
     private function getRequest(): ServerRequestInterface
     {
-        // This is a fallback for TYPO3 < 13.3
-        if (
-            !method_exists($this->renderingContext, 'getAttribute') ||
-            !method_exists($this->renderingContext, 'hasAttribute') ||
-            !$this->renderingContext->hasAttribute(ServerRequestInterface::class)
-        ) {
-            /** @var RenderingContext */
-            $renderingContext = $this->renderingContext;
-            return $renderingContext->getRequest();
-        }
         return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
 
