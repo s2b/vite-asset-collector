@@ -238,6 +238,10 @@ class ViteService
             $legacyManifestFile = $this->determineOutputDirFromManifestFile($manifestFile) . PathUtility::basename($manifestFile);
             $resolvedLegacyManifestFile = GeneralUtility::getFileAbsFileName($legacyManifestFile);
             if ($resolvedLegacyManifestFile !== '' && file_exists($resolvedLegacyManifestFile)) {
+                trigger_error(
+                    'Support for vite < 5 is deprecated in EXT:vite_asset_collector and will no longer work with v2.',
+                    E_USER_DEPRECATED,
+                );
                 return $resolvedLegacyManifestFile;
             }
 
@@ -288,6 +292,11 @@ class ViteService
         $outputDir = PathUtility::dirname($manifestFile);
         if (PathUtility::basename($outputDir) === '.vite') {
             $outputDir = PathUtility::dirname($outputDir);
+        } else {
+            trigger_error(
+                'Support for vite < 5 is deprecated in EXT:vite_asset_collector and will no longer work with v2.',
+                E_USER_DEPRECATED,
+            );
         }
         return $outputDir . '/';
     }

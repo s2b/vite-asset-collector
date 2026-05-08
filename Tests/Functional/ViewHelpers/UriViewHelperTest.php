@@ -32,7 +32,7 @@ final class UriViewHelperTest extends FunctionalTestCase
         parent::setUp();
 
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/manifest.json',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
     }
 
@@ -40,7 +40,7 @@ final class UriViewHelperTest extends FunctionalTestCase
     {
         return [
             'basic' => [
-                '<vite:uri manifest="fileadmin/Fixtures/ValidManifest/manifest.json" file="Main.css" />',
+                '<vite:uri manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" file="Main.css" />',
                 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
             ],
             'defaultManifest' => [

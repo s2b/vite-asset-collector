@@ -35,7 +35,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
             'devServerUri' => 'https://localhost:5173',
-            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/manifest.json',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
     }
 
@@ -44,7 +44,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $manifestDir = 'fileadmin/Fixtures/';
         return [
             'basic' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -61,7 +61,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'withoutCss' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" addCss="0" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" addCss="0" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -88,7 +88,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'autoEntry' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -106,7 +106,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
             ],
             'withAttributes' => [
                 'template' => '<vite:asset
-                    manifest="fileadmin/Fixtures/ValidManifest/manifest.json"
+                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
                     entry="Main.js"
                     scriptTagAttributes="{async: 1}"
                     cssTagAttributes="{media: \'print\'}"
@@ -127,7 +127,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'withPriority' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" priority="1" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" priority="1" />',
                 'priorityJavaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -144,7 +144,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 ],
             ],
             'withNonce' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" useNonce="1" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" useNonce="1" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -207,7 +207,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/manifest.json" entry="Main.js" />');
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />');
         (new TemplateView($context))->render();
 
         self::assertEquals(
