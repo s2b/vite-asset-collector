@@ -18,6 +18,23 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *
  * This can be used to preload certain assets in the HTML `<head>` tag.
  *
+ * Solution for TYPO3 v14+
+ * -----------------------
+ *
+ * ..  code-block:: html
+ *     <f:page.headerData>
+ *         <link
+ *             rel="preload"
+ *             href="{vite:uri(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
+ *             as="font"
+ *             type="font/woff2"
+ *             crossorigin
+ *         />
+ *     </f:page.headerData>
+ *
+ * Solution for TYPO3 v13
+ * ----------------------
+ *
  * First, add a Fluid template to your TypoScript setup, for example:
  *
  * ..  code-block:: typoscript
