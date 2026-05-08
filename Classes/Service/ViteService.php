@@ -293,7 +293,11 @@ class ViteService
     // TODO remove $external argument with next major version
     protected function prepareAssetPath(string $assetPath, bool $external = true): string
     {
-        return PathUtility::getAbsoluteWebPath($assetPath);
+        $assetPath = PathUtility::getAbsoluteWebPath($assetPath);
+        // TODO adjust this when support for TYPO3 v13 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13
+            ? 'URI:' . $assetPath
+            : $assetPath;
     }
 
     /**

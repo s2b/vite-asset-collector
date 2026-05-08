@@ -285,7 +285,7 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => false,
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -298,14 +298,14 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -318,7 +318,7 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'styleSheets' => [
                     'vite:Main.scss' => [
-                        'source' =>  $fixtureDir . 'OnlyCssManifest/assets/Main-4483b920.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'OnlyCssManifest/assets/Main-4483b920.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -337,14 +337,14 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'priorityJavaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['priority' => true, 'external' => true],
                     ],
@@ -357,7 +357,7 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => false,
                 'javaScripts' => [
                     'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -370,7 +370,7 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => false,
                 'javaScripts' => [
                     'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' =>  $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -383,14 +383,14 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ImportJs/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'ImportJs/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJs/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -403,19 +403,19 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:6a181085b68130ba16f066fdaaf2da09:assets/Shared-pjWofKK4.css' => [
-                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
                     'vite:Main.js:assets/Main-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -428,14 +428,14 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'javaScripts' => [
                     'vite:Default.js' => [
-                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'Vite5Manifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'Vite5Manifest/assets/Default-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'Vite5Manifest/assets/Default-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -448,14 +448,14 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => true,
                 'javaScripts' => [
                     'vite:Default.js' => [
-                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' =>  $fixtureDir . 'DefaultManifest/assets/Default-973bb662.css',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true],
                     ],
@@ -468,7 +468,7 @@ final class ViteServiceTest extends UnitTestCase
                 'addCss' => false,
                 'javaScripts' => [
                     'vite:Main.js' => [
-                        'source' =>  $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -532,17 +532,17 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             [
                 'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
                     'options' => ['external' => true],
                 ],
                 'vite:Main.js:assets/Main-973bb662.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true],
                 ],
                 'vite:Alternative.js:assets/Alternative-973bb662.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true],
                 ],
@@ -565,22 +565,22 @@ final class ViteServiceTest extends UnitTestCase
         self::assertEquals(
             [
                 'vite:88713ee6f56256eb987323824e723146:assets/Shared-pjWofKK4.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => ['media' => 'print'],
                     'options' => ['external' => true],
                 ],
                 'vite:Main.js:assets/Main-973bb662.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => ['media' => 'print'],
                     'options' => ['external' => true],
                 ],
                 'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
                     'options' => ['external' => true],
                 ],
                 'vite:Alternative.js:assets/Alternative-973bb662.css' => [
-                    'source' =>  $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
+                    'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true],
                 ],
@@ -749,5 +749,11 @@ final class ViteServiceTest extends UnitTestCase
             $packageManager,
             $extensionConfiguration
         );
+    }
+
+    protected static function rawAssetUriPrefix(): string
+    {
+        // TODO remove this when support for TYPO3 v13 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'URI:' : '';
     }
 }
