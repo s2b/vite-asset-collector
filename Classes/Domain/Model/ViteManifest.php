@@ -35,11 +35,17 @@ final class ViteManifest
     /**
      * @return array<string, ViteManifestItem>
      */
-    public function getImportsForEntrypoint(string $entrypoint, bool $recursive = false): array
+    public function getImportsForEntrypoint(string $entrypoint, bool $recursive = false, array &$visited = []): array
     {
         if (!isset($this->items[$entrypoint])) {
             return [];
         }
+
+        // Avoid infinite loop when asset references itself
+        if (isset($visited[$entrypoint])) {
+            return [];
+        }
+        $visited[$entrypoint] = true;
 
         $imports = [];
         foreach ($this->items[$entrypoint]->imports as $identifier) {
@@ -47,7 +53,7 @@ final class ViteManifest
             if ($recursive) {
                 $imports = array_merge(
                     $imports,
-                    $this->getImportsForEntrypoint($identifier, $recursive)
+                    $this->getImportsForEntrypoint($identifier, $recursive, $visited)
                 );
             }
         }
