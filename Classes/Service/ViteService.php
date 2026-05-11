@@ -267,7 +267,7 @@ class ViteService
 
     protected function determineAssetIdentifierFromExtensionPath(string $identifier, bool $resolveSymlinks = true): string
     {
-        if (!PathUtility::isExtensionPath($identifier)) {
+        if (!PathUtility::isExtensionPath($identifier, true)) {
             return $identifier;
         }
 
