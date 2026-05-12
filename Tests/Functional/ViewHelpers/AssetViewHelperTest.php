@@ -139,6 +139,28 @@ final class AssetViewHelperTest extends FunctionalTestCase
                         'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
                     ],
                 ],
+                'inlineStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".main{color:red;}\n",
+                        'attributes' => ['media' => 'print'],
+                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                    ],
+                ],
+            ],
+            'withInlineCssAndPriority' => [
+                'template' => '<vite:asset
+                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
+                    entry="Main.js"
+                    cssTagAttributes="{inline: 1, media: \'print\'}"
+                    priority="1"
+                />',
+                'priorityJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
+                    ],
+                ],
                 'priorityInlineStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",

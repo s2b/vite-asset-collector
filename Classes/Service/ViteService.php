@@ -385,7 +385,7 @@ class ViteService
                 $identifier,
                 $cssSource,
                 $attributes,
-                [...$assetOptions, 'priority' => true]
+                $assetOptions
             );
             return;
         }
