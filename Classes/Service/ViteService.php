@@ -129,7 +129,8 @@ class ViteService
         bool $addCss = true,
         array $assetOptions = [],
         array $scriptTagAttributes = [],
-        array $cssTagAttributes = []
+        array $cssTagAttributes = [],
+        bool $inlineCss = false,
     ): void {
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
@@ -171,7 +172,6 @@ class ViteService
         }
 
         if ($addCss) {
-            $inlineCss = $this->shouldInlineCss($cssTagAttributes);
             $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
 
             if ($entryPoint->isCss()) {
@@ -351,16 +351,10 @@ class ViteService
 
     protected function prepareCssAttributes(array $attributes): array
     {
-        unset($attributes['inline']);
         if ($attributes['disabled'] ?? false) {
             $attributes['disabled'] = 'disabled';
         }
         return $attributes;
-    }
-
-    protected function shouldInlineCss(array $attributes): bool
-    {
-        return (bool)($attributes['inline'] ?? false);
     }
 
     protected function addCssAsset(
