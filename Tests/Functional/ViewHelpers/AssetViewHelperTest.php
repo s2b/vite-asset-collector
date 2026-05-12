@@ -130,7 +130,8 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset
                     manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
                     entry="Main.js"
-                    cssTagAttributes="{inline: 1, media: \'print\'}"
+                    cssTagAttributes="{media: \'print\'}"
+                    inlineCss="1"
                 />',
                 'javaScripts' => [
                     'vite:Main.js' => [
@@ -151,7 +152,8 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'template' => '<vite:asset
                     manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
                     entry="Main.js"
-                    cssTagAttributes="{inline: 1, media: \'print\'}"
+                    cssTagAttributes="{media: \'print\'}"
+                    inlineCss="1"
                     priority="1"
                 />',
                 'priorityJavaScripts' => [
