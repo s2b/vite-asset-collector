@@ -34,6 +34,8 @@ jobs:
     steps:
       -
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
 
       -
         name: Setup PHP
@@ -60,16 +62,23 @@ jobs:
 
       -
         name: Set composer minimum-stability
-        run: composer config minimum-stability ${{ inputs.stability }}
+        env:
+          INPUTS_STABILITY: ${{ inputs.stability }}
+        run: composer config minimum-stability ${INPUTS_STABILITY}
 
       -
         name: Remove selected composer packages
-        run: composer remove --no-update --dev ${{ inputs.composer-remove }}
+        env:
+          INPUTS_COMPOSER_REMOVE: ${{ inputs.composer-remove }}
+        run: composer remove --no-update --dev ${INPUTS_COMPOSER_REMOVE}
         if: inputs.composer-remove != ''
+
 
       -
         name: Install composer dependencies
-        run: composer up --with typo3/cms-core:"${{ inputs.typo3-version }}" --with typo3/cms-fluid:"${{ inputs.typo3-version }}" --with typo3/cms-extbase:"${{ inputs.typo3-version }}" --with typo3/cms-backend:"${{ inputs.typo3-version }}" --with typo3/cms-frontend:"${{ inputs.typo3-version }}" --prefer-dist --no-progress
+        env:
+          INPUTS_TYPO3_VERSION: ${{ inputs.typo3-version }}
+        run: composer up --with typo3/cms-core:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-fluid:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-extbase:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-backend:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-frontend:"${INPUTS_TYPO3_VERSION}" --prefer-dist --no-progress
 
       -
         name: Unit Testing
