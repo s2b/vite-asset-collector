@@ -44,7 +44,7 @@
 		"typo3/cms": {
 			"web-dir": ".Build/web",
 			"extension-key": "vite_asset_collector",
-			"version": "1.18.0",
+			"version": "1.18.1",
 			"Package": {
 				"providesPackages": {
 					"symfony/console": ""
