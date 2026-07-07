@@ -16,6 +16,7 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -28,7 +29,8 @@ class ViteService
         private readonly FrontendInterface $cache,
         protected readonly AssetCollector $assetCollector,
         protected readonly PackageManager $packageManager,
-        protected readonly ExtensionConfiguration $extensionConfiguration
+        protected readonly ExtensionConfiguration $extensionConfiguration,
+        protected readonly PageRenderer $pageRenderer
     ) {}
 
     public function getDefaultManifestFile(): string
@@ -131,6 +133,7 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = [],
         bool $inlineCss = false,
+        bool $preloadModules = false,
     ): void {
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
@@ -160,6 +163,10 @@ class ViteService
 
         $entryPoint = $manifest->get($entry);
 
+        $imports = $addCss || $preloadModules
+            ? $manifest->getImportsForEntrypoint($entry, true)
+            : [];
+
         if (!$entryPoint->isCss()) {
             $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
 
@@ -184,7 +191,7 @@ class ViteService
                 );
             }
 
-            foreach ($manifest->getImportsForEntrypoint($entry, true) as $import) {
+            foreach ($imports as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes));
                 foreach ($import->css as $file) {
                     $this->addCssAsset(
@@ -205,6 +212,14 @@ class ViteService
                     $assetOptions,
                     $inlineCss
                 );
+            }
+        }
+
+        if ($preloadModules && !$entryPoint->isCss()) {
+            foreach ($imports as $import) {
+                if (!$import->isCss()) {
+                    $this->addModulePreload($outputDir . $import->file);
+                }
             }
         }
     }
@@ -390,5 +405,14 @@ class ViteService
             $attributes,
             $assetOptions
         );
+    }
+
+    protected function addModulePreload(string $assetPath): void
+    {
+        // PageRenderer discards identical tags, so shared chunks are preloaded once
+        $this->pageRenderer->addHeaderData('<link ' . GeneralUtility::implodeAttributes([
+            'rel' => 'modulepreload',
+            'href' => PathUtility::getAbsoluteWebPath($assetPath),
+        ], true) . '>');
     }
 }

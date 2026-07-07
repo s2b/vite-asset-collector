@@ -73,6 +73,13 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         $this->registerArgument('devTagAttributes', 'array', 'HTML attributes that should be added to script tags that point to the vite dev server', false, []);
         $this->registerArgument('scriptTagAttributes', 'array', 'HTML attributes that should be added to script tags for built JavaScript assets', false, []);
         $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
+        $this->registerArgument(
+            'preloadModules',
+            'boolean',
+            'If set to "true", <link rel="modulepreload"> tags are added for all JavaScript chunks that are statically imported by the entry point (production mode only). These tags are always rendered in the HTML head, independently of the "priority" argument.',
+            false,
+            false
+        );
         $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag. Note that this is currently experimental due to missing path rewriting for asset files.', false, false);
         $this->registerArgument('cssTagAttributes', 'array', 'Additional attributes for css link tags.', false, []);
         $this->registerArgument(
@@ -114,6 +121,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
                 $this->arguments['scriptTagAttributes'],
                 $this->arguments['cssTagAttributes'],
                 $this->arguments['inlineCss'],
+                $this->arguments['preloadModules'],
             );
         }
         return '';
