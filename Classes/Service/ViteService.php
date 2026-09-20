@@ -85,7 +85,7 @@ class ViteService
             $this->assetCollector->addStyleSheet(
                 "vite:{$entry}",
                 (string)$devServerUri->withPath($entry),
-                $cssTagAttributes,
+                $this->prepareCssAttributes($cssTagAttributes),
                 $assetOptions
             );
         } else {
