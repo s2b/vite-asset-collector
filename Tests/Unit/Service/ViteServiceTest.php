@@ -666,7 +666,6 @@ final class ViteServiceTest extends UnitTestCase
                     'EXT:test_extension/Resources/Private/Assets/test.txt',
                     $fixtureDir . 'test_extension/Resources/Private/Assets/test.txt',
                 ],
-                // TODO remove when support for symlinks is dropped with v2
                 [
                     'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
                     $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
