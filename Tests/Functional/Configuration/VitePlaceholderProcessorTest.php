@@ -47,8 +47,8 @@ final class VitePlaceholderProcessorTest extends AbstractViteFunctionalTestCase
     public function invalidPlaceholdersInYamlFile(): void
     {
         $this->expectException(ViteException::class);
-        $this->expectExceptionCode(1694537554);
+        $this->expectExceptionCode(1683200522);
         $yamlLoader = GeneralUtility::makeInstance(YamlFileLoader::class);
-        $result = $yamlLoader->load(self::getInstancePath() . '/fileadmin/Fixtures/VitePlaceholderProcessor/emptyManifest.yaml');
+        $yamlLoader->load(self::getInstancePath() . '/fileadmin/Fixtures/VitePlaceholderProcessor/emptyManifest.yaml');
     }
 }

@@ -9,7 +9,8 @@
 		],
 		"file": "assets/Main-4483b920.js",
 		"isEntry": true,
-		"src": "Main.js"
+		"src": "Main.js",
+		"name": "Main"
 	},
 	"Alt.css": {
 		"file": "assets/Alt-973bb662.css",

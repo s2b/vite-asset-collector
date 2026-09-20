@@ -6,12 +6,15 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
@@ -208,7 +211,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
 
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext();
+        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
         $context->getTemplatePaths()->setTemplateSource($template);
         (new TemplateView($context))->render();
 
@@ -241,13 +244,9 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     #[Test]
     public function renderWithDevServer(): void
     {
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '1',
-            'devServerUri' => 'https://localhost:5173',
-        ]);
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext();
+        $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
         $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />');
         (new TemplateView($context))->render();
 
@@ -277,13 +276,9 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     #[Test]
     public function renderCssEntrypointWithDevServer(): void
     {
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '1',
-            'devServerUri' => 'https://localhost:5173',
-        ]);
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext();
+        $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
         $context->getTemplatePaths()->setTemplateSource('<vite:asset
             manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json"
             entry="Main.scss"
@@ -322,7 +317,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => '',
         ]);
 
-        $context = $this->createRenderingContext();
+        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
         $context->getTemplatePaths()->setTemplateSource('<vite:asset entry="Default.js" />');
 
         $this->expectException(ViteException::class);
@@ -330,14 +325,15 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         (new TemplateView($context))->render();
     }
 
-    protected function createRenderingContext(): RenderingContextInterface
+    protected function createRenderingContext(bool $useDevServer, UriInterface $devServerUri): RenderingContextInterface
     {
         $context = $this->get(RenderingContextFactory::class)->create();
         $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
 
         $request = (new ServerRequest())
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('extbase', new ExtbaseRequestParameters());
+            ->withAttribute('extbase', new ExtbaseRequestParameters())
+            ->withAttribute('vite.context', new ViteContext(useDevServer: $useDevServer, devServer: $devServerUri));
 
         $context->setAttribute(ServerRequestInterface::class, $request);
 
