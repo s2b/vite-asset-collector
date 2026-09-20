@@ -288,22 +288,13 @@ class ViteService
         return $outputDir . '/';
     }
 
-    // TODO remove $external argument with next major version
-    protected function prepareAssetPath(string $assetPath, bool $external = true): string
+    protected function prepareAssetPath(string $assetPath): string
     {
         $assetPath = PathUtility::getAbsoluteWebPath($assetPath);
         // TODO adjust this when support for TYPO3 v13 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13
             ? 'URI:' . $assetPath
             : $assetPath;
-    }
-
-    /**
-     * @deprecated will be removed with v2
-     */
-    protected function useExternalFlag(): bool
-    {
-        return true;
     }
 
     /**
