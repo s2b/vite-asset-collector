@@ -25,6 +25,13 @@ final class ViteManifestTest extends UnitTestCase
         );
     }
 
+    #[Test]
+    public function getOriginalFile(): void
+    {
+        $manifestPath = realpath(__DIR__ . '/../../../Fixtures/MultipleEntries/.vite/manifest.json');
+        self::assertSame($manifestPath, (ViteManifest::fromFile($manifestPath))->getOriginalPath());
+    }
+
     public static function getItemDataProvider(): array
     {
         return [
