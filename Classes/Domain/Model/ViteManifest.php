@@ -6,17 +6,19 @@ namespace Praetorius\ViteAssetCollector\Domain\Model;
 
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 
-final class ViteManifest
+final readonly class ViteManifest
 {
-    /** @var array<string, ViteManifestItem> */
-    private array $items;
+    /**
+     * @param array<string, ViteManifestItem> $items
+     */
+    public function __construct(
+        private array $items,
+        private string $originalPath = 'manifest.json'
+    ) {}
 
-    public function __construct(string $jsonString, string $fileName = 'manifest.json')
+    public function getOriginalPath(): string
     {
-        $manifest = $this->validateAndSanitize($jsonString, $fileName);
-        foreach ($manifest as $identifier => $item) {
-            $this->items[$identifier] = ViteManifestItem::fromArray($item, $identifier);
-        }
+        return $this->originalPath;
     }
 
     public function get(string $entrypoint): ?ViteManifestItem
@@ -60,19 +62,6 @@ final class ViteManifest
         return $imports;
     }
 
-    private function validateAndSanitize($jsonString, $fileName): array
-    {
-        $manifest = json_decode($jsonString, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ViteException(sprintf(
-                'Invalid vite manifest file "%s": %s.',
-                $fileName,
-                json_last_error_msg()
-            ), 1683200523);
-        }
-        return $manifest;
-    }
-
     public static function fromFile(string $path): self
     {
         $manifestJson = file_get_contents($path);
@@ -82,6 +71,18 @@ final class ViteManifest
                 $path
             ), 1684256597);
         }
-        return new self($manifestJson, $path);
+        $manifest = json_decode($manifestJson, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ViteException(sprintf(
+                'Invalid vite manifest file "%s": %s.',
+                $path,
+                json_last_error_msg()
+            ), 1683200523);
+        }
+        $items = [];
+        foreach ($manifest as $identifier => $item) {
+            $items[$identifier] = ViteManifestItem::fromArray($item, $identifier);
+        }
+        return new self($items, $path);
     }
 }

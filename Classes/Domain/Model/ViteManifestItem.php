@@ -6,18 +6,18 @@ namespace Praetorius\ViteAssetCollector\Domain\Model;
 
 use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
 
-final class ViteManifestItem
+final readonly class ViteManifestItem
 {
     public function __construct(
-        public readonly string $identifier,
-        public readonly ?string $src,
-        public readonly string $file,
-        public readonly bool $isEntry,
-        public readonly bool $isDynamicEntry,
-        public readonly array $assets,
-        public readonly array $css,
-        public readonly array $imports,
-        public readonly array $dynamicImports,
+        public string $identifier,
+        public ?string $src,
+        public string $file,
+        public bool $isEntry,
+        public bool $isDynamicEntry,
+        public array $assets,
+        public array $css,
+        public array $imports,
+        public array $dynamicImports,
     ) {}
 
     public static function fromArray(array $item, string $identifier): self
