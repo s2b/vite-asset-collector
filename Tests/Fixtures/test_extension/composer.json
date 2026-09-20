@@ -2,5 +2,14 @@
 	"name": "praetorius/vite-asset-collector-test-extension",
 	"description": "Test extension for vite-asset-collector",
 	"license": "GPL-2.0-or-later",
-	"type": "typo3-extension"
+	"type": "typo3-extension",
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "test_extension",
+			"version": "1.0.0",
+			"Package": {
+				"providesPackages": {}
+			}
+		}
+	}
 }

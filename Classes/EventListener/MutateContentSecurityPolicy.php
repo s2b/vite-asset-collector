@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\EventListener;
 
-use Praetorius\ViteAssetCollector\Service\ViteService;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
@@ -15,22 +14,18 @@ use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 #[AsEventListener('praetorius/vite-asset-collector-csp')]
 final class MutateContentSecurityPolicy
 {
-    public function __construct(
-        private readonly ViteService $viteService,
-    ) {}
-
     public function __invoke(PolicyMutatedEvent $event): void
     {
-        if (!$this->viteService->useDevServer()) {
+        /** @var ?ViteContext */
+        $viteContext = $event->request?->getAttribute('vite.context');
+        if (!$viteContext?->useDevServer()) {
             return;
         }
 
-        $request = $event->request ?? $GLOBALS['TYPO3_REQUEST'] ?? new ServerRequest();
-        $viteServerUri = $this->viteService->determineDevServer($request);
         $uris = [
-            new UriValue('http://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
-            new UriValue('https://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
-            new UriValue('wss://' . $viteServerUri->getHost() . ':' . $viteServerUri->getPort()),
+            new UriValue('http://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
+            new UriValue('https://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
+            new UriValue('wss://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
         ];
 
         // Allow viteServer url in CSP

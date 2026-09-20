@@ -1,17 +1,19 @@
 <?php
 
+use Praetorius\ViteAssetCollector\Middleware\ViteContextMiddleware;
+
 return [
     'frontend' => [
-        'praetorius/vite-asset-collector/add-csp-nonce-meta-tag' => [
-            'target' => 'Praetorius\ViteAssetCollector\Middleware\AddCspNonceMetaTag',
+        'praetorius/vite-asset-collector/vite-context' => [
+            'target' => ViteContextMiddleware::class,
             'after' => [
                 'typo3/cms-frontend/csp-headers',
             ],
         ],
     ],
     'backend' => [
-        'praetorius/vite-asset-collector/add-csp-nonce-meta-tag' => [
-            'target' => 'Praetorius\ViteAssetCollector\Middleware\AddCspNonceMetaTag',
+        'praetorius/vite-asset-collector/vite-context' => [
+            'target' => ViteContextMiddleware::class,
             'after' => [
                 'typo3/cms-backend/csp-headers',
             ],

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
-use Praetorius\ViteAssetCollector\Exception\ViteException;
-use Praetorius\ViteAssetCollector\Service\ViteService;
+use Praetorius\ViteAssetCollector\Asset\AssetFile;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
@@ -72,7 +74,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  */
 final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
-    protected ViteService $viteService;
+    public function __construct(
+        private AssetUriGenerator $assetUriGenerator,
+        private ManifestFactory $manifestFactory,
+    ) {}
 
     public function initializeArguments(): void
     {
@@ -91,34 +96,18 @@ final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
 
     public function render(): string
     {
-        if ($this->viteService->useDevServer()) {
-            return $this->viteService->getAssetPathFromDevServer(
-                $this->viteService->determineDevServer($this->getRequest()),
-                $this->arguments['file']
-            );
+        $viteContext = $this->getViteContext();
+        $file = AssetFile::create($this->arguments['file']);
+        if ($viteContext?->useDevServer()) {
+            return (string)$this->assetUriGenerator->generateDevUri($file, $viteContext->getDevServer());
         }
-
-        return $this->viteService->getAssetPathFromManifest(
-            $this->getManifest(),
-            $this->arguments['file']
-        );
+        $manifest = $this->manifestFactory->createFromConfiguredPath($this->arguments['manifest']);
+        return (string)$this->assetUriGenerator->generateUri($file, $manifest);
     }
 
-    private function getManifest(): string
+    private function getViteContext(): ?ViteContext
     {
-        $manifest = $this->arguments['manifest'] ?? $this->viteService->getDefaultManifestFile();
-
-        if (!is_string($manifest) || $manifest === '') {
-            throw new ViteException(
-                sprintf(
-                    'Unable to determine vite manifest from specified argument and default manifest: %s',
-                    $manifest
-                ),
-                1684528724
-            );
-        }
-
-        return $manifest;
+        return $this->renderingContext->getAttribute(ServerRequestInterface::class)->getAttribute('vite.context');
     }
 
     /**
@@ -132,15 +121,5 @@ final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
                 E_USER_DEPRECATED,
             );
         }
-    }
-
-    private function getRequest(): ServerRequestInterface
-    {
-        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
-    }
-
-    public function injectViteService(ViteService $viteService): void
-    {
-        $this->viteService = $viteService;
     }
 }
