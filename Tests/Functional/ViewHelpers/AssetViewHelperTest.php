@@ -283,6 +283,47 @@ final class AssetViewHelperTest extends FunctionalTestCase
     }
 
     #[Test]
+    public function renderCssEntrypointWithDevServer(): void
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '1',
+            'devServerUri' => 'https://localhost:5173',
+        ]);
+
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext();
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset
+            manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json"
+            entry="Main.scss"
+            devTagAttributes="{data-dev: \'1\'}"
+            cssTagAttributes="{media: \'print\', disabled: 1}"
+        />');
+        (new TemplateView($context))->render();
+
+        self::assertEquals(
+            [
+                'vite' => [
+                    'source' => 'https://localhost:5173/@vite/client',
+                    'attributes' => ['type' => 'module', 'data-dev' => '1'],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                ],
+            ],
+            $assetCollector->getJavaScripts(false)
+        );
+        self::assertEquals(
+            [
+                'vite:Main.scss' => [
+                    'source' => 'https://localhost:5173/Main.scss',
+                    'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                ],
+            ],
+            $assetCollector->getStyleSheets(false)
+        );
+    }
+
+    #[Test]
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
