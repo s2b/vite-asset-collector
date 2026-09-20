@@ -49,7 +49,7 @@ uses the production build, the dev server is **not available** in that context.
     vite build --watch
 
 You can learn more about this in the
-`Yaml Processor documentation <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:yaml-processor>`_
+`Yaml Processor documentation <https://docs.typo3.org/permalink/praetorius-vite-asset-collector:yaml-processor>`_
 as well as the `RTE Configuration Examples <https://docs.typo3.org/permalink/typo3/cms-rte-ckeditor:config-examples>`_.
 
 ..  _backend-modules:
