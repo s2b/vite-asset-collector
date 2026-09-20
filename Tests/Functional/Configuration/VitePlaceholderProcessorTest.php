@@ -36,15 +36,15 @@ final class VitePlaceholderProcessorTest extends FunctionalTestCase
         self::assertEquals(
             [
                 'testWithoutManifest' => [
-                    'withoutQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
-                    'singleQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
-                    'doubleQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                    'withoutQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                    'singleQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                    'doubleQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',
                 ],
                 'testWithManifest' => [
-                    'withoutQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
-                    'singleQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
-                    'doubleQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
-                    'whitespace' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
+                    'withoutQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
+                    'singleQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
+                    'doubleQuotes' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
+                    'whitespace' => '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/MultipleEntries/assets/Main-973bb662.css',
                 ],
             ],
             $result
@@ -55,8 +55,8 @@ final class VitePlaceholderProcessorTest extends FunctionalTestCase
     public function invalidPlaceholdersInYamlFile(): void
     {
         $this->expectException(ViteException::class);
-        $this->expectExceptionCode(1694537554);
+        $this->expectExceptionCode(1683200522);
         $yamlLoader = GeneralUtility::makeInstance(YamlFileLoader::class);
-        $result = $yamlLoader->load(self::getInstancePath() . '/fileadmin/Fixtures/VitePlaceholderProcessor/emptyManifest.yaml');
+        $yamlLoader->load(self::getInstancePath() . '/fileadmin/Fixtures/VitePlaceholderProcessor/emptyManifest.yaml');
     }
 }

@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
-use Praetorius\ViteAssetCollector\Exception\ViteException;
-use Praetorius\ViteAssetCollector\Service\ViteService;
+use Praetorius\ViteAssetCollector\Asset\Asset;
+use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
+use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
@@ -56,7 +60,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  */
 final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
-    protected ViteService $viteService;
+    public function __construct(
+        private readonly ManifestFactory $manifestFactory,
+        private readonly AssetRenderer $assetRenderer,
+    ) {}
 
     public function initializeArguments(): void
     {
@@ -70,11 +77,18 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             'string',
             'Identifier of the desired vite entrypoint; this is the value specified as "input" in the vite configuration file. Can be omitted if manifest file exists and only one entrypoint is present.',
         );
+
+        // TODO deprecate & migrate
+        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
+        $this->registerArgument('csp', 'bool', 'Whether to collect a CSP hash value for this asset (default: true for external files, false for inline)', false, null);
+
+        // TODO deprecate & remove (event?)
         $this->registerArgument('devTagAttributes', 'array', 'HTML attributes that should be added to script tags that point to the vite dev server', false, []);
-        $this->registerArgument('scriptTagAttributes', 'array', 'HTML attributes that should be added to script tags for built JavaScript assets', false, []);
+
+        $this->registerArgument('scriptTagAttributes', 'array', 'Additional HTML attributes for script tags', false, []);
         $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
         $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag. Note that this is currently experimental due to missing path rewriting for asset files.', false, false);
-        $this->registerArgument('cssTagAttributes', 'array', 'Additional attributes for css link tags.', false, []);
+        $this->registerArgument('cssTagAttributes', 'array', 'Additional HTML attributes for css link tags.', false, []);
         $this->registerArgument(
             'priority',
             'boolean',
@@ -82,58 +96,79 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             false,
             false
         );
-        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
     }
 
-    public function render(): string
+    public function render(): void
     {
-        $assetOptions = [
-            'priority' => $this->arguments['priority'],
-            'useNonce' => $this->arguments['useNonce'],
-        ];
-
-        $manifest = $this->getManifest();
-
+        $viteContext = $this->getViteContext();
+        $manifest = null;
         $entry = $this->arguments['entry'];
-        $entry ??= $this->viteService->determineEntrypointFromManifest($manifest);
-
-        if ($this->viteService->useDevServer()) {
-            $this->viteService->addAssetsFromDevServer(
-                $this->viteService->determineDevServer($this->getRequest()),
-                $entry,
-                $assetOptions,
-                $this->arguments['devTagAttributes'],
-                $this->arguments['cssTagAttributes']
-            );
-        } else {
-            $this->viteService->addAssetsFromManifest(
-                $manifest,
-                $entry,
-                $this->arguments['addCss'],
-                $assetOptions,
-                $this->arguments['scriptTagAttributes'],
-                $this->arguments['cssTagAttributes'],
-                $this->arguments['inlineCss'],
-            );
+        if (!$viteContext?->useDevServer() || $entry === null) {
+            $manifest = $this->manifestFactory->createFromConfiguredPath($this->arguments['manifest']);
+            $entry ??= $manifest->getOnlyEntrypoint()->identifier;
         }
-        return '';
+
+        $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
+        /** @var CssEmbedding */
+        $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName, $this->createFallbackCssEmbedding());
+        /** @var ScriptEmbedding */
+        $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName, $this->createFallbackScriptEmbedding());
+        $asset = Asset::create(
+            entry: $entry,
+            cssEmbedding: $cssEmbedding,
+            scriptEmbedding: $scriptEmbedding,
+            manifest: $manifest,
+            csp: $this->resolveCspOption($cssEmbedding->inline || $scriptEmbedding->inline),
+        );
+
+        if ($viteContext?->useDevServer()) {
+            $this->assetRenderer->renderDevAsset($asset, $viteContext->getDevServer(), $this->getRequest());
+        } else {
+            $this->assetRenderer->renderAsset($asset, $this->getRequest());
+        }
     }
 
-    private function getManifest(): string
+    private function createFallbackCssEmbedding(): CssEmbedding
     {
-        $manifest = $this->arguments['manifest'] ?? $this->viteService->getDefaultManifestFile();
+        return new CssEmbedding(
+            priority: $this->arguments['priority'],
+            ignore: !$this->arguments['addCss'],
+            inline: $this->arguments['inlineCss'],
+            additionalAttributes: $this->arguments['cssTagAttributes'],
+        );
+    }
 
-        if (!is_string($manifest) || $manifest === '') {
-            throw new ViteException(
-                sprintf(
-                    'Unable to determine vite manifest from specified argument and default manifest: %s',
-                    $manifest
-                ),
-                1684528724
-            );
+    private function createFallbackScriptEmbedding(): ScriptEmbedding
+    {
+        return new ScriptEmbedding(
+            priority: $this->arguments['priority'],
+            additionalAttributes: $this->arguments['scriptTagAttributes'],
+        );
+    }
+
+    private function resolveCspOption(bool $isInline): bool
+    {
+        $csp = $this->arguments['csp'];
+        $useNonce = $this->arguments['useNonce'];
+        // Deprecated useNonce argument maps to csp
+        if ($useNonce !== null) {
+            return (bool)$useNonce;
         }
+        if ($csp !== null) {
+            return (bool)$csp;
+        }
+        // Default: true for external files (allows hash collection), false for inline
+        return !$isInline;
+    }
 
-        return $manifest;
+    private function getViteContext(): ?ViteContext
+    {
+        return $this->getRequest()->getAttribute('vite.context');
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
 
     /**
@@ -147,15 +182,5 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
                 E_USER_DEPRECATED,
             );
         }
-    }
-
-    private function getRequest(): ServerRequestInterface
-    {
-        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
-    }
-
-    public function injectViteService(ViteService $viteService): void
-    {
-        $this->viteService = $viteService;
     }
 }

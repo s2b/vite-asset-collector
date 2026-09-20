@@ -6,6 +6,10 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Praetorius\ViteAssetCollector\Asset\AssetPathResolver;
+use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
 use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
@@ -14,6 +18,7 @@ use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ViteServiceTest extends UnitTestCase
@@ -37,7 +42,8 @@ final class ViteServiceTest extends UnitTestCase
     #[DataProvider('useDevServerDataProvider')]
     public function useDevServer(string $useDevServer, bool $expected): void
     {
-        self::assertEquals($expected, $this->createViteService(useDevServer: $useDevServer)->useDevServer());
+        $request = new ServerRequest(new Uri('https://some.ddev.site/path/to/file'));
+        self::assertEquals($expected, $this->createViteService(useDevServer: $useDevServer)->useDevServer($request));
     }
 
     public static function determineDevServerDataProvider(): array
@@ -691,11 +697,14 @@ final class ViteServiceTest extends UnitTestCase
                 ['vite_asset_collector', 'devServerUri', $devServerUri],
             ]);
 
+        $assetPathResolver = new AssetPathResolver($packageManager);
+        $assetUriGenerator = new AssetUriGenerator($assetPathResolver);
         return new ViteService(
-            new NullFrontend('manifest'),
-            $assetCollector,
-            $packageManager,
-            $extensionConfiguration
+            $extensionConfiguration,
+            $assetPathResolver,
+            $assetUriGenerator,
+            new AssetRenderer($assetCollector, self::createStub(PageRenderer::class), $assetPathResolver, $assetUriGenerator),
+            new ManifestFactory(new NullFrontend('manifest'), $extensionConfiguration),
         );
     }
 

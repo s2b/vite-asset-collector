@@ -6,9 +6,11 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional;
 
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
@@ -35,7 +37,7 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
             '<vac:resource.vite manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" file="Main.css" />'
         );
         self::assertEquals(
-            'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
+            '/fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
             (new TemplateView($context))->render()
         );
     }
@@ -65,7 +67,8 @@ final class ViewHelperAliasesTest extends FunctionalTestCase
 
         $request = (new ServerRequest())
             ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('extbase', new ExtbaseRequestParameters());
+            ->withAttribute('extbase', new ExtbaseRequestParameters())
+            ->withAttribute('vite.context', new ViteContext(useDevServer: false, devServer: new Uri('/')));
 
         $context->setAttribute(ServerRequestInterface::class, $request);
 

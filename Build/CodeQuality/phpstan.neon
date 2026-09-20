@@ -12,10 +12,12 @@ parameters:
 	excludePaths:
 		- ../../.Build/
 		- ../../Build/
+		- ../../var/ (?)
 
 	typo3:
 		requestGetAttributeMapping:
 			nonce: TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce
+			vite.context: Praetorius\ViteAssetCollector\Context\ViteContext
 
 	ignoreErrors:
 		-

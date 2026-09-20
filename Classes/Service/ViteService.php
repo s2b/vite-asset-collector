@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Service;
 
-use Praetorius\ViteAssetCollector\Domain\Model\ViteManifest;
-use Praetorius\ViteAssetCollector\Exception\ViteException;
-use Praetorius\ViteAssetCollector\Utility\VitePathUtility;
+use Praetorius\ViteAssetCollector\Asset\Asset;
+use Praetorius\ViteAssetCollector\Asset\AssetFile;
+use Praetorius\ViteAssetCollector\Asset\AssetPathResolver;
+use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
+use Praetorius\ViteAssetCollector\Event\BuildViteContextEvent;
+use Praetorius\ViteAssetCollector\EventListener\BuildViteContext;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Core\Http\ServerRequest;
 
-class ViteService
+readonly class ViteService
 {
     public const DEFAULT_PORT = 5173;
 
     public function __construct(
-        #[Autowire(service: 'cache.viteassetcollector_manifest')]
-        private readonly FrontendInterface $cache,
-        protected readonly AssetCollector $assetCollector,
-        protected readonly PackageManager $packageManager,
-        protected readonly ExtensionConfiguration $extensionConfiguration
+        protected ExtensionConfiguration $extensionConfiguration,
+        protected AssetPathResolver $assetPathResolver,
+        protected AssetUriGenerator $assetUriGenerator,
+        protected AssetRenderer $assetRenderer,
+        protected ManifestFactory $manifestFactory,
     ) {}
 
     public function getDefaultManifestFile(): string
@@ -36,31 +36,20 @@ class ViteService
         return $this->extensionConfiguration->get('vite_asset_collector', 'defaultManifest');
     }
 
-    public function useDevServer(): bool
+    public function useDevServer(ServerRequestInterface $request): bool
     {
-        $useDevServer = $this->extensionConfiguration->get('vite_asset_collector', 'useDevServer');
-        if ($useDevServer === 'auto') {
-            return Environment::getContext()->isDevelopment();
-        }
-        return (bool)$useDevServer;
+        $event = new BuildViteContextEvent($request);
+        (new BuildViteContext($this->extensionConfiguration))($event);
+        $viteContext = $event->getViteContext();
+        return $viteContext->useDevServer();
     }
 
     public function determineDevServer(ServerRequestInterface $request): UriInterface
     {
-        $devServerUri = $this->extensionConfiguration->get('vite_asset_collector', 'devServerUri');
-        if ($devServerUri === 'auto') {
-            // This constant is used by ddev-vite-sidecar and contains the full DDEV server uri
-            $serverUri = getenv('VITE_SERVER_URI');
-            if ($serverUri) {
-                return new Uri($serverUri);
-            }
-
-            // This constant is used by ddev-viteserve and contains only the port that can be
-            // combined with any ddev domain of the current project
-            $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-            return $request->getUri()->withPath('')->withPort((int)$vitePort);
-        }
-        return new Uri($devServerUri);
+        $event = new BuildViteContextEvent($request);
+        (new BuildViteContext($this->extensionConfiguration))($event);
+        $viteContext = $event->getViteContext();
+        return $viteContext?->getDevServer();
     }
 
     public function addAssetsFromDevServer(
@@ -70,56 +59,35 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = [],
     ): void {
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
-        $assetOptions = $this->prepareAssetOptions($assetOptions);
-
-        $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
-        $this->assetCollector->addJavaScript(
-            'vite',
-            (string)$devServerUri->withPath('@vite/client'),
-            ['type' => 'module'],
-            [...$assetOptions, 'priority' => true],
+        $this->assetRenderer->renderDevAsset(
+            Asset::create(
+                entry: $entry,
+                cssEmbedding: new CssEmbedding(
+                    priority: $assetOptions['priority'] ?? false,
+                    additionalAttributes: $cssTagAttributes,
+                ),
+                scriptEmbedding: new ScriptEmbedding(
+                    priority: $assetOptions['priority'] ?? false,
+                    additionalAttributes: $scriptTagAttributes,
+                ),
+                csp: $assetOptions['useNonce'] ?? false,
+            ),
+            $devServerUri,
+            new ServerRequest(),
         );
-        if (VitePathUtility::isCssFile($entry)) {
-            $this->assetCollector->addStyleSheet(
-                "vite:{$entry}",
-                (string)$devServerUri->withPath($entry),
-                $this->prepareCssAttributes($cssTagAttributes),
-                $assetOptions
-            );
-        } else {
-            $this->assetCollector->addJavaScript(
-                "vite:{$entry}",
-                (string)$devServerUri->withPath($entry),
-                ['type' => 'module', ...$scriptTagAttributes],
-                $assetOptions
-            );
-        }
     }
 
     public function getAssetPathFromDevServer(
         UriInterface $devServerUri,
         string $assetFile,
     ): string {
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
-        return (string)$devServerUri->withPath($assetFile);
+        return (string)$this->assetUriGenerator->generateDevUri(AssetFile::create($assetFile), $devServerUri);
     }
 
     public function determineEntrypointFromManifest(string $manifestFile): string
     {
-        $manifestFile = $this->resolveManifestFile($manifestFile);
-        $manifest = $this->parseManifestFile($manifestFile);
-
-        $entrypoints = $manifest->getValidEntrypoints();
-        if (count($entrypoints) !== 1) {
-            throw new ViteException(sprintf(
-                'Appropriate vite entrypoint could not be determined automatically. Expected 1 entrypoint in "%s", found %d.',
-                $manifestFile,
-                count($entrypoints)
-            ), 1683552723);
-        }
-        $onlyEntrypoint = array_pop($entrypoints);
-        return $onlyEntrypoint->identifier;
+        $manifest = $this->manifestFactory->createFromFilePath($manifestFile);
+        return $manifest->getOnlyEntrypoint()->identifier;
     }
 
     public function addAssetsFromManifest(
@@ -131,69 +99,24 @@ class ViteService
         array $cssTagAttributes = [],
         bool $inlineCss = false,
     ): void {
-        $assetOptions = $this->prepareAssetOptions($assetOptions);
-        $manifestFile = $this->resolveManifestFile($manifestFile);
-        $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
-        $manifest = $this->parseManifestFile($manifestFile);
-
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
-        if (!$manifest->get($entry)?->isEntry) {
-            throw new ViteException(sprintf(
-                'Invalid vite entry point "%s" in manifest file "%s".',
-                $entry,
-                $manifestFile
-            ), 1683200524);
-        }
-
-        $entryPoint = $manifest->get($entry);
-
-        if (!$entryPoint->isCss()) {
-            $scriptTagAttributes = $this->prepareScriptAttributes($scriptTagAttributes);
-
-            $this->assetCollector->addJavaScript(
-                "vite:{$entry}",
-                $this->prepareAssetPath($outputDir . $entryPoint->file),
-                ['type' => 'module', ...$scriptTagAttributes],
-                $assetOptions
-            );
-        }
-
-        if ($addCss) {
-            $cssTagAttributes = $this->prepareCssAttributes($cssTagAttributes);
-
-            if ($entryPoint->isCss()) {
-                $this->addCssAsset(
-                    "vite:{$entry}",
-                    $outputDir . $entryPoint->file,
-                    $cssTagAttributes,
-                    $assetOptions,
-                    $inlineCss
-                );
-            }
-
-            foreach ($manifest->getImportsForEntrypoint($entry, true) as $import) {
-                $identifier = md5($import->identifier . '|' . serialize($cssTagAttributes));
-                foreach ($import->css as $file) {
-                    $this->addCssAsset(
-                        "vite:{$identifier}:{$file}",
-                        $outputDir . $file,
-                        $cssTagAttributes,
-                        $assetOptions,
-                        $inlineCss
-                    );
-                }
-            }
-
-            foreach ($manifest->get($entry)->css as $file) {
-                $this->addCssAsset(
-                    "vite:{$entry}:{$file}",
-                    $outputDir . $file,
-                    $cssTagAttributes,
-                    $assetOptions,
-                    $inlineCss
-                );
-            }
-        }
+        $this->assetRenderer->renderAsset(
+            Asset::create(
+                entry: $entry,
+                cssEmbedding: new CssEmbedding(
+                    ignore: !$addCss,
+                    priority: $assetOptions['priority'] ?? false,
+                    additionalAttributes: $cssTagAttributes,
+                    inline: $inlineCss,
+                ),
+                scriptEmbedding: new ScriptEmbedding(
+                    priority: $assetOptions['priority'] ?? false,
+                    additionalAttributes: $scriptTagAttributes,
+                ),
+                manifest: $this->manifestFactory->createFromFilePath($manifestFile),
+                csp: $assetOptions['useNonce'] ?? false,
+            ),
+            new ServerRequest(),
+        );
     }
 
     public function getAssetPathFromManifest(
@@ -201,155 +124,10 @@ class ViteService
         string $assetFile,
         bool $returnWebPath = true
     ): string {
-        $manifestFile = $this->resolveManifestFile($manifestFile);
-        $manifest = $this->parseManifestFile($manifestFile);
-
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
-        if (!$manifest->get($assetFile)) {
-            throw new ViteException(sprintf(
-                'Invalid asset file "%s" in vite manifest file "%s".',
-                $assetFile,
-                $manifestFile
-            ), 1690735353);
+        $manifest = $this->manifestFactory->createFromFilePath($manifestFile);
+        if ($returnWebPath) {
+            return (string)$this->assetUriGenerator->generateUri(AssetFile::create($assetFile), $manifest);
         }
-
-        $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest->get($assetFile)->file;
-        return ($returnWebPath) ? PathUtility::getAbsoluteWebPath($assetPath) : $assetPath;
-    }
-
-    protected function resolveManifestFile(string $manifestFile): string
-    {
-        $resolvedManifestFile = GeneralUtility::getFileAbsFileName($manifestFile);
-        if ($resolvedManifestFile === '' || !file_exists($resolvedManifestFile)) {
-            throw new ViteException(sprintf(
-                'Vite manifest file "%s" was resolved to "%s" and cannot be opened.',
-                $manifestFile,
-                $resolvedManifestFile
-            ), 1683200522);
-        }
-        return $resolvedManifestFile;
-    }
-
-    protected function parseManifestFile(string $manifestFile): ViteManifest
-    {
-        $cacheIdentifier = md5($manifestFile);
-        $manifest = $this->cache->get($cacheIdentifier);
-        if ($manifest === false) {
-            $manifest = ViteManifest::fromFile($manifestFile);
-            $this->cache->set($cacheIdentifier, $manifest);
-        }
-        return $manifest;
-    }
-
-    protected function determineAssetIdentifierFromExtensionPath(string $identifier): string
-    {
-        if (!PathUtility::isExtensionPath($identifier)) {
-            return $identifier;
-        }
-
-        $absolutePath = $this->packageManager->resolvePackagePath($identifier);
-        $file = PathUtility::basename($absolutePath);
-        $dir = PathUtility::dirname($absolutePath);
-        $relativeDirToProjectRoot = $this->stripProjectPath($dir);
-        return $relativeDirToProjectRoot . $file;
-    }
-
-    protected function determineOutputDirFromManifestFile(string $manifestFile): string
-    {
-        // from _assets/vite/.vite/manifest.json to _assets/vite/
-        return PathUtility::dirname(PathUtility::dirname($manifestFile)) . '/';
-    }
-
-    protected function prepareAssetPath(string $assetPath): string
-    {
-        $assetPath = PathUtility::getAbsoluteWebPath($assetPath);
-        // TODO adjust this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13
-            ? 'URI:' . $assetPath
-            : $assetPath;
-    }
-
-    /**
-     * @return string Given path without project prefix, with trailing slash
-     */
-    protected function stripProjectPath(string $path): string
-    {
-        $projectPath = Environment::getProjectPath() . '/';
-        if (str_starts_with($path, $projectPath)) {
-            $path = substr($path, strlen($projectPath));
-        }
-        return rtrim($path, '/') . '/';
-    }
-
-    protected function prepareScriptAttributes(array $attributes): array
-    {
-        foreach (['async', 'defer', 'nomodule'] as $attr) {
-            if ($attributes[$attr] ?? false) {
-                $attributes[$attr] = $attr;
-            }
-        }
-        return $attributes;
-    }
-
-    protected function prepareCssAttributes(array $attributes): array
-    {
-        if ($attributes['disabled'] ?? false) {
-            $attributes['disabled'] = 'disabled';
-        }
-        return $attributes;
-    }
-
-    protected function addCssAsset(
-        string $identifier,
-        string $assetPath,
-        array $attributes,
-        array $assetOptions,
-        bool $inlineCss
-    ): void {
-        if ($inlineCss) {
-            $absoluteAssetPath = GeneralUtility::getFileAbsFileName($assetPath);
-            if ($absoluteAssetPath === '' || !is_file($absoluteAssetPath)) {
-                throw new ViteException(sprintf(
-                    'CSS asset file "%s" was resolved to "%s" and cannot be opened for inline rendering.',
-                    $assetPath,
-                    $absoluteAssetPath
-                ), 1745414701);
-            }
-
-            $cssSource = (string)file_get_contents($absoluteAssetPath);
-            $this->assetCollector->addInlineStyleSheet(
-                $identifier,
-                $cssSource,
-                $attributes,
-                $assetOptions
-            );
-            return;
-        }
-
-        $this->assetCollector->addStyleSheet(
-            $identifier,
-            $this->prepareAssetPath($assetPath),
-            $attributes,
-            $assetOptions
-        );
-    }
-
-    protected function prepareAssetOptions(array $options): array
-    {
-        // The "external" flag has been introduced with TYPO3 v13. It allows bypassing
-        // of the default path preparation by AssetRenderer, including the addition of
-        // cache-busting parameters to all asset files. As this is not necessary for files
-        // generated by vite, which already contain a hash in their file name, this behavior
-        // is avoided with v13. This also improves the behavior of dynamic imports, which
-        // could result in duplicate requests before.
-        // TODO remove external flag once support for TYPO3 v13 is dropped
-        $options['external'] = true;
-        if (isset($options['priority']) && !$options['priority']) {
-            unset($options['priority']);
-        }
-        if (isset($options['useNonce']) && !$options['useNonce']) {
-            unset($options['useNonce']);
-        }
-        return $options;
+        return $this->assetPathResolver->resolveOutputPath(AssetFile::create($assetFile), $manifest);
     }
 }

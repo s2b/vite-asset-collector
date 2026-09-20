@@ -2,16 +2,16 @@
 
 return [
     'frontend' => [
-        'praetorius/vite-asset-collector/add-csp-nonce-meta-tag' => [
-            'target' => 'Praetorius\ViteAssetCollector\Middleware\AddCspNonceMetaTag',
+        'praetorius/vite-asset-collector/vite-assets' => [
+            'target' => 'Praetorius\ViteAssetCollector\Middleware\ViteAssetsMiddleware',
             'after' => [
                 'typo3/cms-frontend/csp-headers',
             ],
         ],
     ],
     'backend' => [
-        'praetorius/vite-asset-collector/add-csp-nonce-meta-tag' => [
-            'target' => 'Praetorius\ViteAssetCollector\Middleware\AddCspNonceMetaTag',
+        'praetorius/vite-asset-collector/vite-assets' => [
+            'target' => 'Praetorius\ViteAssetCollector\Middleware\ViteAssetsMiddleware',
             'after' => [
                 'typo3/cms-backend/csp-headers',
             ],

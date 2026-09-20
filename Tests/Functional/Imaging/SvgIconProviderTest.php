@@ -62,7 +62,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
     {
         $this->svgIconProvider->prepareIconMarkup($this->icon, ['source' => 'typo3.svg']);
         self::assertEquals(
-            '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="16" height="16" alt="" />',
+            '<img src="/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="16" height="16" alt="" />',
             $this->icon->getMarkup()
         );
     }
@@ -95,7 +95,7 @@ final class SvgIconProviderTest extends FunctionalTestCase
         );
 
         self::assertStringContainsString(
-            '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="32" height="32" alt="" />',
+            '<img src="/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="32" height="32" alt="" />',
             $iconMarkup
         );
     }

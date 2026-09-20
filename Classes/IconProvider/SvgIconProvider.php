@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\IconProvider;
 
+use Praetorius\ViteAssetCollector\Asset\AssetFile;
+use Praetorius\ViteAssetCollector\Asset\AssetPathResolver;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
-use Praetorius\ViteAssetCollector\Service\ViteService;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
@@ -16,7 +19,9 @@ use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 class SvgIconProvider extends AbstractSvgIconProvider
 {
     public function __construct(
-        private readonly ViteService $viteService
+        private AssetPathResolver $assetPathResolver,
+        private AssetUriGenerator $assetUriGenerator,
+        private ManifestFactory $manifestFactory,
     ) {}
 
     /**
@@ -28,31 +33,12 @@ class SvgIconProvider extends AbstractSvgIconProvider
             throw new \InvalidArgumentException('[' . $icon->getIdentifier() . '] The option "source" is required and must not be empty', 1460976566);
         }
 
-        $source = $this->viteService->getAssetPathFromManifest(
-            $this->getManifest($options['manifest'] ?? ''),
-            $options['source']
+        $source = (string)$this->assetUriGenerator->generateUri(
+            AssetFile::create($options['source']),
+            $this->manifestFactory->createFromConfiguredPath($options['manifest'] ?? null),
         );
 
         return '<img src="' . htmlspecialchars($source) . '" width="' . $icon->getDimension()->getWidth() . '" height="' . $icon->getDimension()->getHeight() . '" alt="" />';
-    }
-
-    private function getManifest(string $manifest): string
-    {
-        if ($manifest === '') {
-            $manifest = $this->viteService->getDefaultManifestFile();
-        }
-
-        if (!is_string($manifest) || $manifest === '') {
-            throw new ViteException(
-                sprintf(
-                    'Unable to determine vite manifest from specified argument and default manifest: %s',
-                    $manifest
-                ),
-                1684528724
-            );
-        }
-
-        return $manifest;
     }
 
     /**
@@ -64,10 +50,9 @@ class SvgIconProvider extends AbstractSvgIconProvider
             throw new \InvalidArgumentException('The option "source" is required and must not be empty', 1690831431);
         }
 
-        $source = $this->viteService->getAssetPathFromManifest(
-            $this->getManifest($options['manifest'] ?? ''),
-            $options['source'],
-            false
+        $source = $this->assetPathResolver->resolveOutputPath(
+            AssetFile::create($options['source']),
+            $this->manifestFactory->createFromConfiguredPath($options['manifest'] ?? null),
         );
 
         return $this->getInlineSvg($source);

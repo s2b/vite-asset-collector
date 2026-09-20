@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Configuration;
 
-use Praetorius\ViteAssetCollector\Exception\ViteException;
-use Praetorius\ViteAssetCollector\Service\ViteService;
+use Praetorius\ViteAssetCollector\Asset\AssetFile;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Processor\Placeholder\PlaceholderProcessorInterface;
 
 #[Autoconfigure(public: true)]
-final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
+final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInterface
 {
     /**
      * Regular expression to support the following syntax variants:
@@ -25,7 +26,8 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
     public const PLACEHOLDER_PATTERN = '^[\'"]?([^(]*?)[\'"]?(?:\s*,\s*[\'"]?([^(]*?)[\'"]?)?$';
 
     public function __construct(
-        private readonly ViteService $viteService
+        private AssetUriGenerator $assetUriGenerator,
+        private ManifestFactory $manifestFactory,
     ) {}
 
     public function canProcess(string $placeholder, array $referenceArray): bool
@@ -40,19 +42,8 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
             return '';
         }
 
-        $assetFile = $matches[1];
-        $manifest = $matches[2] ?? $this->viteService->getDefaultManifestFile();
-
-        if (!is_string($manifest) || $manifest === '') {
-            throw new ViteException(
-                sprintf(
-                    'Unable to determine vite manifest from specified argument and default manifest: %s',
-                    $manifest
-                ),
-                1694537554
-            );
-        }
-
-        return $this->viteService->getAssetPathFromManifest($manifest, $assetFile);
+        $assetFile = AssetFile::create($matches[1]);
+        $manifest = $this->manifestFactory->createFromConfiguredPath($matches[2] ?? null);
+        return (string)$this->assetUriGenerator->generateUri($assetFile, $manifest);
     }
 }

@@ -6,10 +6,10 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\EventListener;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\EventListener\MutateContentSecurityPolicy;
-use Praetorius\ViteAssetCollector\Service\ViteService;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Configuration\Behavior;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
@@ -240,18 +240,13 @@ final class MutateContentSecurityPolicyTest extends FunctionalTestCase
     #[DataProvider('getDefaultManifestFileDataProvider')]
     public function getDefaultManifestFile(bool $useDevServer, string $devServerUri, ConsumableNonce $nonce, Policy $currentPolicy, array $expectedPolicy): void
     {
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => $useDevServer,
-            'devServerUri' => $devServerUri,
-        ]);
-
         $event = new PolicyMutatedEvent(
             Scope::frontend(),
-            new ServerRequest(),
+            (new ServerRequest())->withAttribute('vite.context', new ViteContext($useDevServer, new Uri($devServerUri))),
             new Policy(),
             $currentPolicy,
         );
-        $subject = new MutateContentSecurityPolicy($this->get(ViteService::class));
+        $subject = new MutateContentSecurityPolicy();
         $subject($event);
         // TODO remove switch once support for TYPO3 v13 is dropped
         if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13) {
