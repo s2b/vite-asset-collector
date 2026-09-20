@@ -230,17 +230,6 @@ class ViteService
     {
         $resolvedManifestFile = GeneralUtility::getFileAbsFileName($manifestFile);
         if ($resolvedManifestFile === '' || !file_exists($resolvedManifestFile)) {
-            // Fallback to directory structure from vite < 5
-            $legacyManifestFile = $this->determineOutputDirFromManifestFile($manifestFile) . PathUtility::basename($manifestFile);
-            $resolvedLegacyManifestFile = GeneralUtility::getFileAbsFileName($legacyManifestFile);
-            if ($resolvedLegacyManifestFile !== '' && file_exists($resolvedLegacyManifestFile)) {
-                trigger_error(
-                    'Support for vite < 5 is deprecated in EXT:vite_asset_collector and will no longer work with v2.',
-                    E_USER_DEPRECATED,
-                );
-                return $resolvedLegacyManifestFile;
-            }
-
             throw new ViteException(sprintf(
                 'Vite manifest file "%s" was resolved to "%s" and cannot be opened.',
                 $manifestFile,
@@ -276,16 +265,8 @@ class ViteService
 
     protected function determineOutputDirFromManifestFile(string $manifestFile): string
     {
-        $outputDir = PathUtility::dirname($manifestFile);
-        if (PathUtility::basename($outputDir) === '.vite') {
-            $outputDir = PathUtility::dirname($outputDir);
-        } else {
-            trigger_error(
-                'Support for vite < 5 is deprecated in EXT:vite_asset_collector and will no longer work with v2.',
-                E_USER_DEPRECATED,
-            );
-        }
-        return $outputDir . '/';
+        // from _assets/vite/.vite/manifest.json to _assets/vite/
+        return PathUtility::dirname(PathUtility::dirname($manifestFile)) . '/';
     }
 
     protected function prepareAssetPath(string $assetPath): string
