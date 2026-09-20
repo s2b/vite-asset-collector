@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Unit\Service;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Service\ViteService;
@@ -463,87 +462,6 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    public static function addAssetsFromManifestDeprecatedDataProvider(): array
-    {
-        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        return [
-            'withSymlinkedExtPath' => [
-                'manifestFile' => $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
-                'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                'options' => [],
-                'addCss' => false,
-                'javaScripts' => [
-                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
-                    ],
-                ],
-            ],
-            'vite4' => [
-                'manifestFile' => $fixtureDir . 'Vite4Manifest/manifest.json',
-                'entry' => 'Default.js',
-                'options' => [],
-                'addCss' => true,
-                'javaScripts' => [
-                    'vite:Default.js' => [
-                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'Vite4Manifest/assets/Default-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
-                    ],
-                ],
-                'styleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
-                        'source' => self::rawAssetUriPrefix() . $fixtureDir . 'Vite4Manifest/assets/Default-973bb662.css',
-                        'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    #[Test]
-    #[IgnoreDeprecations]
-    #[DataProvider('addAssetsFromManifestDeprecatedDataProvider')]
-    public function addAssetsFromManifestDeprecated(
-        string $manifestFile,
-        string $entry,
-        array $options,
-        bool $addCss,
-        array $javaScripts = [],
-        array $priorityJavaScripts = [],
-        array $styleSheets = [],
-        array $priorityStyleSheets = [],
-    ): void {
-        $assetCollector = new AssetCollector();
-        $this->createViteService($assetCollector)->addAssetsFromManifest(
-            $manifestFile,
-            $entry,
-            $addCss,
-            $options,
-            ['async' => true, 'otherAttribute' => 'otherValue'],
-            ['media' => 'print', 'disabled' => true],
-        );
-
-        self::assertEquals(
-            $javaScripts,
-            $assetCollector->getJavaScripts(false)
-        );
-        self::assertEquals(
-            $priorityJavaScripts,
-            $assetCollector->getJavaScripts(true)
-        );
-        self::assertEquals(
-            $styleSheets,
-            $assetCollector->getStyleSheets(false)
-        );
-        self::assertEquals(
-            $priorityStyleSheets,
-            $assetCollector->getStyleSheets(true)
-        );
-    }
-
     #[Test]
     public function addAssetsFromManifestPreventDuplicateCss(): void
     {
@@ -700,21 +618,6 @@ final class ViteServiceTest extends UnitTestCase
         );
     }
 
-    #[Test]
-    #[IgnoreDeprecations]
-    public function getAssetWithSymlinkedExtPathFromManifest(): void
-    {
-        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
-        $manifestDir = realpath(__DIR__ . '/../../Fixtures/ExtPathManifest') . '/';
-        self::assertEquals(
-            $manifestDir . 'assets/Main-4483b920.js',
-            $this->createViteService()->getAssetPathFromManifest(
-                $fixtureDir . 'ExtPathManifest/.vite/manifest.json',
-                'EXT:symlink_extension/Resources/Private/JavaScript/Main.js'
-            )
-        );
-    }
-
     public static function getAssetPathFromManifestErrorHandlingDataProvider(): array
     {
         $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
@@ -727,7 +630,7 @@ final class ViteServiceTest extends UnitTestCase
             [
                 $fixtureDir . 'ValidManifest/.vite/manifest.json',
                 'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
-                1696238083,
+                1690735353,
             ],
         ];
     }

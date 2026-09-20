@@ -70,7 +70,7 @@ class ViteService
         array $scriptTagAttributes = [],
         array $cssTagAttributes = [],
     ): void {
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry, false);
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
         // TODO remove external flag once support for TYPO3 v13 is dropped
         $assetOptions = ['external' => true, ...$assetOptions];
 
@@ -102,7 +102,7 @@ class ViteService
         UriInterface $devServerUri,
         string $assetFile,
     ): string {
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile, false);
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
         return (string)$devServerUri->withPath($assetFile);
     }
 
@@ -136,17 +136,13 @@ class ViteService
         $outputDir = $this->determineOutputDirFromManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
-        $originalEntry = $entry;
-        $entry = $this->determineAssetIdentifierFromExtensionPath($entry, false);
+        $entry = $this->determineAssetIdentifierFromExtensionPath($entry);
         if (!$manifest->get($entry)?->isEntry) {
-            $entry = $this->determineAssetIdentifierFromExtensionPath($originalEntry, true);
-            if (!$manifest->get($entry)?->isEntry) {
-                throw new ViteException(sprintf(
-                    'Invalid vite entry point "%s" in manifest file "%s".',
-                    $entry,
-                    $manifestFile
-                ), 1683200524);
-            }
+            throw new ViteException(sprintf(
+                'Invalid vite entry point "%s" in manifest file "%s".',
+                $entry,
+                $manifestFile
+            ), 1683200524);
         }
 
         // The "external" flag has been introduced with TYPO3 v13. It allows bypassing
@@ -217,17 +213,13 @@ class ViteService
         $manifestFile = $this->resolveManifestFile($manifestFile);
         $manifest = $this->parseManifestFile($manifestFile);
 
-        $originalAssetFile = $assetFile;
-        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile, false);
+        $assetFile = $this->determineAssetIdentifierFromExtensionPath($assetFile);
         if (!$manifest->get($assetFile)) {
-            $assetFile = $this->determineAssetIdentifierFromExtensionPath($originalAssetFile, true);
-            if (!$manifest->get($assetFile)) {
-                throw new ViteException(sprintf(
-                    'Invalid asset file "%s" in vite manifest file "%s".',
-                    $assetFile,
-                    $manifestFile
-                ), 1690735353);
-            }
+            throw new ViteException(sprintf(
+                'Invalid asset file "%s" in vite manifest file "%s".',
+                $assetFile,
+                $manifestFile
+            ), 1690735353);
         }
 
         $assetPath = $this->determineOutputDirFromManifestFile($manifestFile) . $manifest->get($assetFile)->file;
@@ -269,7 +261,7 @@ class ViteService
         return $manifest;
     }
 
-    protected function determineAssetIdentifierFromExtensionPath(string $identifier, bool $resolveSymlinks = true): string
+    protected function determineAssetIdentifierFromExtensionPath(string $identifier): string
     {
         if (!PathUtility::isExtensionPath($identifier)) {
             return $identifier;
@@ -278,19 +270,6 @@ class ViteService
         $absolutePath = $this->packageManager->resolvePackagePath($identifier);
         $file = PathUtility::basename($absolutePath);
         $dir = PathUtility::dirname($absolutePath);
-        if ($resolveSymlinks) {
-            $dir = realpath($dir);
-            if ($dir === false) {
-                throw new ViteException(sprintf(
-                    'The specified extension path "%s" does not exist.',
-                    $identifier
-                ), 1696238083);
-            }
-            trigger_error(
-                'Accessing symlinked vite entrypoints via their original path is deprecated in EXT:vite_asset_collector and will no longer work with v2. Switch to v3 of vite-plugin-typo3 or set "resolve.preserveSymlinks" to true in your vite config.',
-                E_USER_DEPRECATED,
-            );
-        }
         $relativeDirToProjectRoot = $this->stripProjectPath($dir);
         return $relativeDirToProjectRoot . $file;
     }
