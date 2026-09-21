@@ -32,6 +32,8 @@ final class UriViewHelperTest extends FunctionalTestCase
         parent::setUp();
 
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
     }
@@ -56,8 +58,15 @@ final class UriViewHelperTest extends FunctionalTestCase
         string $template,
         string $assetUri
     ): void {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+        ]);
+
         $context = $this->createRenderingContext();
         $context->getTemplatePaths()->setTemplateSource($template);
+
         self::assertEquals($assetUri, (new TemplateView($context))->render());
     }
 
@@ -67,6 +76,7 @@ final class UriViewHelperTest extends FunctionalTestCase
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '1',
             'devServerUri' => 'https://localhost:5173',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
 
         $context = $this->createRenderingContext();
@@ -82,6 +92,8 @@ final class UriViewHelperTest extends FunctionalTestCase
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
             'defaultManifest' => '',
         ]);
 

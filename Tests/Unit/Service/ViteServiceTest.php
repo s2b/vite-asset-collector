@@ -139,7 +139,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'javaScripts' => [
@@ -173,7 +173,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'javaScripts' => [
@@ -191,7 +191,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'javaScripts' => [
@@ -209,7 +209,7 @@ final class ViteServiceTest extends UnitTestCase
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
