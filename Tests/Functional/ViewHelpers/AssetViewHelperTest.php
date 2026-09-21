@@ -49,14 +49,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -66,7 +66,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -76,14 +76,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Default.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -93,14 +93,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -115,14 +115,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -137,14 +137,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
                 'inlineStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -160,14 +160,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'priorityInlineStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
             ],
@@ -177,14 +177,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => true, 'useNonce' => false, 'external' => true],
+                        'options' => ['priority' => true, 'external' => true],
                     ],
                 ],
             ],
@@ -194,14 +194,14 @@ final class AssetViewHelperTest extends FunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
+                        'options' => ['useNonce' => true, 'external' => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => false, 'useNonce' => true, 'external' => true],
+                        'options' => ['useNonce' => true, 'external' => true],
                     ],
                 ],
             ],
@@ -270,7 +270,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['useNonce' => false, 'priority' => true, 'external' => true],
+                    'options' => ['priority' => true, 'external' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(true)
@@ -280,7 +280,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                    'options' => ['external' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(false)
@@ -310,7 +310,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['useNonce' => false, 'priority' => true, 'external' => true],
+                    'options' => ['priority' => true, 'external' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(true)
@@ -320,7 +320,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite:Main.scss' => [
                     'source' => 'https://localhost:5173/Main.scss',
                     'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                    'options' => ['external' => true],
                 ],
             ],
             $assetCollector->getStyleSheets(false)
