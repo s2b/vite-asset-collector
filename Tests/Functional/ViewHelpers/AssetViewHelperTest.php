@@ -28,17 +28,6 @@ final class AssetViewHelperTest extends FunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
     ];
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '0',
-            'devServerUri' => 'https://localhost:5173',
-            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
-        ]);
-    }
-
     public static function renderDataProvider(): array
     {
         $manifestDir = 'fileadmin/Fixtures/';
@@ -219,6 +208,12 @@ final class AssetViewHelperTest extends FunctionalTestCase
         array $inlineStyleSheets = [],
         array $priorityInlineStyleSheets = []
     ): void {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+        ]);
+
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
@@ -258,7 +253,6 @@ final class AssetViewHelperTest extends FunctionalTestCase
             'useDevServer' => '1',
             'devServerUri' => 'https://localhost:5173',
         ]);
-
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
@@ -275,6 +269,7 @@ final class AssetViewHelperTest extends FunctionalTestCase
             ],
             $assetCollector->getJavaScripts(true)
         );
+
         self::assertEquals(
             [
                 'vite:Main.js' => [
@@ -294,7 +289,6 @@ final class AssetViewHelperTest extends FunctionalTestCase
             'useDevServer' => '1',
             'devServerUri' => 'https://localhost:5173',
         ]);
-
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext();
@@ -331,6 +325,8 @@ final class AssetViewHelperTest extends FunctionalTestCase
     public function renderWithoutManifest()
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
             'defaultManifest' => '',
         ]);
 
