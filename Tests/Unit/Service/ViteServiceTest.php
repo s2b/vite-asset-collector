@@ -135,12 +135,14 @@ final class ViteServiceTest extends UnitTestCase
             'withoutPriority' => [
                 'entry' => 'path/to/Main.js',
                 'options' => [],
-                'javaScripts' => [
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
+                ],
+                'javaScripts' => [
                     'vite:path/to/Main.js' => [
                         'source' => 'https://localhost:5173/path/to/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -154,7 +156,7 @@ final class ViteServiceTest extends UnitTestCase
                 'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'attributes' => ['type' => 'module'],
                         'options' => ['priority' => true, 'external' => true],
                     ],
                     'vite:path/to/Main.js' => [
@@ -167,12 +169,14 @@ final class ViteServiceTest extends UnitTestCase
             'withExtPath' => [
                 'entry' => 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
                 'options' => [],
-                'javaScripts' => [
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
+                ],
+                'javaScripts' => [
                     'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
                         'source' => 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -183,12 +187,14 @@ final class ViteServiceTest extends UnitTestCase
             'withSymlinkedExtPath' => [
                 'entry' => 'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
                 'options' => [],
-                'javaScripts' => [
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
+                ],
+                'javaScripts' => [
                     'vite:Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js' => [
                         'source' => 'https://localhost:5173/Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
@@ -199,11 +205,11 @@ final class ViteServiceTest extends UnitTestCase
             'withCssEntrypoint' => [
                 'entry' => 'path/to/Main.css',
                 'options' => [],
-                'javaScripts' => [
+                'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
                 'styleSheets' => [
@@ -220,7 +226,7 @@ final class ViteServiceTest extends UnitTestCase
                 'priorityJavaScripts' => [
                     'vite' => [
                         'source' => 'https://localhost:5173/@vite/client',
-                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'attributes' => ['type' => 'module'],
                         'options' => ['priority' => true, 'external' => true],
                     ],
                 ],

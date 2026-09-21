@@ -78,8 +78,8 @@ class ViteService
         $this->assetCollector->addJavaScript(
             'vite',
             (string)$devServerUri->withPath('@vite/client'),
-            ['type' => 'module', ...$scriptTagAttributes],
-            $assetOptions
+            ['type' => 'module'],
+            [...$assetOptions, 'priority' => true],
         );
         if (VitePathUtility::isCssFile($entry)) {
             $this->assetCollector->addStyleSheet(
