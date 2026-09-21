@@ -270,8 +270,13 @@ final class AssetViewHelperTest extends FunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                    'options' => ['useNonce' => false, 'priority' => true, 'external' => true],
                 ],
+            ],
+            $assetCollector->getJavaScripts(true)
+        );
+        self::assertEquals(
+            [
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
                     'attributes' => ['type' => 'module'],
@@ -296,7 +301,6 @@ final class AssetViewHelperTest extends FunctionalTestCase
         $context->getTemplatePaths()->setTemplateSource('<vite:asset
             manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json"
             entry="Main.scss"
-            devTagAttributes="{data-dev: \'1\'}"
             cssTagAttributes="{media: \'print\', disabled: 1}"
         />');
         (new TemplateView($context))->render();
@@ -305,11 +309,11 @@ final class AssetViewHelperTest extends FunctionalTestCase
             [
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
-                    'attributes' => ['type' => 'module', 'data-dev' => '1'],
-                    'options' => ['priority' => false, 'useNonce' => false, 'external' => true],
+                    'attributes' => ['type' => 'module'],
+                    'options' => ['useNonce' => false, 'priority' => true, 'external' => true],
                 ],
             ],
-            $assetCollector->getJavaScripts(false)
+            $assetCollector->getJavaScripts(true)
         );
         self::assertEquals(
             [
