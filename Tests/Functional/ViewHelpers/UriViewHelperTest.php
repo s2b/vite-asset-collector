@@ -27,17 +27,6 @@ final class UriViewHelperTest extends FunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
     ];
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '0',
-            'devServerUri' => 'https://localhost:5173',
-            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
-        ]);
-    }
-
     public static function renderDataProvider(): array
     {
         return [
