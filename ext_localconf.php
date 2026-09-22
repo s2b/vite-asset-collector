@@ -13,3 +13,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['viteassetc
     ??= TransientMemoryBackend::class;
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['yamlLoader']['placeholderProcessors'][VitePlaceholderProcessor::class] = [];
+
+if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['vite'][] = 'Praetorius\ViteAssetCollector\ViewHelpers';
+}
