@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\EventListener\MutateContentSecurityPolicy;
 use Praetorius\ViteAssetCollector\Service\ViteService;
+use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Configuration\Behavior;
@@ -21,14 +22,9 @@ use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Scope;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 use TYPO3\CMS\Core\Type\Map;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-final class MutateContentSecurityPolicyTest extends FunctionalTestCase
+final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'typo3conf/ext/vite_asset_collector',
-    ];
-
     public static function getDefaultManifestFileDataProvider(): iterable
     {
         //
