@@ -177,8 +177,8 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 'javaScripts' => [
-                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' => 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js',
+                    'vite:typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => 'https://localhost:5173/typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -195,8 +195,8 @@ final class ViteServiceTest extends UnitTestCase
                     ],
                 ],
                 'javaScripts' => [
-                    'vite:Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js' => [
-                        'source' => 'https://localhost:5173/Tests/Fixtures/symlink_extension/Resources/Private/JavaScript/Main.js',
+                    'vite:typo3conf/ext/symlink_extension/Resources/Private/JavaScript/Main.js' => [
+                        'source' => 'https://localhost:5173/typo3conf/ext/symlink_extension/Resources/Private/JavaScript/Main.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
@@ -360,7 +360,7 @@ final class ViteServiceTest extends UnitTestCase
                 'options' => [],
                 'addCss' => false,
                 'javaScripts' => [
-                    'vite:Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js' => [
+                    'vite:typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $fixtureDir . 'ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
@@ -582,7 +582,7 @@ final class ViteServiceTest extends UnitTestCase
     {
         return [
             ['path/to/file.jpg', 'https://localhost:5173/path/to/file.jpg'],
-            ['EXT:test_extension/Resources/Private/Assets/test.txt', 'https://localhost:5173/Tests/Fixtures/test_extension/Resources/Private/Assets/test.txt'],
+            ['EXT:test_extension/Resources/Private/Assets/test.txt', 'https://localhost:5173/typo3conf/ext/test_extension/Resources/Private/Assets/test.txt'],
         ];
     }
 
@@ -659,26 +659,25 @@ final class ViteServiceTest extends UnitTestCase
     ) {
         $assetCollector ??= new AssetCollector();
 
-        $fixtureDir = realpath(__DIR__ . '/../../Fixtures') . '/';
         $packageManager = self::createStub(PackageManager::class);
         $packageManager
             ->method('resolvePackagePath')
             ->willReturnMap([
                 [
                     'EXT:test_extension/Resources/Private/JavaScript/Main.js',
-                    $fixtureDir . 'test_extension/Resources/Private/JavaScript/Main.js',
+                    'typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js',
                 ],
                 [
                     'EXT:test_extension/Resources/Private/Assets/test.txt',
-                    $fixtureDir . 'test_extension/Resources/Private/Assets/test.txt',
+                    'typo3conf/ext/test_extension/Resources/Private/Assets/test.txt',
                 ],
                 [
                     'EXT:symlink_extension/Resources/Private/JavaScript/Main.js',
-                    $fixtureDir . 'symlink_extension/Resources/Private/JavaScript/Main.js',
+                    'typo3conf/ext/symlink_extension/Resources/Private/JavaScript/Main.js',
                 ],
                 [
                     'EXT:test_extension/Resources/Private/JavaScript/NonExistent/NonExistent.js',
-                    $fixtureDir . 'test_extension/Resources/Private/NonExistent/NonExistent.js',
+                    'typo3conf/ext/test_extension/Resources/Private/NonExistent/NonExistent.js',
                 ],
             ]);
 
