@@ -7,26 +7,18 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
+use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
 
-final class UriViewHelperTest extends FunctionalTestCase
+final class UriViewHelperTest extends AbstractViteFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'typo3conf/ext/vite_asset_collector',
-    ];
-
-    protected array $pathsToProvideInTestInstance = [
-        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
-    ];
-
     public static function renderDataProvider(): array
     {
         return [

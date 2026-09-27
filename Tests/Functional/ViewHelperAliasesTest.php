@@ -12,20 +12,11 @@ use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
 
-final class ViewHelperAliasesTest extends FunctionalTestCase
+final class ViewHelperAliasesTest extends AbstractViteFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'typo3conf/ext/vite_asset_collector',
-    ];
-
-    protected array $pathsToProvideInTestInstance = [
-        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
-    ];
-
     #[Test]
     #[IgnoreDeprecations]
     public function resourceAliasViewHelperCanBeUsed(): void

@@ -6,20 +6,12 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\Configuration;
 
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
+use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-final class VitePlaceholderProcessorTest extends FunctionalTestCase
+final class VitePlaceholderProcessorTest extends AbstractViteFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'typo3conf/ext/vite_asset_collector',
-    ];
-
-    protected array $pathsToProvideInTestInstance = [
-        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
-    ];
-
     protected array $configurationToUseInTestInstance = [
         'EXTENSIONS' => [
             'vite_asset_collector' => [

@@ -2,31 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\Tests\Functional\Imaging;
+namespace Praetorius\ViteAssetCollector\Tests\Functional\IconProvider;
 
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\IconProvider\SvgIconProvider;
+use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-final class SvgIconProviderTest extends FunctionalTestCase
+final class SvgIconProviderTest extends AbstractViteFunctionalTestCase
 {
     protected IconFactory $subject;
     protected SvgIconProvider $svgIconProvider;
     protected Icon $icon;
     protected string $registeredIconIdentifier = 'typo3-logo';
-
-    protected array $testExtensionsToLoad = [
-        'typo3conf/ext/vite_asset_collector',
-    ];
-
-    protected array $pathsToProvideInTestInstance = [
-        'typo3conf/ext/vite_asset_collector/Tests/Fixtures' => 'fileadmin/Fixtures/',
-    ];
 
     protected array $configurationToUseInTestInstance = [
         'EXTENSIONS' => [
