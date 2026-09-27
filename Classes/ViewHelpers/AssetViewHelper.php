@@ -70,7 +70,6 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             'string',
             'Identifier of the desired vite entrypoint; this is the value specified as "input" in the vite configuration file. Can be omitted if manifest file exists and only one entrypoint is present.',
         );
-        $this->registerArgument('devTagAttributes', 'array', 'HTML attributes that should be added to script tags that point to the vite dev server', false, []);
         $this->registerArgument('scriptTagAttributes', 'array', 'HTML attributes that should be added to script tags for built JavaScript assets', false, []);
         $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
         $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag. Note that this is currently experimental due to missing path rewriting for asset files.', false, false);
@@ -102,7 +101,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
                 $this->viteService->determineDevServer($this->getRequest()),
                 $entry,
                 $assetOptions,
-                $this->arguments['devTagAttributes'],
+                $this->arguments['scriptTagAttributes'],
                 $this->arguments['cssTagAttributes']
             );
         } else {
