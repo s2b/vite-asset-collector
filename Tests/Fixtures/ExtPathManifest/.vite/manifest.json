@@ -1,5 +1,5 @@
 {
-	"Tests/Fixtures/test_extension/Resources/Private/JavaScript/Main.js": {
+	"typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js": {
 		"css": [],
 		"file": "assets/Main-4483b920.js",
 		"isEntry": true,
