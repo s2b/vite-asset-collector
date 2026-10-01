@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorius\ViteAssetCollector\Tests\Unit\EventListener;
+namespace Praetorius\ViteAssetCollector\Tests\Functional\EventListener;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -252,7 +252,6 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         // TODO remove switch once support for TYPO3 v13 is dropped
         if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13) {
             $compiledPolicy = $currentPolicy->compile(
-                // @phpstan-ignore-next-line
                 new PolicyBag(Scope::frontend(), new Map(), new Behavior(), $nonce, $this->get(DirectiveHashCollection::class))
             );
         } else {

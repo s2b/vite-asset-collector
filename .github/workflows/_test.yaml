@@ -7,6 +7,10 @@ on:
       typo3-version:
         required: true
         type: string
+      phpstan-config:
+        default: 'Build/CodeQuality/phpstan.neon'
+        required: false
+        type: string
       unit-coverage-name:
         description: Artifact name of unit test coverage report
         default: coverage-unit
@@ -73,16 +77,27 @@ jobs:
         run: composer remove --no-update --dev ${INPUTS_COMPOSER_REMOVE}
         if: inputs.composer-remove != ''
 
-
       -
         name: Install composer dependencies
         env:
           INPUTS_TYPO3_VERSION: ${{ inputs.typo3-version }}
         run: composer up --with typo3/cms-core:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-fluid:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-extbase:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-backend:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-frontend:"${INPUTS_TYPO3_VERSION}" --prefer-dist --no-progress
 
-      -
-        name: Unit Testing
-        run: composer coverage:unit
+      - parallel:
+        -
+          name: Phpstan Analyze
+          env:
+            INPUTS_PHPSTAN_CONFIG: ${{ inputs.phpstan-config }}
+          run: composer phpstan -- -c ${INPUTS_PHPSTAN_CONFIG}
+          if: inputs.phpstan-config != ''
+
+        -
+          name: Unit Testing
+          run: composer coverage:unit
+
+        -
+          name: Functional testing
+          run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
 
       -
         name: Upload coverage report
@@ -90,10 +105,6 @@ jobs:
         with:
           name: ${{ inputs.unit-coverage-name }}
           path: .Build/logs/clover.unit.xml
-
-      -
-        name: Functional testing
-        run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
 
       -
         name: Upload coverage report

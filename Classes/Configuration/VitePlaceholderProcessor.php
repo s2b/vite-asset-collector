@@ -43,7 +43,7 @@ final class VitePlaceholderProcessor implements PlaceholderProcessorInterface
         $assetFile = $matches[1];
         $manifest = $matches[2] ?? $this->viteService->getDefaultManifestFile();
 
-        if (!is_string($manifest) || $manifest === '') {
+        if ($manifest === '') {
             throw new ViteException(
                 sprintf(
                     'Unable to determine vite manifest from specified argument and default manifest: %s',

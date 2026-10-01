@@ -15,6 +15,7 @@ jobs:
       unit-coverage-name: coverage-unit-main
       functional-coverage-name: coverage-functional-main
       composer-remove: saschaegerer/phpstan-typo3
+      phpstan-config: ''
 
   test-lts:
     name: Nightly Testing (current LTS)
@@ -24,7 +25,7 @@ jobs:
       typo3-version: '^14'
       unit-coverage-name: coverage-unit-lts
       functional-coverage-name: coverage-functional-lts
-      composer-remove: saschaegerer/phpstan-typo3
+      phpstan-config: 'Build/CodeQuality/phpstan14.neon'
 
   test-13:
     name: Nightly Testing (13.4)
@@ -34,3 +35,4 @@ jobs:
       typo3-version: '^13'
       unit-coverage-name: coverage-unit-13
       functional-coverage-name: coverage-functional-13
+      phpstan-config: 'Build/CodeQuality/phpstan13.neon'

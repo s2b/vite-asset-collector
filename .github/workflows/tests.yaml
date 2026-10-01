@@ -47,28 +47,24 @@ jobs:
         name: Editorconfig Linting
         run: composer lint:editorconfig
 
-      -
-        name: Phpstan Linting
-        run: composer lint:phpstan
-
 
   test:
-    name: Testing (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }})
+    name: Testing (PHP ${{ matrix.php-version }}, TYPO3 ^${{ matrix.typo3-version }})
     needs: lint
 
     strategy:
       fail-fast: false
       matrix:
         php-version: [8.5, 8.4, 8.3, 8.2]
-        typo3-version: ['^14', '^13']
+        typo3-version: [14, 13]
 
     uses: ./.github/workflows/_test.yaml
     with:
       php-version: ${{ matrix.php-version }}
-      typo3-version: ${{ matrix.typo3-version }}
-      composer-remove: saschaegerer/phpstan-typo3
-      unit-coverage-name: coverage-unit-${{ matrix.php-version }}-${{ matrix.typo3-version }}
-      functional-coverage-name: coverage-functional-${{ matrix.php-version }}-${{ matrix.typo3-version }}
+      typo3-version: ^${{ matrix.typo3-version }}
+      unit-coverage-name: coverage-unit-${{ matrix.php-version }}-^${{ matrix.typo3-version }}
+      functional-coverage-name: coverage-functional-${{ matrix.php-version }}-^${{ matrix.typo3-version }}
+      phpstan-config: 'Build/CodeQuality/phpstan${{ matrix.typo3-version }}.neon'
 
   test-doc:
     name: Test documentation rendering
