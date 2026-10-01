@@ -7,11 +7,16 @@ parameters:
 	treatPhpDocTypesAsCertain: true
 
 	paths:
-		- ../../
+		- ../../Classes/
+		- ../../Configuration/
+		- ../../Tests/
+		- ../../ext_localconf.php
+		- ../../ext_emconf.php
 
 	excludePaths:
 		- ../../.Build/
 		- ../../Build/
+		- ../../var/ (?)
 
 	typo3:
 		requestGetAttributeMapping:
@@ -19,11 +24,17 @@ parameters:
 
 	ignoreErrors:
 		-
-			message: '#Variable \$_EXTKEY might not be defined.#'
-			path: ../../ext_emconf.php
+			message: '#^Variable \$_EXTKEY might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../Tests/Fixtures/symlink_extension/ext_emconf.php
 		-
-			message: '#Variable \$_EXTKEY might not be defined.#'
+			message: '#^Variable \$_EXTKEY might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
 			path: ../../Tests/Fixtures/test_extension/ext_emconf.php
 		-
-			message: '#Variable \$_EXTKEY might not be defined.#'
-			path: ../../Tests/Fixtures/symlink_extension/ext_emconf.php
+			message: '#^Variable \$_EXTKEY might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../ext_emconf.php

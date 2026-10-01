@@ -1,0 +1,15 @@
+includes:
+	- ./phpstan.neon
+
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$policyBag of method TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\Policy\:\:compile\(\) expects TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\Middleware\\PolicyBag, TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\ConsumableNonce given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../Tests/Functional/EventListener/MutateContentSecurityPolicyTest.php
+		-
+			message: '#^Access to undefined constant TYPO3\\CMS\\Core\\Imaging\\Icon\:\:SIZE_SMALL\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: ../../Tests/Functional/IconProvider/SvgIconProviderTest.php

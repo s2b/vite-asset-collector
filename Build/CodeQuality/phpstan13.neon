@@ -1,0 +1,40 @@
+includes:
+	- ./phpstan.neon
+
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to method removeExtension\(\) on an unknown class TYPO3\\CMS\\Core\\Localization\\Event\\ModifyLanguagePacksEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
+		-
+			message: '#^Call to method removeExtension\(\) on an unknown class TYPO3\\CMS\\Install\\Service\\Event\\ModifyLanguagePacksEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
+		-
+			message: '#^Parameter \$event of method Praetorius\\ViteAssetCollector\\EventListener\\ExcludeExtensionFromLanguageUpdate\:\:__invoke\(\) has invalid type TYPO3\\CMS\\Core\\Localization\\Event\\ModifyLanguagePacksEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
+		-
+			message: '#^Parameter \$event of method Praetorius\\ViteAssetCollector\\EventListener\\ExcludeExtensionFromLanguageUpdate\:\:__invoke\(\) has invalid type TYPO3\\CMS\\Install\\Service\\Event\\ModifyLanguagePacksEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
+		-
+			message: '#^Class TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\DirectiveHashCollection not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Tests/Functional/EventListener/MutateContentSecurityPolicyTest.php
+		-
+			message: '#^Class TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\Middleware\\PolicyBag constructor invoked with 5 parameters, 4 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: ../../Tests/Functional/EventListener/MutateContentSecurityPolicyTest.php
+		-
+			message: '#^Parameter \#1 \$nonce of method TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\Policy\:\:compile\(\) expects TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\ConsumableNonce, TYPO3\\CMS\\Core\\Security\\ContentSecurityPolicy\\Middleware\\PolicyBag given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../Tests/Functional/EventListener/MutateContentSecurityPolicyTest.php
