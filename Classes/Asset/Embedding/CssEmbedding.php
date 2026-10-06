@@ -21,7 +21,7 @@ final readonly class CssEmbedding
         public ?string $media = null,
         public array $additionalAttributes = [],
     ) {
-        if ($inline && ($disabled || ($additionalAttributes['disabled'] ?? false))) {
+        if ($inline && $disabled) {
             throw new ViteException('Invalid configuration for css embedding: inline stylesheets cannot be disabled.', 1790873152);
         }
     }

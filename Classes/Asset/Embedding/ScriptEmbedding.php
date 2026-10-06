@@ -18,7 +18,7 @@ final readonly class ScriptEmbedding
         public bool $nomodule = false,
         public array $additionalAttributes = [],
     ) {
-        if ($loading === ScriptLoading::Module && ($nomodule || ($additionalAttributes['nomodule'] ?? false))) {
+        if ($loading === ScriptLoading::Module && $nomodule) {
             throw new ViteException('Invalid configuration for script embedding: module script cannot be used as nomodule script.', 1790873151);
         }
     }
