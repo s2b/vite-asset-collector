@@ -236,3 +236,8 @@ Next Steps
 
         Learn how to setup the CSS preprocessor of your choice
         with Vite
+
+    ..  card:: :ref:`_viewhelper-asset`
+
+        Learn how to customize the embedding of your asset
+        files

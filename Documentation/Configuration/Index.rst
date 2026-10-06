@@ -23,7 +23,23 @@ By default, both are set to `auto`, which means:
     `vite-sidecar <https://github.com/s2b/ddev-vite-sidecar>`__ or
     `vite-serve for DDEV <https://github.com/torenware/ddev-viteserve>`__ set up
 
-You can adjust both options in your :php:`$TYPO3_CONF_VARS`, for example:
+When configured, the `Vite plugin <https://github.com/s2b/vite-plugin-typo3/>`__
+can automatically update `VITE_SERVER_RUNNING` in your `.env` file to let
+TYPO3 know if the Vite dev server is actually running.
+
+When set to `auto`, the extension attempts to determine the appropriate configuration
+from environment variables, which the mentioned tools (DDEV add-ons, vite plugin)
+provide to TYPO3. These can also be set manually for setups where these tools
+aren't used:
+
+..  code-block:: bash
+    :caption: .env
+
+    VITE_SERVER_RUNNING=1
+    VITE_SERVER_URI=https://localhost:5173
+
+Alternatively, you can adjust both options in your :php:`$TYPO3_CONF_VARS`, for
+example to use your own environment variables:
 
 ..  code-block:: php
     :caption: config/system/additional.php
