@@ -17,19 +17,19 @@ final class CssEmbeddingTest extends UnitTestCase
         return [
             [
                 'cssEmbedding' => new CssEmbedding(),
-                'expected' => []
+                'expected' => [],
             ],
             [
                 'cssEmbedding' => new CssEmbedding(media: 'print'),
-                'expected' => ['media' => 'print']
+                'expected' => ['media' => 'print'],
             ],
             [
                 'cssEmbedding' => new CssEmbedding(disabled: true),
-                'expected' => ['disabled' => 'disabled']
+                'expected' => ['disabled' => 'disabled'],
             ],
             [
                 'cssEmbedding' => new CssEmbedding(media: 'print', additionalAttributes: ['media' => 'screen', 'foo' => 'bar']),
-                'expected' => ['media' => 'screen', 'foo' => 'bar']
+                'expected' => ['media' => 'screen', 'foo' => 'bar'],
             ],
         ];
     }
