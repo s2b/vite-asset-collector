@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Asset\Asset;
-use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
+use Praetorius\ViteAssetCollector\Asset\AssetRendererInterface;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
@@ -62,7 +62,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
 {
     public function __construct(
         private readonly ManifestFactory $manifestFactory,
-        private readonly AssetRenderer $assetRenderer,
+        private readonly AssetRendererInterface $assetRenderer,
     ) {}
 
     public function initializeArguments(): void

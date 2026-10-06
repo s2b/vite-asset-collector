@@ -10,17 +10,19 @@ use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
 
-final readonly class AssetRenderer
+#[AsAlias(AssetRendererInterface::class)]
+final readonly class AssetRenderer implements AssetRendererInterface
 {
     public function __construct(
         private AssetCollector $assetCollector,
         private PageRenderer $pageRenderer,
-        private AssetPathResolver $assetPathResolver,
-        private AssetUriGenerator $assetUriGenerator,
+        private AssetPathResolverInterface $assetPathResolver,
+        private AssetUriGeneratorInterface $assetUriGenerator,
     ) {}
 
     public function renderDevAsset(Asset $asset, UriInterface $devServerUri, ServerRequestInterface $request): void
@@ -172,7 +174,7 @@ final readonly class AssetRenderer
             : $assetPath;
     }
 
-    public function prepareOptions(array $options): array
+    private function prepareOptions(array $options): array
     {
         // The "external" flag has been introduced with TYPO3 v13. It allows bypassing
         // of the default path preparation by AssetRenderer, including the addition of

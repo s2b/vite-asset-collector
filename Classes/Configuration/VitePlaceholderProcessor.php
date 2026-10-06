@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Configuration;
 
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
-use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Processor\Placeholder\PlaceholderProcessorInterface;
@@ -26,7 +26,7 @@ final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInt
     public const PLACEHOLDER_PATTERN = '^[\'"]?([^(]*?)[\'"]?(?:\s*,\s*[\'"]?([^(]*?)[\'"]?)?$';
 
     public function __construct(
-        private AssetUriGenerator $assetUriGenerator,
+        private AssetUriGeneratorInterface $assetUriGenerator,
         private ManifestFactory $manifestFactory,
     ) {}
 

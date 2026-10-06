@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\IconProvider;
 
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
-use Praetorius\ViteAssetCollector\Asset\AssetPathResolver;
-use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\AssetPathResolverInterface;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
@@ -19,8 +19,8 @@ use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 class SvgIconProvider extends AbstractSvgIconProvider
 {
     public function __construct(
-        private AssetPathResolver $assetPathResolver,
-        private AssetUriGenerator $assetUriGenerator,
+        private AssetPathResolverInterface $assetPathResolver,
+        private AssetUriGeneratorInterface $assetUriGenerator,
         private ManifestFactory $manifestFactory,
     ) {}
 
