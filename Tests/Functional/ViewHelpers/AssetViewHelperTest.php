@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
@@ -33,14 +34,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -50,7 +51,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -60,14 +61,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Default.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -77,14 +78,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -99,14 +100,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -121,7 +122,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'inlineStyleSheets' => [
@@ -144,14 +145,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'external' => true],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'priorityInlineStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
-                        'options' => ['priority' => true, 'external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
@@ -161,31 +162,48 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['priority' => true, 'external' => true],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['priority' => true, 'external' => true],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
-            'withNonce' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" useNonce="1" />',
+            'withCsp' => [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" csp="1" />',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['useNonce' => true, 'external' => true],
+                        'options' => ['external' => true, self::cspOptionName() => true],
                     ],
                 ],
                 'styleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['useNonce' => true, 'external' => true],
+                        'options' => ['external' => true, self::cspOptionName() => true],
+                    ],
+                ],
+            ],
+            'withoutCsp' => [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" csp="0" />',
+                'javaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true],
+                    ],
+                ],
+                'styleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -255,7 +273,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => true, 'external' => true],
+                    'options' => ['external' => true, 'priority' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(true)
@@ -291,7 +309,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
                     'attributes' => ['type' => 'module'],
-                    'options' => ['priority' => true, 'external' => true],
+                    'options' => ['external' => true, 'priority' => true],
                 ],
             ],
             $assetCollector->getJavaScripts(true)
@@ -309,7 +327,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
-    public function renderWithoutManifest()
+    public function renderWithoutManifest(): void
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
@@ -325,6 +343,42 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         (new TemplateView($context))->render();
     }
 
+    #[Test]
+    #[IgnoreDeprecations]
+    public function nonceTriggersDeprecation(): void
+    {
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+        ]);
+
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
+        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" useNonce="1" />');
+        (new TemplateView($context))->render();
+
+        self::assertEquals(
+            [
+                'vite:Main.js' => [
+                    'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
+                    'attributes' => ['type' => 'module'],
+                    'options' => ['external' => true, self::cspOptionName() => true],
+                ],
+            ],
+            $assetCollector->getJavaScripts(false)
+        );
+        self::assertEquals(
+            [
+                'vite:Main.js:assets/Main-973bb662.css' => [
+                    'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
+                    'attributes' => [],
+                    'options' => ['external' => true, self::cspOptionName() => true],
+                ],
+            ],
+            $assetCollector->getStyleSheets(false)
+        );
+    }
+
     protected function createRenderingContext(bool $useDevServer, UriInterface $devServerUri): RenderingContextInterface
     {
         $context = $this->get(RenderingContextFactory::class)->create();
@@ -338,6 +392,18 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;
+    }
+
+    protected static function autoCspForNonInline(): array
+    {
+        // TODO remove this when support for TYPO3 v13 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? [self::cspOptionName() => true] : [];
+    }
+
+    protected static function cspOptionName(): string
+    {
+        // TODO remove this when support for TYPO3 v13 is dropped
+        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'csp' : 'useNonce';
     }
 
     protected static function rawAssetUriPrefix(): string

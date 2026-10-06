@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Asset;
 
+use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 
@@ -13,14 +14,14 @@ final readonly class Asset
         public AssetFile $entry,
         public CssEmbedding $cssEmbedding,
         public ScriptEmbedding $scriptEmbedding,
-        public bool $csp,
+        public ContentSecurityMode $csp,
     ) {}
 
     public static function create(
         AssetFile|string $entry,
         ?CssEmbedding $cssEmbedding = null,
         ?ScriptEmbedding $scriptEmbedding = null,
-        bool $csp = false,
+        ContentSecurityMode $csp = ContentSecurityMode::Auto,
     ): self {
         return new self(
             entry: $entry instanceof AssetFile ? $entry : AssetFile::create($entry),
