@@ -104,10 +104,18 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             $entry ??= $manifest->getOnlyEntrypoint()->identifier;
         }
 
+        $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
+        $viewHelperVariableContainer->add(self::class, CssEmbedding::VariableName, $this->createFallbackCssEmbedding());
+        $viewHelperVariableContainer->add(self::class, ScriptEmbedding::VariableName, $this->createFallbackScriptEmbedding());
+        $this->renderChildren();
+        /** @var CssEmbedding */
+        $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
+        /** @var ScriptEmbedding */
+        $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
         $asset = Asset::create(
             entry: $entry,
-            cssEmbedding: $this->createFallbackCssEmbedding(),
-            scriptEmbedding: $this->createFallbackScriptEmbedding(),
+            cssEmbedding: $cssEmbedding,
+            scriptEmbedding: $scriptEmbedding,
             csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
 

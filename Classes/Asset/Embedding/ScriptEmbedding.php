@@ -9,6 +9,7 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 final readonly class ScriptEmbedding
 {
     public const VariableName = 'scriptEmbedding';
+    public const BooleanAttributes = ['async', 'defer', 'nomodule'];
 
     public function __construct(
         public bool $priority = false,
@@ -35,7 +36,7 @@ final readonly class ScriptEmbedding
 
     private function convertBooleanAttributes(array $attributes): array
     {
-        foreach (['async', 'defer', 'nomodule'] as $attr) {
+        foreach (self::BooleanAttributes as $attr) {
             if ($attributes[$attr] ?? false) {
                 $attributes[$attr] = $attr;
             } else {
