@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorius\ViteAssetCollector\Asset;
 
+use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
@@ -35,14 +36,14 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 "vite:{$path}",
                 $uri,
                 $asset->cssEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $asset->cssEmbedding->priority, 'useNonce' => $asset->csp]),
+                $this->prepareOptions(['priority' => $asset->cssEmbedding->priority]),
             );
         } else {
             $this->assetCollector->addJavaScript(
                 "vite:{$path}",
                 $uri,
                 $asset->scriptEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'useNonce' => $asset->csp])
+                $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority])
             );
         }
     }
@@ -64,7 +65,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 "vite:{$chunk->identifier}",
                 $this->prepareAssetPath($chunk->file, $manifest),
                 $asset->scriptEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'useNonce' => $asset->csp]),
+                $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'csp' => $this->determineCspStatus($asset->csp, false)]),
             );
         }
 
@@ -130,7 +131,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         OutputFile $file,
         Manifest $manifest,
         CssEmbedding $cssEmbedding,
-        bool $csp,
+        ContentSecurityMode $csp,
     ): void {
         if ($cssEmbedding->inline) {
             $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest, true);
@@ -152,7 +153,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 $identifier,
                 $cssSource,
                 $cssEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $cssEmbedding->priority, 'useNonce' => $csp])
+                $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, true)])
             );
             return;
         }
@@ -161,7 +162,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
             $identifier,
             $this->prepareAssetPath($file, $manifest),
             $cssEmbedding->getTagAttributes(),
-            $this->prepareOptions(['priority' => $cssEmbedding->priority, 'useNonce' => $csp])
+            $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, false)])
         );
     }
 
@@ -183,13 +184,29 @@ final readonly class AssetRenderer implements AssetRendererInterface
         // is avoided with v13. This also improves the behavior of dynamic imports, which
         // could result in duplicate requests before.
         // TODO remove external flag once support for TYPO3 v13 is dropped
-        $options['external'] = true;
+        $options = ['external' => true, ...$options];
         if (isset($options['priority']) && $options['priority'] !== true) {
             unset($options['priority']);
         }
-        if (isset($options['useNonce']) && $options['useNonce'] !== true) {
-            unset($options['useNonce']);
+        if (isset($options['csp']) && $options['csp'] !== true) {
+            unset($options['csp']);
+        }
+        // TODO remove this once support for TYPO3 v13 is dropped
+        if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14 && isset($options['csp'])) {
+            $options['useNonce'] = $options['csp'];
+            unset($options['csp']);
         }
         return $options;
+    }
+
+    private function determineCspStatus(ContentSecurityMode $mode, bool $inline): bool
+    {
+        return match ($mode) {
+            // Enable CSP by default in v14, but only for non-inline assets; for v13, it's disabled by default
+            // TODO remove version switch when support for v13 is dropped
+            ContentSecurityMode::Auto => (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 && !$inline,
+            ContentSecurityMode::Enabled => true,
+            ContentSecurityMode::Disabled => false,
+        };
     }
 }

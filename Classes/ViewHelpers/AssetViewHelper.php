@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Asset\Asset;
 use Praetorius\ViteAssetCollector\Asset\AssetRendererInterface;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
@@ -78,6 +79,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             'Identifier of the desired vite entrypoint; this is the value specified as "input" in the vite configuration file. Can be omitted if manifest file exists and only one entrypoint is present.',
         );
         $this->registerArgument('csp', 'bool', 'Whether to collect a CSP hash value for this asset (default: true for external files, false for inline)', false, null);
+        // TODO remove with v3
         $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value (deprecated, use csp instead)', false, null);
         $this->registerArgument('scriptTagAttributes', 'array', 'Additional HTML attributes for script tags', false, []);
         $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
@@ -106,7 +108,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             entry: $entry,
             cssEmbedding: $this->createFallbackCssEmbedding(),
             scriptEmbedding: $this->createFallbackScriptEmbedding(),
-            csp: (bool)$this->arguments['useNonce'],
+            csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
 
         if ($viteContext?->useDevServer()) {
@@ -153,6 +155,12 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             trigger_error(
                 'ViewHelper <vac:asset.vite> has been renamed to <vite:asset>. The old name is deprecated and will be removed with v2 of EXT:vite_asset_collector.',
                 E_USER_DEPRECATED,
+            );
+        }
+        if (array_key_exists('useNonce', $arguments)) {
+            trigger_error(
+                'The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.',
+                E_USER_DEPRECATED
             );
         }
     }
