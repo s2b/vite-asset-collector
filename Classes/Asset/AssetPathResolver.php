@@ -7,16 +7,18 @@ namespace Praetorius\ViteAssetCollector\Asset;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-final readonly class AssetPathResolver
+#[AsAlias(AssetPathResolverInterface::class)]
+final readonly class AssetPathResolver implements AssetPathResolverInterface
 {
     public function __construct(private PackageManager $packageManager) {}
 
-    public function resolveOutputPath(AssetFile|OutputFile $file, Manifest $manifest, $absolute = false): string
+    public function resolveOutputPath(AssetFile|OutputFile $file, Manifest $manifest, bool $absolute = false): string
     {
         if ($file instanceof OutputFile) {
             $outputFile = $file;
@@ -37,7 +39,7 @@ final readonly class AssetPathResolver
         return $absolute ? $path : $this->stripProjectPath($path);
     }
 
-    public function resolveSourcePath(AssetFile $file, $absolute = false): string
+    public function resolveSourcePath(AssetFile $file, bool $absolute = false): string
     {
         $path = $file->locator;
         if (PathUtility::isExtensionPath($path)) {

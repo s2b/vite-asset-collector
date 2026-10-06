@@ -7,11 +7,13 @@ namespace Praetorius\ViteAssetCollector\Asset;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Psr\Http\Message\UriInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-final readonly class AssetUriGenerator
+#[AsAlias(AssetUriGeneratorInterface::class)]
+final readonly class AssetUriGenerator implements AssetUriGeneratorInterface
 {
-    public function __construct(private AssetPathResolver $assetPathResolver) {}
+    public function __construct(private AssetPathResolverInterface $assetPathResolver) {}
 
     public function generateDevUri(AssetFile $file, UriInterface $devServerBase): UriInterface
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
-use Praetorius\ViteAssetCollector\Asset\AssetUriGenerator;
+use Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
@@ -75,7 +75,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
 final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
     public function __construct(
-        private AssetUriGenerator $assetUriGenerator,
+        private AssetUriGeneratorInterface $assetUriGenerator,
         private ManifestFactory $manifestFactory,
     ) {}
 

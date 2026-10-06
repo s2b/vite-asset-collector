@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Asset\Manifest;
 
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
-use Praetorius\ViteAssetCollector\Asset\AssetPathResolver;
+use Praetorius\ViteAssetCollector\Asset\AssetPathResolverInterface;
 use Praetorius\ViteAssetCollector\Asset\AssetType;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -19,7 +19,7 @@ final readonly class ManifestFactory
         #[Autowire(service: 'cache.viteassetcollector_manifest')]
         private FrontendInterface $cache,
         private ExtensionConfiguration $extensionConfiguration,
-        private AssetPathResolver $assetPathResolver,
+        private AssetPathResolverInterface $assetPathResolver,
     ) {}
 
     public function createFromConfiguredPath(?string $manifestFile): Manifest
