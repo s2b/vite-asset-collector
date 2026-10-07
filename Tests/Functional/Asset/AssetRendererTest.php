@@ -506,7 +506,6 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         array $expectedStyleSheets = [],
         array $expectedInlineStyleSheets = [],
     ): void {
-        $GLOBALS['TYPO3_REQUEST'] = $this->createRequest($request);
         /** @var AssetCollector */
         $assetCollector = $this->get(AssetCollector::class);
         /** @var ManifestFactory */
@@ -514,11 +513,10 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderAsset($asset, $manifest, $GLOBALS['TYPO3_REQUEST']);
+        $assetRenderer->renderAsset($asset, $manifest, $this->createRequest($request));
         self::assertSame($expectedJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
         self::assertSame($expectedInlineStyleSheets, $assetCollector->getInlineStyleSheets(), 'inlineStyleSheets');
-        unset($GLOBALS['TYPO3_REQUEST']);
     }
 
     #[Test]
