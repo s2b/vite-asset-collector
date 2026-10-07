@@ -12,7 +12,6 @@ use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\UriInterface;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 
 final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
@@ -54,7 +53,7 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
     {
         /** @var AssetUriGenerator */
         $subject = $this->get(AssetUriGenerator::class);
-        self::assertEquals($expected, (string)$subject->generateDevUri($file, $devServerBase, new ServerRequest()));
+        self::assertEquals($expected, (string)$subject->generateDevUri($file, $devServerBase, $this->createRequest()));
     }
 
     public static function generateUriDataProvider(): array
@@ -87,6 +86,6 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetUriGenerator */
         $subject = $this->get(AssetUriGenerator::class);
-        self::assertEquals($expected, (string)$subject->generateUri($file, $manifest, new ServerRequest()));
+        self::assertEquals($expected, (string)$subject->generateUri($file, $manifest, $this->createRequest()));
     }
 }

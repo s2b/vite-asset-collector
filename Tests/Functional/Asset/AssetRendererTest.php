@@ -17,9 +17,6 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
-use TYPO3\CMS\Core\Http\NormalizedParams;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 
@@ -220,7 +217,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetCollector = $this->get(AssetCollector::class);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderDevAsset($asset, $devServerUri, $request ?? new ServerRequest());
+        $assetRenderer->renderDevAsset($asset, $devServerUri, $this->createRequest($request));
         self::assertSame($expectedDevJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedDevStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
     }
@@ -535,7 +532,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $request = new ServerRequest();
+        $request = $this->createRequest();
         $assetRenderer->renderAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
         $assetRenderer->renderAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         $assetRenderer->renderAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
@@ -588,7 +585,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $request = new ServerRequest();
+        $request = $this->createRequest();
         $assetRenderer->renderAsset(Asset::create(entry: 'Main.js', cssEmbedding: new CssEmbedding(media: 'print')), $manifest, $request);
         $assetRenderer->renderAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         self::assertEquals(
@@ -658,15 +655,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderAsset($asset, $manifest, new ServerRequest());
-    }
-
-    private function createRequest(?ServerRequestInterface $request = null): ServerRequestInterface
-    {
-        $request ??= new ServerRequest();
-        return $request
-            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('normalizedParams', NormalizedParams::createFromRequest($request));
+        $assetRenderer->renderAsset($asset, $manifest, $this->createRequest());
     }
 
     private static function autoCspForNonInline(): array
