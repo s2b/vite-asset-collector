@@ -83,7 +83,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value (deprecated, use csp instead)', false, null);
         $this->registerArgument('scriptTagAttributes', 'array', 'Additional HTML attributes for script tags', false, []);
         $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
-        $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag. Note that this is currently experimental due to missing path rewriting for asset files.', false, false);
+        $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag.', false, false);
         $this->registerArgument('cssTagAttributes', 'array', 'Additional HTML attributes for css link tags.', false, []);
         $this->registerArgument(
             'priority',

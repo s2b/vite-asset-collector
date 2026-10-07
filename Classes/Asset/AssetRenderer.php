@@ -14,7 +14,9 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Resource\RelativeCssPathFixer;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 #[AsAlias(AssetRendererInterface::class)]
 final readonly class AssetRenderer implements AssetRendererInterface
@@ -22,6 +24,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
     public function __construct(
         private AssetCollector $assetCollector,
         private PageRenderer $pageRenderer,
+        private RelativeCssPathFixer $relativeCssPathFixer,
         private AssetPathResolverInterface $assetPathResolver,
         private AssetUriGeneratorInterface $assetUriGenerator,
     ) {}
@@ -77,6 +80,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $manifest,
                     $asset->cssEmbedding,
                     $asset->csp,
+                    $request,
                 );
             }
 
@@ -89,6 +93,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                         $manifest,
                         $asset->cssEmbedding,
                         $asset->csp,
+                        $request,
                     );
                 }
             }
@@ -100,6 +105,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $manifest,
                     $asset->cssEmbedding,
                     $asset->csp,
+                    $request,
                 );
             }
         }
@@ -132,6 +138,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         Manifest $manifest,
         CssEmbedding $cssEmbedding,
         ContentSecurityMode $csp,
+        ServerRequestInterface $request,
     ): void {
         if ($cssEmbedding->inline) {
             $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest, true);
@@ -149,6 +156,8 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $resolvedFile
                 ), 1790541381);
             }
+            $outputPath = $this->prepareAssetPath(OutputFile::create(PathUtility::dirname($file->locator)), $manifest) . '/';
+            $cssSource = $this->relativeCssPathFixer->fixRelativeUrlPaths($cssSource, $outputPath, $request);
             $this->assetCollector->addInlineStyleSheet(
                 $identifier,
                 $cssSource,

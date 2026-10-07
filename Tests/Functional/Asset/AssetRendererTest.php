@@ -17,6 +17,8 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
@@ -431,6 +433,27 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
             ],
+            'withInlineCssAndPathRewrite' => [
+                'manifestFile' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Default.js',
+                    cssEmbedding: new CssEmbedding(inline: true),
+                ),
+                'expectedJavaScripts' => [
+                    'vite:Default.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedInlineStyleSheets' => [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' => "body{background:url('fileadmin/Fixtures/DefaultManifest/assets/./typo3-57f5650e.svg');}\n",
+                        'attributes' => [],
+                        'options' => ['external' => true],
+                    ],
+                ],
+            ],
             'withCsp' => [
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',
                 'asset' => Asset::create(
@@ -486,6 +509,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         array $expectedStyleSheets = [],
         array $expectedInlineStyleSheets = [],
     ): void {
+        $GLOBALS['TYPO3_REQUEST'] = $this->createRequest($request);
         /** @var AssetCollector */
         $assetCollector = $this->get(AssetCollector::class);
         /** @var ManifestFactory */
@@ -493,10 +517,11 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderAsset($asset, $manifest, $request ?? new ServerRequest());
+        $assetRenderer->renderAsset($asset, $manifest, $GLOBALS['TYPO3_REQUEST']);
         self::assertSame($expectedJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
         self::assertSame($expectedInlineStyleSheets, $assetCollector->getInlineStyleSheets(), 'inlineStyleSheets');
+        unset($GLOBALS['TYPO3_REQUEST']);
     }
 
     #[Test]
@@ -636,13 +661,21 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderAsset($asset, $manifest, new ServerRequest());
     }
 
-    protected static function autoCspForNonInline(): array
+    private function createRequest(?ServerRequestInterface $request = null): ServerRequestInterface
+    {
+        $request ??= new ServerRequest();
+        return $request
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+            ->withAttribute('normalizedParams', NormalizedParams::createFromRequest($request));
+    }
+
+    private static function autoCspForNonInline(): array
     {
         // TODO remove this when support for TYPO3 v13 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? [self::cspOptionName() => true] : [];
     }
 
-    protected static function cspOptionName(): string
+    private static function cspOptionName(): string
     {
         // TODO remove this when support for TYPO3 v13 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'csp' : 'useNonce';
