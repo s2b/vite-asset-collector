@@ -36,6 +36,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
         $source = (string)$this->assetUriGenerator->generateUri(
             AssetFile::create($options['source']),
             $this->manifestFactory->createFromConfiguredPath($options['manifest'] ?? null),
+            null,
         );
 
         return '<img src="' . htmlspecialchars($source) . '" width="' . $icon->getDimension()->getWidth() . '" height="' . $icon->getDimension()->getHeight() . '" alt="" />';
