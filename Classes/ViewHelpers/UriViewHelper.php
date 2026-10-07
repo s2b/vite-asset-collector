@@ -9,11 +9,7 @@ use Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
 
 /**
  * The `vite:uri` ViewHelper extracts the uri to one specific asset file from a vite
@@ -72,7 +68,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  *
  *     </html>
  */
-final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
+final class UriViewHelper extends AbstractViewHelper
 {
     public function __construct(
         private AssetUriGeneratorInterface $assetUriGenerator,
@@ -113,18 +109,5 @@ final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
     private function getRequest(): ServerRequestInterface
     {
         return $this->renderingContext->getAttribute(ServerRequestInterface::class);
-    }
-
-    /**
-     * @param array<string, NodeInterface> $arguments Unevaluated ViewHelper arguments
-     */
-    public static function nodeInitializedEvent(ViewHelperNode $node, array $arguments, ParsingState $parsingState): void
-    {
-        if ($node->getName() === 'resource.vite') {
-            trigger_error(
-                'ViewHelper <vac:resource.vite> has been renamed to <vite:uri>. The old name is deprecated and will be removed with v2 of EXT:vite_asset_collector.',
-                E_USER_DEPRECATED,
-            );
-        }
     }
 }
