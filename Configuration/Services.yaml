@@ -12,9 +12,3 @@ services:
     class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
     arguments: ['viteassetcollector_manifest']
-
-  # Register class aliases for deprecated ViewHelper names
-  Praetorius\ViteAssetCollector\ViewHelpers\Asset\ViteViewHelper:
-    class: Praetorius\ViteAssetCollector\ViewHelpers\AssetViewHelper
-  Praetorius\ViteAssetCollector\ViewHelpers\Resource\ViteViewHelper:
-    class: Praetorius\ViteAssetCollector\ViewHelpers\UriViewHelper

@@ -151,12 +151,6 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
      */
     public static function nodeInitializedEvent(ViewHelperNode $node, array $arguments, ParsingState $parsingState): void
     {
-        if ($node->getName() === 'asset.vite') {
-            trigger_error(
-                'ViewHelper <vac:asset.vite> has been renamed to <vite:asset>. The old name is deprecated and will be removed with v2 of EXT:vite_asset_collector.',
-                E_USER_DEPRECATED,
-            );
-        }
         if (array_key_exists('useNonce', $arguments)) {
             trigger_error(
                 'The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.',
