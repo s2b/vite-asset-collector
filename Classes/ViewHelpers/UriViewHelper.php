@@ -99,15 +99,20 @@ final class UriViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
         $viteContext = $this->getViteContext();
         $file = AssetFile::create($this->arguments['file']);
         if ($viteContext?->useDevServer()) {
-            return (string)$this->assetUriGenerator->generateDevUri($file, $viteContext->getDevServer());
+            return (string)$this->assetUriGenerator->generateDevUri($file, $viteContext->getDevServer(), $this->getRequest());
         }
         $manifest = $this->manifestFactory->createFromConfiguredPath($this->arguments['manifest']);
-        return (string)$this->assetUriGenerator->generateUri($file, $manifest);
+        return (string)$this->assetUriGenerator->generateUri($file, $manifest, $this->getRequest());
     }
 
     private function getViteContext(): ?ViteContext
     {
-        return $this->renderingContext->getAttribute(ServerRequestInterface::class)->getAttribute('vite.context');
+        return $this->getRequest()->getAttribute('vite.context');
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
     }
 
     /**

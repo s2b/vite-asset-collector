@@ -44,6 +44,6 @@ final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInt
 
         $assetFile = AssetFile::create($matches[1]);
         $manifest = $this->manifestFactory->createFromConfiguredPath($matches[2] ?? null);
-        return (string)$this->assetUriGenerator->generateUri($assetFile, $manifest);
+        return (string)$this->assetUriGenerator->generateUri($assetFile, $manifest, null);
     }
 }

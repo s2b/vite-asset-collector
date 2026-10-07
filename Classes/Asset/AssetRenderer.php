@@ -33,7 +33,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
     {
         $this->renderViteClient($devServerUri, $request);
         $path = $this->assetPathResolver->resolveSourcePath($asset->entry);
-        $uri = (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri);
+        $uri = (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request);
         if ($asset->entry->type === AssetType::Css) {
             $this->assetCollector->addStyleSheet(
                 "vite:{$path}",
@@ -66,7 +66,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         if (!$asset->scriptEmbedding->ignore && $chunk->file->type === AssetType::Script) {
             $this->assetCollector->addJavaScript(
                 "vite:{$chunk->identifier}",
-                $this->prepareAssetPath($chunk->file, $manifest),
+                $this->prepareAssetPath($chunk->file, $manifest, $request),
                 $asset->scriptEmbedding->getTagAttributes(),
                 $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'csp' => $this->determineCspStatus($asset->csp, false)]),
             );
@@ -126,7 +126,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         }
         $this->assetCollector->addJavaScript(
             'vite',
-            (string)$this->assetUriGenerator->generateDevUri(AssetFile::create('@vite/client'), $devServerUri),
+            (string)$this->assetUriGenerator->generateDevUri(AssetFile::create('@vite/client'), $devServerUri, $request),
             ['type' => 'module'],
             $this->prepareOptions(['priority' => true]),
         );
@@ -156,7 +156,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $resolvedFile
                 ), 1790541381);
             }
-            $outputPath = $this->prepareAssetPath(OutputFile::create(PathUtility::dirname($file->locator)), $manifest) . '/';
+            $outputPath = $this->prepareAssetPath(OutputFile::create(PathUtility::dirname($file->locator)), $manifest, $request) . '/';
             $cssSource = $this->relativeCssPathFixer->fixRelativeUrlPaths($cssSource, $outputPath, $request);
             $this->assetCollector->addInlineStyleSheet(
                 $identifier,
@@ -169,15 +169,15 @@ final readonly class AssetRenderer implements AssetRendererInterface
 
         $this->assetCollector->addStyleSheet(
             $identifier,
-            $this->prepareAssetPath($file, $manifest),
+            $this->prepareAssetPath($file, $manifest, $request),
             $cssEmbedding->getTagAttributes(),
             $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, false)])
         );
     }
 
-    private function prepareAssetPath(OutputFile $file, Manifest $manifest): string
+    private function prepareAssetPath(OutputFile $file, Manifest $manifest, ServerRequestInterface $request): string
     {
-        $assetPath = (string)$this->assetUriGenerator->generateUri($file, $manifest);
+        $assetPath = (string)$this->assetUriGenerator->generateUri($file, $manifest, $request);
         // TODO adjust this when support for TYPO3 v13 is dropped
         return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13
             ? 'URI:' . $assetPath
