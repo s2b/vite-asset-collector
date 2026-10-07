@@ -38,3 +38,8 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../Tests/Functional/EventListener/MutateContentSecurityPolicyTest.php
+		-
+			message: '#^Method TYPO3\\CMS\\Core\\Resource\\RelativeCssPathFixer\:\:fixRelativeUrlPaths\(\) invoked with 3 parameters, 2 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: ../../Classes/Asset/AssetRenderer.php
