@@ -43,3 +43,43 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: ../../Classes/Asset/AssetRenderer.php
+		-
+			message: '#^Call to method createPublicResource\(\) on an unknown class TYPO3\\CMS\\Core\\SystemResource\\SystemResourceFactory\.$#'
+			identifier: class.notFound
+			count: 2
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Call to method generateUri\(\) on an unknown class TYPO3\\CMS\\Core\\SystemResource\\Publishing\\SystemResourcePublisherInterface\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Caught class TYPO3\\CMS\\Core\\SystemResource\\Exception\\SystemResourceException not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Instantiated class TYPO3\\CMS\\Core\\SystemResource\\Publishing\\UriGenerationOptions not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Parameter \$systemResourceFactory of method Praetorius\\ViteAssetCollector\\Asset\\AssetUriGenerator\:\:__construct\(\) has invalid type TYPO3\\CMS\\Core\\SystemResource\\SystemResourceFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Parameter \$systemResourcePublisher of method Praetorius\\ViteAssetCollector\\Asset\\AssetUriGenerator\:\:__construct\(\) has invalid type TYPO3\\CMS\\Core\\SystemResource\\Publishing\\SystemResourcePublisherInterface\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Property Praetorius\\ViteAssetCollector\\Asset\\AssetUriGenerator\:\:\$systemResourceFactory has unknown class TYPO3\\CMS\\Core\\SystemResource\\SystemResourceFactory as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Property Praetorius\\ViteAssetCollector\\Asset\\AssetUriGenerator\:\:\$systemResourcePublisher has unknown class TYPO3\\CMS\\Core\\SystemResource\\Publishing\\SystemResourcePublisherInterface as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetUriGenerator.php
