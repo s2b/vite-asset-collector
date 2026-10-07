@@ -8,11 +8,8 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
@@ -56,11 +53,8 @@ final class ViewHelperAliasesTest extends AbstractViteFunctionalTestCase
         $context = $this->get(RenderingContextFactory::class)->create();
         $context->getViewHelperResolver()->addNamespace('vac', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
 
-        $request = (new ServerRequest())
-            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('extbase', new ExtbaseRequestParameters())
+        $request = $this->createRequest()
             ->withAttribute('vite.context', new ViteContext(useDevServer: false, devServer: new Uri('/')));
-
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;

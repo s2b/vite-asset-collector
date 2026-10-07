@@ -13,11 +13,8 @@ use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCas
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
@@ -384,11 +381,8 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         $context = $this->get(RenderingContextFactory::class)->create();
         $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
 
-        $request = (new ServerRequest())
-            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('extbase', new ExtbaseRequestParameters())
+        $request = $this->createRequest()
             ->withAttribute('vite.context', new ViteContext(useDevServer: $useDevServer, devServer: $devServerUri));
-
         $context->setAttribute(ServerRequestInterface::class, $request);
 
         return $context;
