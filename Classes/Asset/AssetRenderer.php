@@ -155,7 +155,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $resolvedFile
                 ), 1790541381);
             }
-            $outputPath = $this->prepareAssetPath(OutputFile::create(dirname($file->locator)), $manifest, $request) . '/';
+            $outputPath = dirname($this->prepareAssetPath($file, $manifest, $request)) . '/';
             $cssSource = $this->relativeCssPathFixer->fixRelativeUrlPaths($cssSource, $outputPath, $request);
             $this->assetCollector->addInlineStyleSheet(
                 $identifier,
