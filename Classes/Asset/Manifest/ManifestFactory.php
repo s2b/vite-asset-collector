@@ -11,7 +11,6 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
 final readonly class ManifestFactory
 {
@@ -128,7 +127,7 @@ final readonly class ManifestFactory
     private function determineOutputDir(string $manifestFile): string
     {
         // from _assets/vite/.vite/manifest.json to _assets/vite/
-        return PathUtility::dirname(PathUtility::dirname($manifestFile)) . '/';
+        return dirname(dirname($manifestFile)) . '/';
     }
 
     private function stripOutputDir(string $path, string $outputDir): string
