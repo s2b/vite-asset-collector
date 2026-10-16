@@ -67,6 +67,24 @@ final class BuildViteContextTest extends UnitTestCase
                 'expectedUseDevServer' => false,
                 'expectedDevServerUri' => 'https://example.com',
             ],
+            'dev server disabled based on env var' => [
+                'useDevServer' => 'auto',
+                'devServerUri' => 'https://example.com',
+                'requestUri' => 'https://localhost',
+                'typo3Context' => 'Development',
+                'environmentVariables' => ['VITE_SERVER_RUNNING' => '0'],
+                'expectedUseDevServer' => false,
+                'expectedDevServerUri' => 'https://example.com',
+            ],
+            'dev server enabled based on env var' => [
+                'useDevServer' => 'auto',
+                'devServerUri' => 'https://example.com',
+                'requestUri' => 'https://localhost',
+                'typo3Context' => 'Production',
+                'environmentVariables' => ['VITE_SERVER_RUNNING' => '1'],
+                'expectedUseDevServer' => true,
+                'expectedDevServerUri' => 'https://example.com',
+            ],
             'automatic dev server status on production' => [
                 'useDevServer' => 'auto',
                 'devServerUri' => 'https://example.com',
@@ -131,7 +149,11 @@ final class BuildViteContextTest extends UnitTestCase
         self::assertSame($expectedUseDevServer, $event->getViteContext()->useDevServer());
         self::assertSame($expectedDevServerUri, (string)$event->getViteContext()->getDevServer());
         foreach ($originalVariables as $name => $value) {
-            putenv($name . '=' . (string)$value);
+            if ($value === false) {
+                putenv($name);
+            } else {
+                putenv($name . '=' . (string)$value);
+            }
         }
     }
 }
