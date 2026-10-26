@@ -9,13 +9,14 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 final readonly class CssEmbedding
 {
     public const VariableName = 'cssEmbedding';
+    public const BooleanAttributes = ['disabled'];
 
     public function __construct(
         public bool $priority = false,
         public bool $inline = false,
         public bool $preload = true,
         public bool $preloadFonts = true,
-        public bool $preloadImages = false,
+        public bool $preloadImages = true,
         public bool $ignore = false,
         public bool $disabled = false,
         public ?string $media = null,
@@ -38,10 +39,12 @@ final readonly class CssEmbedding
 
     private function convertBooleanAttributes(array $attributes): array
     {
-        if ($attributes['disabled'] ?? false) {
-            $attributes['disabled'] = 'disabled';
-        } else {
-            unset($attributes['disabled']);
+        foreach (self::BooleanAttributes as $attr) {
+            if ($attributes[$attr] ?? false) {
+                $attributes[$attr] = $attr;
+            } else {
+                unset($attributes[$attr]);
+            }
         }
         return $attributes;
     }
