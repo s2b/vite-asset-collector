@@ -19,45 +19,63 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
 
 /**
- * The `vite:asset` ViewHelper embeds all JavaScript and CSS belonging to the
- * specified vite `entry` using TYPO3's AssetCollector API.
+ * The `<vite:asset>` ViewHelper embeds all JavaScript and CSS belonging to the
+ * specified vite `entry` using TYPO3's AssetCollector API. It automatically
+ * switches between Vite's development server and production rendering
+ * (manifest.json) based on the extension's configuration.
  *
- * Example
- * =======
+ * Assets are embedded with the following defaults:
+ *
+ * * Scripts are embedded as JavaScript modules using `<script type="module">`
+ *   at the end of the document
+ * * CSS files use `<link rel="stylesheet">` in the `<head>`
+ * * Imported JavaScript modules are preloaded automatically using
+ *   `<link rel="modulepreload">`
+ * * Referenced images and fonts are preloaded automatically using
+ *   `<link rel="preload">`
+ *
+ * These defaults can be configured separately for CSS and script assets by nesting
+ * `<vite:asset.script> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-script>`_
+ * and/or
+ * `<vite:asset.css> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-css>`_
+ * inside `<vite:asset>` (see examples below).
+ *
+ * Example: Basic usage
+ * ====================
  *
  * ..  code-block:: html
  *
- *     <html
- *         data-namespace-typo3-fluid="true"
- *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
- *     >
+ *     <vite:asset entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js" />
  *
- *     <vite:asset
- *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
- *     />
- *
- * Advanced Example
- * ================
+ * Example: Inlining CSS
+ * =====================
  *
  * ..  code-block:: html
  *
- *     <html
- *         data-namespace-typo3-fluid="true"
- *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
- *     >
+ *     <vite:asset entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js">
+ *         <vite:asset.css inline="{true}" />
+ *     </vite:asset>
  *
- *     <vite:asset
- *         manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
- *         entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js"
- *         scriptTagAttributes="{
- *             type: 'text/javascript',
- *             async: 1
- *         }"
- *         cssTagAttributes="{
- *             media: 'print'
- *         }"
- *         priority="1"
- *     />
+ * Example: Disable automatic preloading
+ * =====================================
+ *
+ * ..  code-block:: html
+ *
+ *     <vite:asset entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js">
+ *         <vite:asset.script preloadImports="{false}" />
+ *         <vite:asset.css preloadFonts="{false}" preloadImages="{false}" />
+ *     </vite:asset>
+ *
+ * Example: Media query for CSS
+ * ============================
+ *
+ * ..  code-block:: html
+ *
+ *     <vite:asset entry="EXT:sitepackage/Resources/Private/Css/Print.entry.css">
+ *         <vite:asset.css media="print" />
+ *     </vite:asset>
+ *
+ * @see https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset
  */
 final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
@@ -80,15 +98,15 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         );
         $this->registerArgument('csp', 'bool', 'Whether to collect a CSP hash value for this asset (default: true for external files, false for inline)', false, null);
         // TODO remove with v3
-        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value (deprecated, use csp instead)', false, null);
-        $this->registerArgument('scriptTagAttributes', 'array', 'Additional HTML attributes for script tags', false, []);
-        $this->registerArgument('addCss', 'boolean', 'If set to "false", CSS files associated with the entry point won\'t be added to the asset collector', false, true);
-        $this->registerArgument('inlineCss', 'boolean', 'If set to "true", CSS will be added as inline <style> tag.', false, false);
-        $this->registerArgument('cssTagAttributes', 'array', 'Additional HTML attributes for css link tags.', false, []);
+        $this->registerArgument('useNonce', 'bool', 'Deprecated, use csp instead. (Whether to use the global nonce value)', false, null);
+        $this->registerArgument('scriptTagAttributes', 'array', 'Deprecated, use <vite:asset.script> instead. (Additional HTML attributes for script tags)', false, []);
+        $this->registerArgument('addCss', 'boolean', 'Deprecated, use <vite:asset.css> instead. (If set to "false", CSS files associated with the entry point won\'t be added to the asset collector)', false, true);
+        $this->registerArgument('inlineCss', 'boolean', 'Deprecated, use <vite:asset.css> instead. (If set to "true", CSS will be added as inline <style> tag.)', false, false);
+        $this->registerArgument('cssTagAttributes', 'array', 'Deprecated, use <vite:asset.css> instead. (Additional HTML attributes for css link tags.)', false, []);
         $this->registerArgument(
             'priority',
             'boolean',
-            'Include assets before other assets in HTML',
+            'Deprecated, use <vite:asset.css> for CSS and <vite:asset.script> for scripts instead. (Include assets before other assets in HTML)',
             false,
             false
         );
@@ -104,10 +122,18 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             $entry ??= $manifest->getOnlyEntrypoint()->identifier;
         }
 
+        $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
+        $viewHelperVariableContainer->add(self::class, CssEmbedding::VariableName, $this->createFallbackCssEmbedding());
+        $viewHelperVariableContainer->add(self::class, ScriptEmbedding::VariableName, $this->createFallbackScriptEmbedding());
+        $this->renderChildren();
+        /** @var CssEmbedding */
+        $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
+        /** @var ScriptEmbedding */
+        $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
         $asset = Asset::create(
             entry: $entry,
-            cssEmbedding: $this->createFallbackCssEmbedding(),
-            scriptEmbedding: $this->createFallbackScriptEmbedding(),
+            cssEmbedding: $cssEmbedding,
+            scriptEmbedding: $scriptEmbedding,
             csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
 
@@ -118,6 +144,9 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         }
     }
 
+    /**
+     * @todo remove with v3
+     */
     private function createFallbackCssEmbedding(): CssEmbedding
     {
         return new CssEmbedding(
@@ -128,6 +157,9 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         );
     }
 
+    /**
+     * @todo remove with v3
+     */
     private function createFallbackScriptEmbedding(): ScriptEmbedding
     {
         return new ScriptEmbedding(
@@ -148,6 +180,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
 
     /**
      * @param array<string, NodeInterface> $arguments Unevaluated ViewHelper arguments
+     * @todo remove with v3
      */
     public static function nodeInitializedEvent(ViewHelperNode $node, array $arguments, ParsingState $parsingState): void
     {
@@ -156,6 +189,26 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
                 'The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.',
                 E_USER_DEPRECATED
             );
+        }
+        if (array_key_exists('priority', $arguments)) {
+            trigger_error(
+                'The "priority" argument of <vite:asset> is deprecated. Use <vite:asset.script> and/or <vite:asset.css> instead to configure embedding.',
+                E_USER_DEPRECATED
+            );
+        }
+        if (array_key_exists('scriptTagAttributes', $arguments)) {
+            trigger_error(
+                'The "scriptTagAttributes" argument of <vite:asset> is deprecated. Use <vite:asset.script> instead to configure script embedding.',
+                E_USER_DEPRECATED
+            );
+        }
+        foreach (['addCss', 'inlineCss', 'cssTagAttributes'] as $argumentName) {
+            if (array_key_exists($argumentName, $arguments)) {
+                trigger_error(
+                    'The "' . $argumentName . '" argument of <vite:asset> is deprecated. Use <vite:asset.css> instead to configure CSS embedding.',
+                    E_USER_DEPRECATED
+                );
+            }
         }
     }
 }

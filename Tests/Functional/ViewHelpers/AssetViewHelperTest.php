@@ -44,7 +44,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 ],
             ],
             'withoutCss' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" addCss="0" />',
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js"><vite:asset.css ignore="{true}" /></vite:asset>',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -92,34 +92,33 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 ],
             ],
             'withAttributes' => [
-                'template' => '<vite:asset
-                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
-                    entry="Main.js"
-                    scriptTagAttributes="{async: 1}"
-                    cssTagAttributes="{media: \'print\'}"
-                />',
+                'template' => '
+                    <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js">
+                        <vite:asset.script loading="async" additionalAttributes="{foo: \'bar\'}" />
+                        <vite:asset.css media="print" additionalAttributes="{foo: \'bar\'}" />
+                    </vite:asset>
+                ',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
-                        'attributes' => ['type' => 'module', 'async' => 'async'],
+                        'attributes' => ['async' => 'async', 'foo' => 'bar'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
-                        'attributes' => ['media' => 'print'],
+                        'attributes' => ['media' => 'print', 'foo' => 'bar'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
-            'withInlineCss' => [
-                'template' => '<vite:asset
-                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
-                    entry="Main.js"
-                    cssTagAttributes="{media: \'print\'}"
-                    inlineCss="1"
-                />',
+            'withInlineCssWithoutPriority' => [
+                'template' => '
+                    <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js">
+                        <vite:asset.css inline="{true}" media="print" priority="{false}" />
+                    </vite:asset>
+                ',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -135,19 +134,17 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
             ],
-            'withInlineCssAndPriority' => [
-                'template' => '<vite:asset
-                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
-                    entry="Main.js"
-                    cssTagAttributes="{media: \'print\'}"
-                    inlineCss="1"
-                    priority="1"
-                />',
-                'priorityJavaScripts' => [
+            'withInlineCss' => [
+                'template' => '
+                    <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js">
+                        <vite:asset.css inline="{true}" media="print" />
+                    </vite:asset>
+                ',
+                'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
-                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'priorityInlineStyleSheets' => [
@@ -159,7 +156,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 ],
             ],
             'withPriority' => [
-                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" priority="1" />',
+                'template' => '
+                    <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js">
+                        <vite:asset.script priority="{true}" />
+                    </vite:asset>
+                ',
                 'priorityJavaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
@@ -265,6 +266,168 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         self::assertSame($preload, $headerDataAccessor->getValue($pageRenderer));
     }
 
+    public static function renderWithDeprecatedArgumentsDataProvider(): array
+    {
+        $manifestDir = 'fileadmin/Fixtures/';
+        return [
+            'withoutCss' => [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" addCss="0" />',
+                'javaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'deprecationMessage' => 'The "addCss" argument of <vite:asset> is deprecated. Use <vite:asset.css> instead to configure CSS embedding.',
+            ],
+            'withAttributes' => [
+                'template' => '<vite:asset
+                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
+                    entry="Main.js"
+                    scriptTagAttributes="{async: 1}"
+                    cssTagAttributes="{media: \'print\'}"
+                />',
+                'javaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'priorityStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'attributes' => ['media' => 'print'],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'deprecationMessage' => 'The "scriptTagAttributes" argument of <vite:asset> is deprecated. Use <vite:asset.script> instead to configure script embedding.',
+            ],
+            'withInlineCss' => [
+                'template' => '<vite:asset
+                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
+                    entry="Main.js"
+                    inlineCss="1"
+                    cssTagAttributes="{media: \'print\'}"
+                />',
+                'javaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'inlineStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".main{color:red;}\n",
+                        'attributes' => ['media' => 'print'],
+                        'options' => ['external' => true],
+                    ],
+                ],
+                'deprecationMessage' => 'The "inlineCss" argument of <vite:asset> is deprecated. Use <vite:asset.css> instead to configure CSS embedding.',
+            ],
+            'withInlineCssAndPriority' => [
+                'template' => '<vite:asset
+                    manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json"
+                    entry="Main.js"
+                    cssTagAttributes="{media: \'print\'}"
+                    inlineCss="1"
+                    priority="1"
+                />',
+                'priorityJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'priorityInlineStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => ".main{color:red;}\n",
+                        'attributes' => ['media' => 'print'],
+                        'options' => ['external' => true, 'priority' => true],
+                    ],
+                ],
+                'deprecationMessage' => 'The "cssTagAttributes" argument of <vite:asset> is deprecated. Use <vite:asset.css> instead to configure CSS embedding.',
+            ],
+            'withPriority' => [
+                'template' => '<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" priority="1" />',
+                'priorityJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'priorityStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'deprecationMessage' => 'The "priority" argument of <vite:asset> is deprecated. Use <vite:asset.script> and/or <vite:asset.css> instead to configure embedding.',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('renderWithDeprecatedArgumentsDataProvider')]
+    #[IgnoreDeprecations]
+    public function renderWithDeprecatedArguments(
+        string $template,
+        string $deprecationMessage,
+        array $javaScripts = [],
+        array $priorityJavaScripts = [],
+        array $styleSheets = [],
+        array $priorityStyleSheets = [],
+        array $inlineStyleSheets = [],
+        array $priorityInlineStyleSheets = [],
+        array $preload = [],
+    ): void {
+        self::expectUserDeprecationMessage($deprecationMessage);
+        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
+            'useDevServer' => '0',
+            'devServerUri' => 'https://localhost:5173',
+            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+        ]);
+
+        $pageRenderer = $this->get(PageRenderer::class);
+        $assetCollector = $this->get(AssetCollector::class);
+
+        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
+        $context->getTemplatePaths()->setTemplateSource($template);
+        (new TemplateView($context))->render();
+
+        self::assertSame(
+            $javaScripts,
+            $assetCollector->getJavaScripts(false)
+        );
+        self::assertSame(
+            $priorityJavaScripts,
+            $assetCollector->getJavaScripts(true)
+        );
+        self::assertSame(
+            $styleSheets,
+            $assetCollector->getStyleSheets(false)
+        );
+        self::assertSame(
+            $priorityStyleSheets,
+            $assetCollector->getStyleSheets(true)
+        );
+        self::assertSame(
+            $inlineStyleSheets,
+            $assetCollector->getInlineStyleSheets(false)
+        );
+        self::assertSame(
+            $priorityInlineStyleSheets,
+            $assetCollector->getInlineStyleSheets(true)
+        );
+        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
+        self::assertSame($preload, $headerDataAccessor->getValue($pageRenderer));
+    }
+
     #[Test]
     public function renderWithDevServer(): void
     {
@@ -303,11 +466,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset
-            manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json"
-            entry="Main.scss"
-            cssTagAttributes="{media: \'print\', disabled: 1}"
-        />');
+        $context->getTemplatePaths()->setTemplateSource('
+            <vite:asset manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json" entry="Main.scss">
+                <vite:asset.css media="print" disabled="{true}" />
+            </vite:asset>
+        ');
         (new TemplateView($context))->render();
 
         self::assertEquals(
@@ -353,6 +516,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     #[IgnoreDeprecations]
     public function nonceTriggersDeprecation(): void
     {
+        self::expectUserDeprecationMessage('The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.');
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
         ]);
