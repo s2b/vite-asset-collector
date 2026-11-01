@@ -32,6 +32,9 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures/test_extension' => 'typo3conf/ext/symlink_extension',
     ];
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function renderDevAssetDataProvider(): array
     {
         return [
@@ -205,6 +208,10 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed[]> $expectedDevJavaScripts
+     * @param array<string, mixed[]> $expectedDevStyleSheets
+     */
     #[Test]
     #[DataProvider('renderDevAssetDataProvider')]
     public function renderDevAsset(
@@ -227,6 +234,9 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         self::assertSame([], $headerDataAccessor->getValue($pageRenderer));
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function renderAssetDataProvider(): array
     {
         return [
@@ -591,6 +601,12 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed[]> $expectedJavaScripts
+     * @param array<string, mixed[]> $expectedStyleSheets
+     * @param array<string, mixed[]> $expectedInlineStyleSheets
+     * @param string[] $expectedPreloadTags
+     */
     #[Test]
     #[DataProvider('renderAssetDataProvider')]
     public function renderAsset(
@@ -713,6 +729,9 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         );
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function addAssetsFromManifestFileErrorHandlingDataProvider(): array
     {
         return [
@@ -756,6 +775,9 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderAsset($asset, $manifest, $this->createRequest());
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private static function autoCspForNonInline(): array
     {
         // TODO remove this when support for TYPO3 v13 is dropped

@@ -225,6 +225,10 @@ final readonly class AssetRenderer implements AssetRendererInterface
             : $assetPath;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
     private function prepareOptions(array $options): array
     {
         // The "external" flag has been introduced with TYPO3 v13. It allows bypassing

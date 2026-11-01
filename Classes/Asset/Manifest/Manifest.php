@@ -55,6 +55,7 @@ final readonly class Manifest
     }
 
     /**
+     * @param array<string, true> $visited
      * @return array<string, ManifestChunk>
      */
     public function getImportsForChunk(string $identifier, bool $recursive = false, array &$visited = []): array

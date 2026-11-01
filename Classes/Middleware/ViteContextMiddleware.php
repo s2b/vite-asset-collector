@@ -23,8 +23,9 @@ final readonly class ViteContextMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function buildViteContext($request): ViteContext
+    private function buildViteContext(ServerRequestInterface $request): ViteContext
     {
+        /** @var BuildViteContextEvent */
         $event = $this->eventDispatcher->dispatch(new BuildViteContextEvent($request));
         if ($event->getViteContext() === null) {
             throw new ViteException('Unable to determine vite context: No event listener created a valid context object.', 1789912229);

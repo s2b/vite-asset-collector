@@ -2,9 +2,9 @@ includes:
 	- ../../.Build/vendor/saschaegerer/phpstan-typo3/extension.neon
 
 parameters:
-	level: 5
+	level: 7
 	phpVersion: 80200
-	treatPhpDocTypesAsCertain: true
+	treatPhpDocTypesAsCertain: false
 
 	paths:
 		- ../../Classes/

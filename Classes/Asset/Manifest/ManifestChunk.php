@@ -11,6 +11,8 @@ final readonly class ManifestChunk
     /**
      * @param OutputFile[] $assets
      * @param OutputFile[] $css
+     * @param string[] $imports
+     * @param string[] $dynamicImports
      */
     public function __construct(
         public string $identifier,

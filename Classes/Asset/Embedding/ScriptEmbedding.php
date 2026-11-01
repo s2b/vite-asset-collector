@@ -11,6 +11,9 @@ final readonly class ScriptEmbedding
     public const VariableName = 'scriptEmbedding';
     public const BooleanAttributes = ['async', 'defer', 'nomodule'];
 
+    /**
+     * @param array<string, mixed> $additionalAttributes
+     */
     public function __construct(
         public bool $priority = false,
         public bool $preloadImports = true,
@@ -24,6 +27,9 @@ final readonly class ScriptEmbedding
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getTagAttributes(): array
     {
         $attributes = [
@@ -34,6 +40,10 @@ final readonly class ScriptEmbedding
         return $this->convertBooleanAttributes($attributes);
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
     private function convertBooleanAttributes(array $attributes): array
     {
         foreach (self::BooleanAttributes as $attr) {

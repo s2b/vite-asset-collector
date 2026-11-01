@@ -25,25 +25,28 @@ use TYPO3\CMS\Core\Type\Map;
 
 final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCase
 {
+    /**
+     * @return iterable<string, array<string, mixed>>
+     */
     public static function getDefaultManifestFileDataProvider(): iterable
     {
         //
         // Basic use cases
         //
         yield 'do nothing if dev server is disabled' => [
-            false,
-            'https://localhost:1234',
-            new ConsumableNonce('theNonce'),
-            new Policy(),
-            [''],
+            'useDevServer' => false,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => new ConsumableNonce('theNonce'),
+            'currentPolicy' => new Policy(),
+            'expectedPolicy' => [''],
         ];
 
         yield 'empty project policy, nonce not consumed' => [
-            true,
-            'https://localhost:1234',
-            new ConsumableNonce('theNonce'),
-            new Policy(),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => new ConsumableNonce('theNonce'),
+            'currentPolicy' => new Policy(),
+            'expectedPolicy' => [
                 'connect-src http://localhost:1234 https://localhost:1234 wss://localhost:1234',
                 'script-src-elem http://localhost:1234 https://localhost:1234 wss://localhost:1234',
                 'style-src-elem http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -55,11 +58,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'empty project policy, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            new Policy(),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => new Policy(),
+            'expectedPolicy' => [
                 'connect-src http://localhost:1234 https://localhost:1234 wss://localhost:1234',
                 "script-src-elem http://localhost:1234 https://localhost:1234 wss://localhost:1234 'nonce-" . $nonce->consume() . "'",
                 "style-src-elem http://localhost:1234 https://localhost:1234 wss://localhost:1234 'nonce-" . $nonce->consume() . "'",
@@ -71,11 +74,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com'))),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com'))),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
                 "script-src-elem https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234 'nonce-" . $nonce->consume() . "'",
@@ -91,11 +94,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and nonce for scripts, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrc, SourceKeyword::nonceProxy),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrc, SourceKeyword::nonceProxy),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "script-src https://example.com 'nonce-" . $nonce->consume() . "'",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -109,11 +112,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and nonce for script elements, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrcElem, SourceKeyword::nonceProxy),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrcElem, SourceKeyword::nonceProxy),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "script-src-elem https://example.com 'nonce-" . $nonce->consume() . "' http://localhost:1234 https://localhost:1234 wss://localhost:1234",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -126,11 +129,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and unsafe-inline for scripts, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrc, SourceKeyword::unsafeInline),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrc, SourceKeyword::unsafeInline),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "script-src https://example.com 'unsafe-inline'",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -144,11 +147,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and unsafe-inline for script elements, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrcElem, SourceKeyword::unsafeInline),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::ScriptSrcElem, SourceKeyword::unsafeInline),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "script-src-elem https://example.com 'unsafe-inline' http://localhost:1234 https://localhost:1234 wss://localhost:1234",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -164,11 +167,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and nonce for styles, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrc, SourceKeyword::nonceProxy),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrc, SourceKeyword::nonceProxy),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "style-src https://example.com 'nonce-" . $nonce->consume() . "'",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -182,11 +185,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and nonce for style elements, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrcElem, SourceKeyword::nonceProxy),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrcElem, SourceKeyword::nonceProxy),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "style-src-elem https://example.com 'nonce-" . $nonce->consume() . "' http://localhost:1234 https://localhost:1234 wss://localhost:1234",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -199,11 +202,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and unsafe-inline for styles, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrc, SourceKeyword::unsafeInline),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrc, SourceKeyword::unsafeInline),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "style-src https://example.com 'unsafe-inline'",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -217,11 +220,11 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'project policy with default uri and unsafe-inline for style elements, nonce consumed' => [
-            true,
-            'https://localhost:1234',
-            $nonce,
-            (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrcElem, SourceKeyword::unsafeInline),
-            [
+            'useDevServer' => true,
+            'devServerUri' => 'https://localhost:1234',
+            'nonce' => $nonce,
+            'currentPolicy' => (new Policy(new UriValue('https://example.com')))->extend(Directive::StyleSrcElem, SourceKeyword::unsafeInline),
+            'expectedPolicy' => [
                 'default-src https://example.com',
                 "style-src-elem https://example.com 'unsafe-inline' http://localhost:1234 https://localhost:1234 wss://localhost:1234",
                 'connect-src https://example.com http://localhost:1234 https://localhost:1234 wss://localhost:1234',
@@ -232,6 +235,9 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         ];
     }
 
+    /**
+     * @param string[] $expectedPolicy
+     */
     #[Test]
     #[DataProvider('getDefaultManifestFileDataProvider')]
     public function getDefaultManifestFile(bool $useDevServer, string $devServerUri, ConsumableNonce $nonce, Policy $currentPolicy, array $expectedPolicy): void

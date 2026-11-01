@@ -13,6 +13,9 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ScriptEmbeddingTest extends UnitTestCase
 {
+    /**
+     * @return array<string, mixed>[]
+     */
     public static function getTagAttributesDataProvider(): array
     {
         return [
@@ -47,6 +50,9 @@ final class ScriptEmbeddingTest extends UnitTestCase
         ];
     }
 
+    /**
+     * @param array<string, string> $expected
+     */
     #[Test]
     #[DataProvider('getTagAttributesDataProvider')]
     public function getTagAttributes(ScriptEmbedding $scriptEmbedding, array $expected): void

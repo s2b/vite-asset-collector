@@ -21,18 +21,21 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures/test_extension',
     ];
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function resolveOutputPathDataProvider(): array
     {
         return [
             'from output file' => [
-                OutputFile::create('assets/Default-4483b920.js'),
-                'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
-                'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-4483b920.js',
+                'file' => OutputFile::create('assets/Default-4483b920.js'),
+                'manifestFile' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
+                'expected' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-4483b920.js',
             ],
             'from asset file' => [
-                AssetFile::create('Default.js'),
-                'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
-                'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-4483b920.js',
+                'file' => AssetFile::create('Default.js'),
+                'manifestFile' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
+                'expected' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-4483b920.js',
             ],
         ];
     }
@@ -50,18 +53,24 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
         self::assertSame(self::getInstancePath() . '/' . $expected, $subject->resolveOutputPath($file, $manifest, true));
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function resolveOutputPathThrowsExceptionDataProvider(): array
     {
         return [
             'non-existent chunk' => [
-                AssetFile::create('NonExistent.js'),
-                'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
-                ViteException::class,
-                1690735353,
+                'file' => AssetFile::create('NonExistent.js'),
+                'manifestFile' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json',
+                'expectedException' => ViteException::class,
+                'expectedExceptionCode' => 1690735353,
             ],
         ];
     }
 
+    /**
+     * @param class-string<\Throwable> $expectedException
+     */
     #[Test]
     #[DataProvider('resolveOutputPathThrowsExceptionDataProvider')]
     public function resolveOutputPathThrowsException(AssetFile|OutputFile $file, string $manifestFile, string $expectedException, int $expectedExceptionCode): void
@@ -76,24 +85,27 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
         $subject->resolveOutputPath($file, $manifest);
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function resolveSourcePathDataProvider(): array
     {
         return [
             'asset in fileadmin' => [
-                AssetFile::create('fileadmin/Fixtures/FileadminAsset/main.js'),
-                'fileadmin/Fixtures/FileadminAsset/main.js',
+                'file' => AssetFile::create('fileadmin/Fixtures/FileadminAsset/main.js'),
+                'expected' => 'fileadmin/Fixtures/FileadminAsset/main.js',
             ],
             'asset in extension' => [
-                AssetFile::create('EXT:test_extension/Resources/Private/JavaScript/Main.js'),
-                'typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js',
+                'file' => AssetFile::create('EXT:test_extension/Resources/Private/JavaScript/Main.js'),
+                'expected' => 'typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js',
             ],
             'non-existent asset in fileadmin' => [
-                AssetFile::create('fileadmin/Fixtures/FileadminAsset/NonExistent.js'),
-                'fileadmin/Fixtures/FileadminAsset/NonExistent.js',
+                'file' => AssetFile::create('fileadmin/Fixtures/FileadminAsset/NonExistent.js'),
+                'expected' => 'fileadmin/Fixtures/FileadminAsset/NonExistent.js',
             ],
             'non-existent asset in extension' => [
-                AssetFile::create('EXT:test_extension/Resources/Private/JavaScript/NonExistent.js'),
-                'typo3conf/ext/test_extension/Resources/Private/JavaScript/NonExistent.js',
+                'file' => AssetFile::create('EXT:test_extension/Resources/Private/JavaScript/NonExistent.js'),
+                'expected' => 'typo3conf/ext/test_extension/Resources/Private/JavaScript/NonExistent.js',
             ],
         ];
     }
@@ -108,17 +120,23 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
         self::assertSame(self::getInstancePath() . '/' . $expected, $subject->resolveSourcePath($file, true));
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function resolveSourcePathThrowsExceptionDataProvider(): array
     {
         return [
             'asset in non-existent extension' => [
-                AssetFile::create('EXT:nonexistent/Resources/Private/JavaScript/NonExistent.js'),
-                UnknownPackagePathException::class,
-                1631630087,
+                'file' => AssetFile::create('EXT:nonexistent/Resources/Private/JavaScript/NonExistent.js'),
+                'expectedException' => UnknownPackagePathException::class,
+                'expectedExceptionCode' => 1631630087,
             ],
         ];
     }
 
+    /**
+     * @param class-string<\Throwable> $expectedException
+     */
     #[Test]
     #[DataProvider('resolveSourcePathThrowsExceptionDataProvider')]
     public function resolveSourcePathThrowsException(AssetFile $file, string $expectedException, int $expectedExceptionCode): void

@@ -19,6 +19,9 @@ final class BuildViteContextTest extends UnitTestCase
 {
     protected bool $backupEnvironment = true;
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function buildViteContextDataProvider(): array
     {
         return [
@@ -88,6 +91,9 @@ final class BuildViteContextTest extends UnitTestCase
         ];
     }
 
+    /**
+     * @param array<string, scalar> $environmentVariables
+     */
     #[Test]
     #[DataProvider('buildViteContextDataProvider')]
     public function buildViteContext(
