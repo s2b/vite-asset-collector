@@ -122,14 +122,18 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             $entry ??= $manifest->getOnlyEntrypoint()->identifier;
         }
 
-        $viewHelperVariableContainer = $this->renderingContext->getViewHelperVariableContainer();
-        $viewHelperVariableContainer->add(self::class, CssEmbedding::VariableName, $this->createFallbackCssEmbedding());
-        $viewHelperVariableContainer->add(self::class, ScriptEmbedding::VariableName, $this->createFallbackScriptEmbedding());
-        $this->renderChildren();
-        /** @var CssEmbedding */
-        $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
-        /** @var ScriptEmbedding */
-        $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
+        $cssEmbedding = $this->createFallbackCssEmbedding();
+        $scriptEmbedding = $this->createFallbackScriptEmbedding();
+        $viewHelperVariableContainer = $this->renderingContext?->getViewHelperVariableContainer();
+        if ($viewHelperVariableContainer) {
+            $viewHelperVariableContainer->add(self::class, CssEmbedding::VariableName, $cssEmbedding);
+            $viewHelperVariableContainer->add(self::class, ScriptEmbedding::VariableName, $scriptEmbedding);
+            $this->renderChildren();
+            /** @var CssEmbedding */
+            $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
+            /** @var ScriptEmbedding */
+            $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
+        }
         $asset = Asset::create(
             entry: $entry,
             cssEmbedding: $cssEmbedding,
@@ -175,7 +179,11 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
 
     private function getRequest(): ServerRequestInterface
     {
-        return $this->renderingContext->getAttribute(ServerRequestInterface::class);
+        $request = $this->renderingContext?->getAttribute(ServerRequestInterface::class);
+        if ($request === null) {
+            throw new \RuntimeException('Request is required for <vite:asset> ViewHelper.', 1793551383);
+        }
+        return $request;
     }
 
     /**

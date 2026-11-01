@@ -56,7 +56,7 @@ final class ScriptViewHelper extends AbstractViewHelper implements ViewHelperNod
         } catch (ViteException $e) {
             throw new InvalidArgumentException($e->getMessage(), 1793528981, $e);
         }
-        $this->renderingContext->getViewHelperVariableContainer()->add(
+        $this->renderingContext?->getViewHelperVariableContainer()->add(
             AssetViewHelper::class,
             ScriptEmbedding::VariableName,
             $scriptEmbedding
