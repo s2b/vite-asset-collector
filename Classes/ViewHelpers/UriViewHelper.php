@@ -109,7 +109,7 @@ final class UriViewHelper extends AbstractViewHelper
     {
         $request = $this->renderingContext?->getAttribute(ServerRequestInterface::class);
         if ($request === null) {
-            throw new \RuntimeException('Request is required for <vite:asset> ViewHelper.', 1793551383);
+            throw new \RuntimeException('Request is required for <vite:uri> ViewHelper.', 1793551384);
         }
         return $request;
     }
