@@ -12,13 +12,17 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * The `vite:uri` ViewHelper extracts the uri to one specific asset file from a vite
+ * The `<vite:uri>` ViewHelper extracts the uri to one specific asset file from a vite
  * manifest file. If the dev server is used, the dev server uri to the resource is returned.
  *
  * Example
  * =======
  *
  * This can be used to preload certain assets in the HTML `<head>` tag.
+ *
+ * ..  note::
+ *     The extension covers this particular use case by default since v2. However, it
+ *     still illustrates the usage of `<vite:uri>`.
  *
  * Solution for TYPO3 v14+
  * -----------------------
@@ -53,11 +57,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * ..  code-block:: html
  *     :caption: EXT:sitepackage/Resources/Private/Templates/HeaderData.html
  *
- *     <html
- *         data-namespace-typo3-fluid="true"
- *         xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
- *     >
- *
  *     <link
  *         rel="preload"
  *         href="{vite:uri(file: 'EXT:sitepackage/Resources/Private/Fonts/webfont.woff2')}"
@@ -66,7 +65,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  *         crossorigin
  *     />
  *
- *     </html>
+ * @see https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-uri
  */
 final class UriViewHelper extends AbstractViewHelper
 {
