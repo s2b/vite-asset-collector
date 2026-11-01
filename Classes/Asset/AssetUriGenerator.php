@@ -33,7 +33,11 @@ final readonly class AssetUriGenerator implements AssetUriGeneratorInterface
     public function generateUri(AssetFile|OutputFile $file, Manifest $manifest, ?ServerRequestInterface $request): UriInterface
     {
         // TODO remove once support for v13 is droppped
-        if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14) {
+        if (
+            (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14
+            || $this->systemResourceFactory === null
+            || $this->systemResourcePublisher === null
+        ) {
             return new \Praetorius\ViteAssetCollector\Http\Uri(PathUtility::getAbsoluteWebPath($this->assetPathResolver->resolveOutputPath($file, $manifest, true)));
         }
         $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest);

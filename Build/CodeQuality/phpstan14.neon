@@ -13,3 +13,8 @@ parameters:
 			identifier: classConstant.notFound
 			count: 1
 			path: ../../Tests/Functional/IconProvider/SvgIconProviderTest.php
+		-
+			message: '#^Parameter \#2 \$manifest of method Praetorius\\ViteAssetCollector\\Asset\\AssetRendererInterface\:\:renderAsset\(\) expects Praetorius\\ViteAssetCollector\\Asset\\Manifest\\Manifest, Praetorius\\ViteAssetCollector\\Asset\\Manifest\\Manifest\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../Classes/ViewHelpers/AssetViewHelper.php

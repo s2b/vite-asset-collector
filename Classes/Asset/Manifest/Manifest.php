@@ -72,7 +72,11 @@ final readonly class Manifest
 
         $imports = [];
         foreach ($this->chunks[$identifier]->imports as $importIdentifier) {
-            $imports[$importIdentifier] = $this->getChunk($importIdentifier);
+            $chunk = $this->getChunk($importIdentifier);
+            if ($chunk === null) {
+                continue;
+            }
+            $imports[$importIdentifier] = $chunk;
             if ($recursive) {
                 $imports = array_merge(
                     $imports,

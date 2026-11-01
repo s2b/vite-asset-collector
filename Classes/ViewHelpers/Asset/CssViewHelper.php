@@ -56,7 +56,7 @@ final class CssViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
         } catch (ViteException $e) {
             throw new InvalidArgumentException($e->getMessage(), 1793528982, $e);
         }
-        $this->renderingContext->getViewHelperVariableContainer()->add(
+        $this->renderingContext?->getViewHelperVariableContainer()->add(
             AssetViewHelper::class,
             CssEmbedding::VariableName,
             $cssEmbedding,
