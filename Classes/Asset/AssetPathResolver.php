@@ -36,7 +36,7 @@ final readonly class AssetPathResolver implements AssetPathResolverInterface
             $outputFile = $chunk->file;
         }
         $path = $manifest->resolveAssetPath($outputFile);
-        return $absolute ? $path : $this->stripProjectPath($path);
+        return $absolute ? $path : $this->stripPublicPath($path);
     }
 
     public function resolveSourcePath(AssetFile $file, bool $absolute = false): string
@@ -55,6 +55,15 @@ final readonly class AssetPathResolver implements AssetPathResolverInterface
         $projectPath = Environment::getProjectPath() . '/';
         if (str_starts_with($path, $projectPath)) {
             return substr($path, strlen($projectPath));
+        }
+        return $path;
+    }
+
+    private function stripPublicPath(string $path): string
+    {
+        $publicPath = Environment::getPublicPath() . '/';
+        if (str_starts_with($path, $publicPath)) {
+            return substr($path, strlen($publicPath));
         }
         return $path;
     }
