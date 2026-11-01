@@ -10,14 +10,17 @@ final readonly class OutputFile
 {
     private function __construct(
         public string $locator,
+        public string $extension,
         public AssetType $type,
     ) {}
 
     public static function create(string $locator, ?AssetType $type = null): self
     {
+        $extension = pathinfo($locator, PATHINFO_EXTENSION);
         return new self(
             locator: $locator,
-            type: $type ?? AssetType::fromFilePath($locator),
+            extension: $extension,
+            type: $type ?? AssetType::fromFileExtension($extension),
         );
     }
 }

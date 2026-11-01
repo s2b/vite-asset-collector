@@ -13,9 +13,9 @@ enum AssetType
     case Image;
     case Other;
 
-    public static function fromFilePath(string $file): self
+    public static function fromFileExtension(string $extension): self
     {
-        return match (pathinfo($file, PATHINFO_EXTENSION)) {
+        return match ($extension) {
             'css', 'less', 'sass', 'scss', 'styl', 'stylus', 'pcss', 'postcss' => self::Css,
             'js', 'mjs', 'cjs', 'ts', 'mts', 'cts', 'jsx', 'tsx', 'svelte', 'vue' => self::Script,
             'woff2', 'woff', 'ttf', 'otf' => self::Font,

@@ -13,7 +13,7 @@ final readonly class ScriptEmbedding
 
     public function __construct(
         public bool $priority = false,
-        public bool $preload = true,
+        public bool $preloadImports = true,
         public bool $ignore = false,
         public ScriptLoading $loading = ScriptLoading::Module,
         public bool $nomodule = false,
