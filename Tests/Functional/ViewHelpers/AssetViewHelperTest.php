@@ -15,6 +15,7 @@ use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\TemplateView;
@@ -67,6 +68,10 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'attributes' => [],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
+                ],
+                'preload' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
                 ],
             ],
             'autoEntry' => [
@@ -216,7 +221,8 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         array $styleSheets = [],
         array $priorityStyleSheets = [],
         array $inlineStyleSheets = [],
-        array $priorityInlineStyleSheets = []
+        array $priorityInlineStyleSheets = [],
+        array $preload = [],
     ): void {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
@@ -224,36 +230,39 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
 
+        $pageRenderer = $this->get(PageRenderer::class);
         $assetCollector = $this->get(AssetCollector::class);
 
         $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
         $context->getTemplatePaths()->setTemplateSource($template);
         (new TemplateView($context))->render();
 
-        self::assertEquals(
+        self::assertSame(
             $javaScripts,
             $assetCollector->getJavaScripts(false)
         );
-        self::assertEquals(
+        self::assertSame(
             $priorityJavaScripts,
             $assetCollector->getJavaScripts(true)
         );
-        self::assertEquals(
+        self::assertSame(
             $styleSheets,
             $assetCollector->getStyleSheets(false)
         );
-        self::assertEquals(
+        self::assertSame(
             $priorityStyleSheets,
             $assetCollector->getStyleSheets(true)
         );
-        self::assertEquals(
+        self::assertSame(
             $inlineStyleSheets,
             $assetCollector->getInlineStyleSheets(false)
         );
-        self::assertEquals(
+        self::assertSame(
             $priorityInlineStyleSheets,
             $assetCollector->getInlineStyleSheets(true)
         );
+        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
+        self::assertSame($preload, $headerDataAccessor->getValue($pageRenderer));
     }
 
     #[Test]

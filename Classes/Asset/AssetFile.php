@@ -8,14 +8,17 @@ final readonly class AssetFile
 {
     private function __construct(
         public string $locator,
+        public string $extension,
         public AssetType $type,
     ) {}
 
     public static function create(string $locator): self
     {
+        $extension = pathinfo($locator, PATHINFO_EXTENSION);
         return new self(
             locator: $locator,
-            type: AssetType::fromFilePath($locator),
+            extension: $extension,
+            type: AssetType::fromFileExtension($extension),
         );
     }
 }

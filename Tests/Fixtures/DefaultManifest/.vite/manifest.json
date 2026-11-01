@@ -1,18 +1,22 @@
 {
 	"Default.css": {
 		"file": "assets/Default-973bb662.css",
-		"src": "Default.css"
+		"src": "path/to/original/Default.css"
 	},
 	"Default.js": {
 		"css": [
 			"assets/Default-973bb662.css"
 		],
+		"assets": [
+			"assets/typo3-57f5650e.svg",
+			"assets/dummy-57f5650e.woff2"
+		],
 		"file": "assets/Default-4483b920.js",
 		"isEntry": true,
-		"src": "Default.js"
+		"src": "path/to/original/Default.js"
 	},
 	"typo3.svg": {
 		"file": "assets/typo3-57f5650e.svg",
-		"src": "assets/typo3.svg"
+		"src": "path/to/original/typo3.svg"
 	}
 }

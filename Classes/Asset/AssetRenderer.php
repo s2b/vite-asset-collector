@@ -6,6 +6,7 @@ namespace Praetorius\ViteAssetCollector\Asset;
 
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptLoading;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
@@ -14,6 +15,7 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Resource\MimeTypeDetector;
 use TYPO3\CMS\Core\Resource\RelativeCssPathFixer;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
 
@@ -26,6 +28,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         private RelativeCssPathFixer $relativeCssPathFixer,
         private AssetPathResolverInterface $assetPathResolver,
         private AssetUriGeneratorInterface $assetUriGenerator,
+        private MimeTypeDetector $mimeTypeDetector,
     ) {}
 
     public function renderDevAsset(Asset $asset, UriInterface $devServerUri, ServerRequestInterface $request): void
@@ -69,6 +72,18 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 $asset->scriptEmbedding->getTagAttributes(),
                 $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'csp' => $this->determineCspStatus($asset->csp, false)]),
             );
+            if ($asset->scriptEmbedding->preloadImports) {
+                $preloadTemplate = match ($asset->scriptEmbedding->loading) {
+                    ScriptLoading::Module => '<link rel="modulepreload" href="%s" />',
+                    default => '<link rel="preload" href="%s" as="script" />',
+                };
+                foreach ($manifest->getImportsForChunk($identifier, true) as $preloadModule) {
+                    $this->pageRenderer->addHeaderData(sprintf(
+                        $preloadTemplate,
+                        (string)$this->assetUriGenerator->generateUri($preloadModule->file, $manifest, $request),
+                    ));
+                }
+            }
         }
 
         if (!$asset->cssEmbedding->ignore) {
@@ -82,6 +97,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $request,
                 );
             }
+            $this->preloadReferencedAssets($chunk->assets, $manifest, $asset->cssEmbedding, $request);
 
             foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
                 $identifier = md5($import->identifier . '|' . serialize($asset->cssEmbedding->getTagAttributes()));
@@ -95,6 +111,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                         $request,
                     );
                 }
+                $this->preloadReferencedAssets($import->assets, $manifest, $asset->cssEmbedding, $request);
             }
 
             foreach ($chunk->css as $file) {
@@ -108,6 +125,74 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 );
             }
         }
+    }
+
+    /**
+     * @param OutputFile[] $assets
+     */
+    private function preloadReferencedAssets(array $assets, Manifest $manifest, CssEmbedding $cssEmbedding, ServerRequestInterface $request): void
+    {
+        foreach ($assets as $asset) {
+            $preloadTemplate = match (true) {
+                ($asset->type === AssetType::Font && $cssEmbedding->preloadFonts)
+                    => '<link rel="preload" href="%s" as="font" type="%s" crossorigin />',
+                (in_array($asset->type, [AssetType::Image, AssetType::Svg]) && $cssEmbedding->preloadImages)
+                    => '<link rel="preload" href="%s" as="image" type="%s" />',
+                default => null,
+            };
+            if ($preloadTemplate) {
+                $mimeType = $this->mimeTypeDetector->getMimeTypesForFileExtension($asset->extension);
+                if ($mimeType[0]) {
+                    $this->pageRenderer->addHeaderData(sprintf(
+                        $preloadTemplate,
+                        (string)$this->assetUriGenerator->generateUri($asset, $manifest, $request),
+                        $mimeType[0],
+                    ));
+                }
+            }
+        }
+    }
+
+    private function renderStyleSheet(
+        string $identifier,
+        OutputFile $file,
+        Manifest $manifest,
+        CssEmbedding $cssEmbedding,
+        ContentSecurityMode $csp,
+        ServerRequestInterface $request,
+    ): void {
+        if (!$cssEmbedding->inline) {
+            $this->assetCollector->addStyleSheet(
+                $identifier,
+                $this->prepareAssetPath($file, $manifest, $request),
+                $cssEmbedding->getTagAttributes(),
+                $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, false)])
+            );
+            return;
+        }
+        $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest, true);
+        if ($resolvedFile === '' || !@is_file($resolvedFile) || !@file_exists($resolvedFile)) {
+            throw new ViteException(sprintf(
+                'CSS asset file "%s" was resolved to "%s" and cannot be opened for inline rendering.',
+                $file->locator,
+                $resolvedFile
+            ), 1745414701);
+        }
+        $cssSource = file_get_contents($resolvedFile);
+        if ($cssSource === false) {
+            throw new ViteException(sprintf(
+                'Unable to open CSS file "%s".',
+                $resolvedFile
+            ), 1790541381);
+        }
+        $outputPath = dirname($this->prepareAssetPath($file, $manifest, $request)) . '/';
+        $cssSource = $this->relativeCssPathFixer->fixRelativeUrlPaths($cssSource, $outputPath, $request);
+        $this->assetCollector->addInlineStyleSheet(
+            $identifier,
+            $cssSource,
+            $cssEmbedding->getTagAttributes(),
+            $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, true)])
+        );
     }
 
     private function renderViteClient(UriInterface $devServerUri, ServerRequestInterface $request): void
@@ -128,49 +213,6 @@ final readonly class AssetRenderer implements AssetRendererInterface
             (string)$this->assetUriGenerator->generateDevUri(AssetFile::create('@vite/client'), $devServerUri, $request),
             ['type' => 'module'],
             $this->prepareOptions(['priority' => true]),
-        );
-    }
-
-    private function renderStyleSheet(
-        string $identifier,
-        OutputFile $file,
-        Manifest $manifest,
-        CssEmbedding $cssEmbedding,
-        ContentSecurityMode $csp,
-        ServerRequestInterface $request,
-    ): void {
-        if ($cssEmbedding->inline) {
-            $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest, true);
-            if ($resolvedFile === '' || !@is_file($resolvedFile) || !@file_exists($resolvedFile)) {
-                throw new ViteException(sprintf(
-                    'CSS asset file "%s" was resolved to "%s" and cannot be opened for inline rendering.',
-                    $file->locator,
-                    $resolvedFile
-                ), 1745414701);
-            }
-            $cssSource = file_get_contents($resolvedFile);
-            if ($cssSource === false) {
-                throw new ViteException(sprintf(
-                    'Unable to open CSS file "%s".',
-                    $resolvedFile
-                ), 1790541381);
-            }
-            $outputPath = dirname($this->prepareAssetPath($file, $manifest, $request)) . '/';
-            $cssSource = $this->relativeCssPathFixer->fixRelativeUrlPaths($cssSource, $outputPath, $request);
-            $this->assetCollector->addInlineStyleSheet(
-                $identifier,
-                $cssSource,
-                $cssEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, true)])
-            );
-            return;
-        }
-
-        $this->assetCollector->addStyleSheet(
-            $identifier,
-            $this->prepareAssetPath($file, $manifest, $request),
-            $cssEmbedding->getTagAttributes(),
-            $this->prepareOptions(['priority' => $cssEmbedding->priority, 'csp' => $this->determineCspStatus($csp, false)])
         );
     }
 

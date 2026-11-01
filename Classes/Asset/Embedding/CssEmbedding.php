@@ -14,7 +14,6 @@ final readonly class CssEmbedding
     public function __construct(
         public bool $priority = false,
         public bool $inline = false,
-        public bool $preload = true,
         public bool $preloadFonts = true,
         public bool $preloadImages = true,
         public bool $ignore = false,

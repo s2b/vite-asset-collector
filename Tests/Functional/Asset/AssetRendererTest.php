@@ -19,6 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Page\PageRenderer;
 
 final class AssetRendererTest extends AbstractViteFunctionalTestCase
 {
@@ -213,6 +214,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         array $expectedDevJavaScripts = [],
         array $expectedDevStyleSheets = [],
     ): void {
+        /** @var PageRenderer */
+        $pageRenderer = $this->get(PageRenderer::class);
         /** @var AssetCollector */
         $assetCollector = $this->get(AssetCollector::class);
         /** @var AssetRenderer */
@@ -220,6 +223,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderDevAsset($asset, $devServerUri, $this->createRequest($request));
         self::assertSame($expectedDevJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedDevStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
+        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
+        self::assertSame([], $headerDataAccessor->getValue($pageRenderer));
     }
 
     public static function renderAssetDataProvider(): array
@@ -361,6 +366,9 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
+                'expectedPreloadTags' => [
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" />',
+                ],
             ],
             'withImportedJsAndCss' => [
                 'manifestFile' => 'fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json',
@@ -384,6 +392,54 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJsAndCss/assets/Shared-To-v4Zbq.js" />',
+                ],
+            ],
+            'withImportedJsAsyncLoading' => [
+                'manifestFile' => 'fileadmin/Fixtures/ImportJs/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    scriptEmbedding: new ScriptEmbedding(loading: ScriptLoading::Async),
+                ),
+                'expectedJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
+                        'attributes' => ['async' => 'async'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" as="script" />',
+                ],
+            ],
+            'withImportedJsWithoutPreload' => [
+                'manifestFile' => 'fileadmin/Fixtures/ImportJs/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    scriptEmbedding: new ScriptEmbedding(preloadImports: false),
+                ),
+                'expectedJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
+                        'attributes' => [],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
@@ -450,6 +506,46 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true],
                     ],
                 ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                ],
+            ],
+            'withoutFontPreload' => [
+                'manifestFile' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Default.js',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                    cssEmbedding: new CssEmbedding(preloadFonts: false),
+                ),
+                'expectedStyleSheets' => [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
+                ],
+            ],
+            'withoutImagePreload' => [
+                'manifestFile' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Default.js',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                    cssEmbedding: new CssEmbedding(preloadImages: false),
+                ),
+                'expectedStyleSheets' => [
+                    'vite:Default.js:assets/Default-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                ],
             ],
             'withCsp' => [
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',
@@ -505,7 +601,10 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         array $expectedJavaScripts = [],
         array $expectedStyleSheets = [],
         array $expectedInlineStyleSheets = [],
+        array $expectedPreloadTags = [],
     ): void {
+        /** @var PageRenderer */
+        $pageRenderer = $this->get(PageRenderer::class);
         /** @var AssetCollector */
         $assetCollector = $this->get(AssetCollector::class);
         /** @var ManifestFactory */
@@ -517,6 +616,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         self::assertSame($expectedJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
         self::assertSame($expectedInlineStyleSheets, $assetCollector->getInlineStyleSheets(), 'inlineStyleSheets');
+        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
+        self::assertSame($expectedPreloadTags, $headerDataAccessor->getValue($pageRenderer));
     }
 
     #[Test]
