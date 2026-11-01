@@ -35,11 +35,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -62,11 +62,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'preload' => [
@@ -83,11 +83,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -105,11 +105,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -184,11 +184,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true, self::cspOptionName() => true],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, self::cspOptionName() => true],
+                        'options' => ['external' => true, 'priority' => true, self::cspOptionName() => true],
                     ],
                 ],
             ],
@@ -201,11 +201,11 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                         'options' => ['external' => true],
                     ],
                 ],
-                'styleSheets' => [
+                'priorityStyleSheets' => [
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
@@ -325,10 +325,10 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 'vite:Main.scss' => [
                     'source' => 'https://localhost:5173/Main.scss',
                     'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                    'options' => ['external' => true],
+                    'options' => ['external' => true, 'priority' => true],
                 ],
             ],
-            $assetCollector->getStyleSheets(false)
+            $assetCollector->getStyleSheets(true)
         );
     }
 
@@ -378,10 +378,10 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                 'vite:Main.js:assets/Main-973bb662.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                     'attributes' => [],
-                    'options' => ['external' => true, self::cspOptionName() => true],
+                    'options' => ['external' => true, 'priority' => true, self::cspOptionName() => true],
                 ],
             ],
-            $assetCollector->getStyleSheets(false)
+            $assetCollector->getStyleSheets(true)
         );
     }
 

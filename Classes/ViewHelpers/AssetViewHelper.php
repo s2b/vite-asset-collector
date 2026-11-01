@@ -121,7 +121,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
     private function createFallbackCssEmbedding(): CssEmbedding
     {
         return new CssEmbedding(
-            priority: $this->arguments['priority'],
+            priority: $this->arguments['inlineCss'] ? $this->arguments['priority'] : true,
             ignore: !$this->arguments['addCss'],
             inline: $this->arguments['inlineCss'],
             additionalAttributes: $this->arguments['cssTagAttributes'],

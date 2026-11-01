@@ -12,7 +12,7 @@ final readonly class CssEmbedding
     public const BooleanAttributes = ['disabled'];
 
     public function __construct(
-        public bool $priority = false,
+        public bool $priority = true,
         public bool $inline = false,
         public bool $preloadFonts = true,
         public bool $preloadImages = true,

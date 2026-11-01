@@ -152,15 +152,15 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:path/to/Main.css' => [
                         'source' => 'https://localhost:5173/path/to/Main.css',
                         'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
-            'withCssEntrypointAndPriority' => [
+            'withCssEntrypointWithoutPriority' => [
                 'asset' => Asset::create(
                     entry: 'path/to/Main.css',
                     cssEmbedding: new CssEmbedding(
-                        priority: true,
+                        priority: false,
                         media: 'screen',
                         additionalAttributes: ['otherAttribute' => 'otherValue'],
                     ),
@@ -177,7 +177,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:path/to/Main.css' => [
                         'source' => 'https://localhost:5173/path/to/Main.css',
                         'attributes' => ['media' => 'screen', 'otherAttribute' => 'otherValue'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -198,7 +198,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:path/to/Main.css' => [
                         'source' => 'https://localhost:5173/path/to/Main.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
@@ -261,7 +261,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -286,7 +286,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -300,7 +300,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.scss' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/OnlyCssManifest/assets/Main-4483b920.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -317,7 +317,6 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'asset' => Asset::create(
                     entry: 'Main.js',
                     scriptEmbedding: new ScriptEmbedding(priority: true),
-                    cssEmbedding: new CssEmbedding(priority: true),
                 ),
                 'expectedJavaScripts' => [
                     'vite:Main.js' => [
@@ -363,7 +362,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -387,12 +386,12 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:6a181085b68130ba16f066fdaaf2da09:assets/Shared-pjWofKK4.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -416,7 +415,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -440,7 +439,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
             ],
@@ -461,15 +460,15 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
-            'withInlineCssAndPriority' => [
+            'withInlineCssWithoutPriority' => [
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',
                 'asset' => Asset::create(
                     entry: 'Main.js',
-                    cssEmbedding: new CssEmbedding(media: 'print', inline: true, priority: true),
+                    cssEmbedding: new CssEmbedding(media: 'print', inline: true, priority: false),
                 ),
                 'expectedJavaScripts' => [
                     'vite:Main.js' => [
@@ -482,7 +481,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
-                        'options' => ['external' => true, 'priority' => true],
+                        'options' => ['external' => true],
                     ],
                 ],
             ],
@@ -503,7 +502,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => "body{background:url('fileadmin/Fixtures/DefaultManifest/assets/./typo3-57f5650e.svg');}\n",
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -522,7 +521,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -540,7 +539,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Default.js:assets/Default-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
@@ -564,7 +563,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true, self::cspOptionName() => true],
+                        'options' => ['external' => true, 'priority' => true, self::cspOptionName() => true],
                     ],
                 ],
             ],
@@ -585,7 +584,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     'vite:Main.js:assets/Main-973bb662.css' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
-                        'options' => ['external' => true],
+                        'options' => ['external' => true, 'priority' => true],
                     ],
                 ],
             ],
@@ -656,17 +655,17 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
                 'vite:Main.js:assets/Main-973bb662.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => [],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
                 'vite:Alternative.js:assets/Alternative-973bb662.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
             ],
             $assetCollector->getStyleSheets(),
@@ -692,22 +691,22 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'vite:88713ee6f56256eb987323824e723146:assets/Shared-pjWofKK4.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => ['media' => 'print'],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
                 'vite:Main.js:assets/Main-973bb662.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => ['media' => 'print'],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
                 'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
                 'vite:Alternative.js:assets/Alternative-973bb662.css' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
-                    'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
             ],
             $assetCollector->getStyleSheets(),
