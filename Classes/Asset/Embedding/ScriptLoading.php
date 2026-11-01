@@ -11,6 +11,9 @@ enum ScriptLoading: string
     case Async = 'async';
     case Blocking = 'blocking';
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getTagAttributes(): array
     {
         return match ($this) {

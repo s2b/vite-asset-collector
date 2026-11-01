@@ -25,6 +25,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
     ) {}
 
     /**
+     * @param array<string, mixed> $options
      * @throws \InvalidArgumentException|ViteException
      */
     protected function generateMarkup(Icon $icon, array $options): string
@@ -43,6 +44,7 @@ class SvgIconProvider extends AbstractSvgIconProvider
     }
 
     /**
+     * @param array<string, mixed> $options
      * @throws \InvalidArgumentException|ViteException|ExtensionConfigurationExtensionNotConfiguredException|ExtensionConfigurationPathDoesNotExistException
      */
     protected function generateInlineMarkup(array $options): string

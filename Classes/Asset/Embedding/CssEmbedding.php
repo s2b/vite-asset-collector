@@ -11,6 +11,9 @@ final readonly class CssEmbedding
     public const VariableName = 'cssEmbedding';
     public const BooleanAttributes = ['disabled'];
 
+    /**
+     * @param array<string, mixed> $additionalAttributes
+     */
     public function __construct(
         public bool $priority = true,
         public bool $inline = false,
@@ -26,6 +29,9 @@ final readonly class CssEmbedding
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getTagAttributes(): array
     {
         $attributes = [
@@ -36,6 +42,10 @@ final readonly class CssEmbedding
         return $this->convertBooleanAttributes($attributes);
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
     private function convertBooleanAttributes(array $attributes): array
     {
         foreach (self::BooleanAttributes as $attr) {

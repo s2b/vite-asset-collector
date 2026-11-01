@@ -19,16 +19,19 @@ use TYPO3Fluid\Fluid\View\TemplateView;
 
 final class UriViewHelperTest extends AbstractViteFunctionalTestCase
 {
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function renderDataProvider(): array
     {
         return [
             'basic' => [
-                '<vite:uri manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" file="Main.css" />',
-                'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
+                'template' => '<vite:uri manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" file="Main.css" />',
+                'assetUri' => 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
             ],
             'defaultManifest' => [
-                '<vite:uri file="Default.css" />',
-                'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                'template' => '<vite:uri file="Default.css" />',
+                'assetUri' => 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
             ],
         ];
     }
@@ -70,7 +73,7 @@ final class UriViewHelperTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
-    public function renderWithoutManifest()
+    public function renderWithoutManifest(): void
     {
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',

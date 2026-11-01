@@ -66,6 +66,9 @@ final readonly class ManifestFactory
         return $manifest;
     }
 
+    /**
+     * @return array<string, ManifestChunk>
+     */
     private function readManifestFile(string $manifestFile): array
     {
         $manifestJson = file_get_contents($manifestFile);
@@ -90,6 +93,9 @@ final readonly class ManifestFactory
         return $chunks;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     private function createManifestChunk(string $identifier, array $data): ManifestChunk
     {
         $defaults = [

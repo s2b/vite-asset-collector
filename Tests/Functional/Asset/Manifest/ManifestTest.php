@@ -33,11 +33,19 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         );
     }
 
+    /**
+     * @return array<string, mixed>[]
+     */
     public static function getChunkDataProvider(): array
     {
         return [
-            ['Main.js', new ManifestChunk('Main.js', 'Main', AssetFile::create('Main.js'), OutputFile::create('assets/Main-4483b920.js'), true, false, [], [OutputFile::create('assets/Main-973bb662.css')], [], [])],
-            ['Undefined.js', null],
+            [
+                'identifier' => 'Main.js',
+                'expected' => new ManifestChunk('Main.js', 'Main', AssetFile::create('Main.js'), OutputFile::create('assets/Main-4483b920.js'), true, false, [], [OutputFile::create('assets/Main-973bb662.css')], [], [])],
+            [
+                'identifier' => 'Undefined.js',
+                'expected' => null,
+            ],
         ];
     }
 
@@ -54,6 +62,9 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         );
     }
 
+    /**
+     * @return array<string, mixed>[]
+     */
     public static function getImportsForChunkDataProvider(): array
     {
         return [
@@ -206,11 +217,22 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         self::assertEquals($expected, $subject->getImportsForChunk($entrypoint, $recursive));
     }
 
+    /**
+     * @return array<string, mixed>[]
+     */
     public static function resolveAssetPathDataProvider(): array
     {
         return [
-            [self::FixtureDir . 'ImportJs/.vite/manifest.json', 'assets/Shared-To-v4Zbq.js', self::FixtureDir . 'ImportJs/assets/Shared-To-v4Zbq.js'],
-            [self::FixtureDir . 'ImportJs/.vite/manifest.json', '.vite/manifest.json', self::FixtureDir . 'ImportJs/.vite/manifest.json'],
+            [
+                'manifestFile' => self::FixtureDir . 'ImportJs/.vite/manifest.json',
+                'assetFile' => 'assets/Shared-To-v4Zbq.js',
+                'expected' => self::FixtureDir . 'ImportJs/assets/Shared-To-v4Zbq.js',
+            ],
+            [
+                'manifestFile' => self::FixtureDir . 'ImportJs/.vite/manifest.json',
+                'assetFile' => '.vite/manifest.json',
+                'expected' => self::FixtureDir . 'ImportJs/.vite/manifest.json',
+            ],
         ];
     }
 
@@ -236,6 +258,9 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         );
     }
 
+    /**
+     * @return string[][]
+     */
     public static function getOnlyEntrypointThrowsExceptionDataProvider(): array
     {
         return [
@@ -268,6 +293,9 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         self::assertSame('.vite/manifest.json', $subject->file->locator);
     }
 
+    /**
+     * @return string[][]
+     */
     public static function nonExistentManifestFilesDataProvider(): array
     {
         return [
@@ -301,6 +329,9 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         $manifestFactory->createFromFilePath($manifestFile);
     }
 
+    /**
+     * @return array<string, mixed>[]
+     */
     public static function createFromConfiguredPathDataProvider(): array
     {
         return [

@@ -21,6 +21,9 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
         'typo3conf/ext/vite_asset_collector/Tests/Fixtures/test_extension',
     ];
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function generateDevUriDataProvider(): array
     {
         return [
@@ -56,6 +59,9 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
         self::assertEquals($expected, (string)$subject->generateDevUri($file, $devServerBase, $this->createRequest()));
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function generateUriDataProvider(): array
     {
         return [

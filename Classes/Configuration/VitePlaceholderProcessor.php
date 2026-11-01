@@ -30,11 +30,17 @@ final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInt
         private ManifestFactory $manifestFactory,
     ) {}
 
+    /**
+     * @param mixed[] $referenceArray
+     */
     public function canProcess(string $placeholder, array $referenceArray): bool
     {
         return str_starts_with($placeholder, '%vite(');
     }
 
+    /**
+     * @param mixed[] $referenceArray
+     */
     public function process(string $value, array $referenceArray): string
     {
         preg_match('/' . self::PLACEHOLDER_PATTERN . '/', $value, $matches);
