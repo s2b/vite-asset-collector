@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
-use Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface;
-use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
-use Praetorius\ViteAssetCollector\Context\ViteContext;
+use Praetorius\ViteAssetCollector\Utility\ViteHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -69,10 +67,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 final class UriViewHelper extends AbstractViewHelper
 {
-    public function __construct(
-        private AssetUriGeneratorInterface $assetUriGenerator,
-        private ManifestFactory $manifestFactory,
-    ) {}
+    public function __construct(private readonly ViteHelper $viteHelper) {}
 
     public function initializeArguments(): void
     {
@@ -91,18 +86,8 @@ final class UriViewHelper extends AbstractViewHelper
 
     public function render(): string
     {
-        $viteContext = $this->getViteContext();
         $file = AssetFile::create($this->arguments['file']);
-        if ($viteContext?->useDevServer()) {
-            return (string)$this->assetUriGenerator->generateDevUri($file, $viteContext->getDevServer(), $this->getRequest());
-        }
-        $manifest = $this->manifestFactory->createFromConfiguredPath($this->arguments['manifest']);
-        return (string)$this->assetUriGenerator->generateUri($file, $manifest, $this->getRequest());
-    }
-
-    private function getViteContext(): ?ViteContext
-    {
-        return $this->getRequest()->getAttribute('vite.context');
+        return (string)$this->viteHelper->generateUri($file, $this->getRequest(), $this->arguments['manifest']);
     }
 
     private function getRequest(): ServerRequestInterface
