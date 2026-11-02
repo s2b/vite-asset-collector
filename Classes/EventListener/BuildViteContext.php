@@ -34,6 +34,11 @@ final readonly class BuildViteContext
         if ($useDevServer !== 'auto') {
             return (bool)$useDevServer;
         }
+        // This constant is written by vite-plugin-typo3 to .env
+        $serverRunning = getenv('VITE_SERVER_RUNNING');
+        if ($serverRunning !== false) {
+            return (bool)$serverRunning;
+        }
         // Decide based on TYPO3 context as fallback. This makes sure that on
         // production, dev server isn't used unless configured explicitly
         return Environment::getContext()->isDevelopment();
