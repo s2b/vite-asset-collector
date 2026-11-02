@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\ViewHelpers;
 
 use Praetorius\ViteAssetCollector\Asset\Asset;
-use Praetorius\ViteAssetCollector\Asset\AssetRendererInterface;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
-use Praetorius\ViteAssetCollector\Context\ViteContext;
+use Praetorius\ViteAssetCollector\Utility\ViteHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
@@ -80,8 +79,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
 final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
     public function __construct(
+        private readonly ViteHelper $viteHelper,
         private readonly ManifestFactory $manifestFactory,
-        private readonly AssetRendererInterface $assetRenderer,
     ) {}
 
     public function initializeArguments(): void
@@ -114,12 +113,10 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
 
     public function render(): void
     {
-        $viteContext = $this->getViteContext();
-        $manifest = null;
         $entry = $this->arguments['entry'];
-        if (!$viteContext?->useDevServer() || $entry === null) {
+        if ($entry === null) {
             $manifest = $this->manifestFactory->createFromConfiguredPath($this->arguments['manifest']);
-            $entry ??= $manifest->getOnlyEntrypoint()->identifier;
+            $entry = $manifest->getOnlyEntrypoint()->identifier;
         }
 
         $cssEmbedding = $this->createFallbackCssEmbedding();
@@ -140,12 +137,7 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             scriptEmbedding: $scriptEmbedding,
             csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
-
-        if ($viteContext?->useDevServer()) {
-            $this->assetRenderer->renderDevAsset($asset, $viteContext->getDevServer(), $this->getRequest());
-        } else {
-            $this->assetRenderer->renderAsset($asset, $manifest, $this->getRequest());
-        }
+        $this->viteHelper->renderAsset($asset, $this->getRequest(), $this->arguments['manifest']);
     }
 
     /**
@@ -170,11 +162,6 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             priority: $this->arguments['priority'],
             additionalAttributes: $this->arguments['scriptTagAttributes'],
         );
-    }
-
-    private function getViteContext(): ?ViteContext
-    {
-        return $this->getRequest()->getAttribute('vite.context');
     }
 
     private function getRequest(): ServerRequestInterface
