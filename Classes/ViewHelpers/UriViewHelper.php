@@ -7,6 +7,7 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 use Praetorius\ViteAssetCollector\Asset\AssetFile;
 use Praetorius\ViteAssetCollector\Utility\ViteHelper;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -84,10 +85,10 @@ final class UriViewHelper extends AbstractViewHelper
         );
     }
 
-    public function render(): string
+    public function render(): UriInterface
     {
         $file = AssetFile::create($this->arguments['file']);
-        return (string)$this->viteHelper->generateUri($file, $this->getRequest(), $this->arguments['manifest']);
+        return $this->viteHelper->generateUri($file, $this->getRequest(), $this->arguments['manifest']);
     }
 
     private function getRequest(): ServerRequestInterface
