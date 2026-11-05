@@ -60,6 +60,53 @@ final class ScriptEmbeddingTest extends UnitTestCase
     }
 
     /**
+     * @return array<string, array{scriptEmbedding: ScriptEmbedding, expected: array<string, string>}>
+     */
+    public static function getDevServerTagAttributesDataProvider(): array
+    {
+        return [
+            'module' => [
+                'scriptEmbedding' => new ScriptEmbedding(),
+                'expected' => ['type' => 'module'],
+            ],
+            'async module' => [
+                'scriptEmbedding' => new ScriptEmbedding(async: true),
+                'expected' => ['type' => 'module', 'async' => 'async'],
+            ],
+            'async classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, async: true),
+                'expected' => ['type' => 'module', 'async' => 'async'],
+            ],
+            'deferred classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, defer: true),
+                'expected' => ['type' => 'module'],
+            ],
+            'blocking classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false),
+                'expected' => ['type' => 'module'],
+            ],
+            'additional attributes' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, defer: true, additionalAttributes: ['foo' => 'bar']),
+                'expected' => ['type' => 'module', 'foo' => 'bar'],
+            ],
+            'type cannot be overwritten by additional attributes' => [
+                'scriptEmbedding' => new ScriptEmbedding(additionalAttributes: ['type' => 'text/javascript']),
+                'expected' => ['type' => 'module'],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, string> $expected
+     */
+    #[Test]
+    #[DataProvider('getDevServerTagAttributesDataProvider')]
+    public function getDevServerTagAttributes(ScriptEmbedding $scriptEmbedding, array $expected): void
+    {
+        self::assertSame($expected, $scriptEmbedding->getDevServerTagAttributes());
+    }
+
+    /**
      * @return array<string, array{arguments: array<string, bool>, expectedCode: int}>
      */
     public static function invalidCombinationThrowsExceptionDataProvider(): array

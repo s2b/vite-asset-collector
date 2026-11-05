@@ -30,28 +30,55 @@ final readonly class AssetRenderer implements AssetRendererInterface
         private MimeTypeDetector $mimeTypeDetector,
     ) {}
 
+    /**
+     * Embeds an asset from a running dev server. Due to the way the vite dev
+     * server operates, not all available embedding options will be applied to
+     * the resulting HTML tags. Content Security Policy is handled by allowing
+     * requests to the dev server in general.
+     */
     public function renderDevAsset(Asset $asset, UriInterface $devServerUri, ServerRequestInterface $request): void
     {
-        $this->renderViteClient($devServerUri, $request);
-        $path = $this->assetPathResolver->resolveSourcePath($asset->entry);
-        $uri = (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request);
-        if ($asset->entry->type === AssetType::Css) {
-            $this->assetCollector->addStyleSheet(
-                "vite:{$path}",
-                $uri,
-                $asset->cssEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $asset->cssEmbedding->priority]),
-            );
-        } else {
-            $this->assetCollector->addJavaScript(
-                "vite:{$path}",
-                $uri,
-                $asset->scriptEmbedding->getTagAttributes(),
-                $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority])
-            );
+        switch ($asset->entry->type) {
+            case AssetType::Css:
+                if ($asset->cssEmbedding->ignore) {
+                    return;
+                }
+                $this->renderViteClient($devServerUri, $request);
+                $this->assetCollector->addStyleSheet(
+                    'vite:' . $this->assetPathResolver->resolveSourcePath($asset->entry),
+                    (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request),
+                    $asset->cssEmbedding->getTagAttributes(),
+                    $this->prepareOptions(['priority' => $asset->cssEmbedding->priority]),
+                );
+                return;
+
+            case AssetType::Script:
+                // Vite JavaScript entrypoints might serve both JavaScript and CSS, so the
+                // separate "ignore" options can only be applied if both CSS and JavaScript
+                // should be ignored.
+                if ($asset->scriptEmbedding->ignore && $asset->cssEmbedding->ignore) {
+                    return;
+                }
+                // Legacy (nomodule) bundles are only generated during build, the dev server
+                // doesn't provide them.
+                if ($asset->scriptEmbedding->nomodule) {
+                    return;
+                }
+                $this->renderViteClient($devServerUri, $request);
+                $this->assetCollector->addJavaScript(
+                    'vite:' . $this->assetPathResolver->resolveSourcePath($asset->entry),
+                    (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request),
+                    $asset->scriptEmbedding->getDevServerTagAttributes(),
+                    $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority])
+                );
+                return;
         }
     }
 
+    /**
+     * Embeds an asset based on a Vite manifest.json file, usually in production
+     * environments.
+     */
     public function renderAsset(Asset $asset, Manifest $manifest, ServerRequestInterface $request): void
     {
         $identifier = $this->assetPathResolver->resolveSourcePath($asset->entry);
