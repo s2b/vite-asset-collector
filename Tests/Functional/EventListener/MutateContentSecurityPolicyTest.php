@@ -55,6 +55,21 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
             ],
         ];
 
+        // e.g. ddev-vite-sidecar: VITE_SERVER_URI=https://vite.example.ddev.site
+        yield 'dev server uri without port' => [
+            'useDevServer' => true,
+            'devServerUri' => 'https://vite.example.ddev.site',
+            'nonce' => new ConsumableNonce('theNonce'),
+            'currentPolicy' => new Policy(),
+            'expectedPolicy' => [
+                'connect-src http://vite.example.ddev.site https://vite.example.ddev.site wss://vite.example.ddev.site',
+                'script-src-elem http://vite.example.ddev.site https://vite.example.ddev.site wss://vite.example.ddev.site',
+                'style-src-elem http://vite.example.ddev.site https://vite.example.ddev.site wss://vite.example.ddev.site',
+                'font-src http://vite.example.ddev.site https://vite.example.ddev.site wss://vite.example.ddev.site',
+                'img-src http://vite.example.ddev.site https://vite.example.ddev.site wss://vite.example.ddev.site',
+            ],
+        ];
+
         $nonce = new ConsumableNonce('theNonce');
         $nonce->consume();
         yield 'empty project policy, nonce consumed' => [
