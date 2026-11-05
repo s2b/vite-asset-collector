@@ -28,6 +28,11 @@ parameters:
 			message: '#^Variable \$_EXTKEY might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
+			path: ../../Tests/Fixtures/vite_context_event_listener/ext_emconf.php
+		-
+			message: '#^Variable \$_EXTKEY might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
 			path: ../../Tests/Fixtures/symlink_extension/ext_emconf.php
 		-
 			message: '#^Variable \$_EXTKEY might not be defined\.$#'

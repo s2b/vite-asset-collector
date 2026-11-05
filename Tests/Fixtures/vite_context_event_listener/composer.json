@@ -1,0 +1,20 @@
+{
+	"name": "praetorius/vite-asset-collector-vite-context-event-listener",
+	"description": "Test extension for vite-asset-collector that captures BuildViteContextEvent",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-extension",
+	"autoload": {
+		"psr-4": {
+			"Praetorius\\ViteAssetCollector\\Tests\\Fixtures\\ViteContextEventListener\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "vite_context_event_listener",
+			"version": "1.0.0",
+			"Package": {
+				"providesPackages": {}
+			}
+		}
+	}
+}
