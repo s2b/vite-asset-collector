@@ -7,44 +7,43 @@ namespace Praetorius\ViteAssetCollector\Tests\Unit\Asset\Embedding;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
-use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptLoading;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 final class ScriptEmbeddingTest extends UnitTestCase
 {
     /**
-     * @return array<string, mixed>[]
+     * @return array<string, array<string, mixed>>
      */
     public static function getTagAttributesDataProvider(): array
     {
         return [
-            [
+            'module' => [
                 'scriptEmbedding' => new ScriptEmbedding(),
                 'expected' => ['type' => 'module'],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(loading: ScriptLoading::Module),
-                'expected' => ['type' => 'module'],
+            'async module' => [
+                'scriptEmbedding' => new ScriptEmbedding(async: true),
+                'expected' => ['type' => 'module', 'async' => 'async'],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(loading: ScriptLoading::Async),
+            'async classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, async: true),
                 'expected' => ['async' => 'async'],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(loading: ScriptLoading::Defer),
+            'deferred classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, defer: true),
                 'expected' => ['defer' => 'defer'],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(loading: ScriptLoading::Blocking),
+            'blocking classic script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false),
                 'expected' => [],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(nomodule: true, loading: ScriptLoading::Defer),
+            'nomodule script' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, defer: true, nomodule: true),
                 'expected' => ['defer' => 'defer', 'nomodule' => 'nomodule'],
             ],
-            [
-                'scriptEmbedding' => new ScriptEmbedding(nomodule: true, loading: ScriptLoading::Defer, additionalAttributes: ['foo' => 'bar']),
+            'additional attributes' => [
+                'scriptEmbedding' => new ScriptEmbedding(module: false, defer: true, nomodule: true, additionalAttributes: ['foo' => 'bar']),
                 'expected' => ['defer' => 'defer', 'nomodule' => 'nomodule', 'foo' => 'bar'],
             ],
         ];
@@ -60,11 +59,36 @@ final class ScriptEmbeddingTest extends UnitTestCase
         self::assertSame($expected, $scriptEmbedding->getTagAttributes());
     }
 
+    /**
+     * @return array<string, array{arguments: array<string, bool>, expectedCode: int}>
+     */
+    public static function invalidCombinationThrowsExceptionDataProvider(): array
+    {
+        return [
+            'module and nomodule' => [
+                'arguments' => ['nomodule' => true],
+                'expectedCode' => 1790873151,
+            ],
+            'module and defer' => [
+                'arguments' => ['defer' => true],
+                'expectedCode' => 1793918609,
+            ],
+            'async and defer' => [
+                'arguments' => ['module' => false, 'async' => true, 'defer' => true],
+                'expectedCode' => 1793918610,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, bool> $arguments
+     */
     #[Test]
-    public function moduleAndNomoduleCombinationThrowsException(): void
+    #[DataProvider('invalidCombinationThrowsExceptionDataProvider')]
+    public function invalidCombinationThrowsException(array $arguments, int $expectedCode): void
     {
         self::expectException(ViteException::class);
-        self::expectExceptionCode(1790873151);
-        new ScriptEmbedding(nomodule: true);
+        self::expectExceptionCode($expectedCode);
+        new ScriptEmbedding(...$arguments);
     }
 }

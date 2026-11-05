@@ -18,12 +18,20 @@ final readonly class ScriptEmbedding
         public bool $priority = false,
         public bool $preloadImports = true,
         public bool $ignore = false,
-        public ScriptLoading $loading = ScriptLoading::Module,
+        public bool $module = true,
+        public bool $async = false,
+        public bool $defer = false,
         public bool $nomodule = false,
         public array $additionalAttributes = [],
     ) {
-        if ($loading === ScriptLoading::Module && $nomodule) {
+        if ($module && $nomodule) {
             throw new ViteException('Invalid configuration for script embedding: module script cannot be used as nomodule script.', 1790873151);
+        }
+        if ($module && $defer) {
+            throw new ViteException('Invalid configuration for script embedding: module scripts are always deferred, "defer" can only be used for classic scripts.', 1793918609);
+        }
+        if ($async && $defer) {
+            throw new ViteException('Invalid configuration for script embedding: script cannot be "async" and "defer" at the same time.', 1793918610);
         }
     }
 
@@ -33,7 +41,9 @@ final readonly class ScriptEmbedding
     public function getTagAttributes(): array
     {
         $attributes = [
-            ...$this->loading->getTagAttributes(),
+            ...($this->module ? ['type' => 'module'] : []),
+            ...($this->async ? ['async' => true] : []),
+            ...($this->defer ? ['defer' => true] : []),
             ...($this->nomodule ? ['nomodule' => true] : []),
             ...$this->additionalAttributes,
         ];

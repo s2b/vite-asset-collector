@@ -97,14 +97,14 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             'withAttributes' => [
                 'template' => '
                     <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js">
-                        <vite:asset.script loading="async" additionalAttributes="{foo: \'bar\'}" />
+                        <vite:asset.script async="{true}" additionalAttributes="{foo: \'bar\'}" />
                         <vite:asset.css media="print" additionalAttributes="{foo: \'bar\'}" />
                     </vite:asset>
                 ',
                 'javaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . $manifestDir . 'ValidManifest/assets/Main-4483b920.js',
-                        'attributes' => ['async' => 'async', 'foo' => 'bar'],
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'foo' => 'bar'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],

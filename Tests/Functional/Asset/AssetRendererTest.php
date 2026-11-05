@@ -11,7 +11,6 @@ use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
-use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptLoading;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
@@ -81,7 +80,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'asset' => Asset::create(
                     entry: 'path/to/Main.js',
                     scriptEmbedding: new ScriptEmbedding(
-                        loading: ScriptLoading::Async,
+                        async: true,
                         additionalAttributes: ['otherAttribute' => 'otherValue'],
                     ),
                 ),
@@ -94,7 +93,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                     'vite:path/to/Main.js' => [
                         'source' => 'https://localhost:5173/path/to/Main.js',
-                        'attributes' => ['async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true],
                     ],
                 ],
@@ -281,14 +280,14 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     entry: 'Main.js',
                     cssEmbedding: new CssEmbedding(media: 'print', disabled: true),
                     scriptEmbedding: new ScriptEmbedding(
-                        loading: ScriptLoading::Async,
+                        async: true,
                         additionalAttributes: ['otherAttribute' => 'otherValue'],
                     ),
                 ),
                 'expectedJavaScripts' => [
                     'vite:Main.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
-                        'attributes' => ['async' => 'async', 'otherAttribute' => 'otherValue'],
+                        'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
@@ -408,11 +407,11 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJsAndCss/assets/Shared-To-v4Zbq.js" />',
                 ],
             ],
-            'withImportedJsAsyncLoading' => [
+            'withImportedJsAsClassicScript' => [
                 'manifestFile' => 'fileadmin/Fixtures/ImportJs/.vite/manifest.json',
                 'asset' => Asset::create(
                     entry: 'Main.js',
-                    scriptEmbedding: new ScriptEmbedding(loading: ScriptLoading::Async),
+                    scriptEmbedding: new ScriptEmbedding(module: false, async: true),
                 ),
                 'expectedJavaScripts' => [
                     'vite:Main.js' => [
@@ -430,6 +429,30 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 ],
                 'expectedPreloadTags' => [
                     '<link rel="preload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" as="script" />',
+                ],
+            ],
+            'withImportedJsAsAsyncModule' => [
+                'manifestFile' => 'fileadmin/Fixtures/ImportJs/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    scriptEmbedding: new ScriptEmbedding(async: true),
+                ),
+                'expectedJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module', 'async' => 'async'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedStyleSheets' => [
+                    'vite:Main.js:assets/Main-973bb662.css' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" />',
                 ],
             ],
             'withImportedJsWithoutPreload' => [
