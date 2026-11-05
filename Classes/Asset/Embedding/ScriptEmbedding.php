@@ -51,6 +51,25 @@ final readonly class ScriptEmbedding
     }
 
     /**
+     * Vite's dev server only serves JavaScript modules, so scripts are always
+     * embedded as modules during development. "async" is kept because it can
+     * be used for module scripts as well.
+     *
+     * @return array<string, mixed>
+     */
+    public function getDevServerTagAttributes(): array
+    {
+        $attributes = [
+            'type' => 'module',
+            ...($this->async ? ['async' => true] : []),
+            ...$this->additionalAttributes,
+        ];
+        // Additional attributes must not turn the script into a classic script
+        $attributes['type'] = 'module';
+        return $this->convertBooleanAttributes($attributes);
+    }
+
+    /**
      * @param array<string, mixed> $attributes
      * @return array<string, mixed>
      */

@@ -98,6 +98,72 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
             ],
+            'classicScriptIsEmbeddedAsModule' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Main.js',
+                    scriptEmbedding: new ScriptEmbedding(module: false, defer: true),
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+                'expectedDevJavaScripts' => [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
+                    ],
+                    'vite:path/to/Main.js' => [
+                        'source' => 'https://localhost:5173/path/to/Main.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true],
+                    ],
+                ],
+            ],
+            'nomoduleIsSkipped' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Main.js',
+                    scriptEmbedding: new ScriptEmbedding(module: false, nomodule: true),
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+            ],
+            'ignoredScriptIsEmbeddedForCss' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Main.js',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+                'expectedDevJavaScripts' => [
+                    'vite' => [
+                        'source' => 'https://localhost:5173/@vite/client',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, 'priority' => true],
+                    ],
+                    'vite:path/to/Main.js' => [
+                        'source' => 'https://localhost:5173/path/to/Main.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true],
+                    ],
+                ],
+            ],
+            'ignoredScriptAndCssIsSkipped' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Main.js',
+                    cssEmbedding: new CssEmbedding(ignore: true),
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+            ],
+            'ignoredCssEntrypointIsSkipped' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Main.css',
+                    cssEmbedding: new CssEmbedding(ignore: true),
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+            ],
+            'otherEntrypointTypeIsSkipped' => [
+                'asset' => Asset::create(
+                    entry: 'path/to/Image.svg',
+                ),
+                'devServerUri' => new Uri('https://localhost:5173'),
+            ],
             'withExtPath' => [
                 'asset' => Asset::create(
                     entry: 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
