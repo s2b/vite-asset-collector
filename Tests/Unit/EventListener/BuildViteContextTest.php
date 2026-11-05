@@ -61,6 +61,15 @@ final class BuildViteContextTest extends UnitTestCase
                 'expectedUseDevServer' => true,
                 'expectedDevServerUri' => 'https://example.com:1234',
             ],
+            'automatic dev server uri based on supplied uri without port' => [
+                'useDevServer' => '1',
+                'devServerUri' => 'auto',
+                'requestUri' => 'https://localhost',
+                'typo3Context' => null,
+                'environmentVariables' => ['VITE_SERVER_URI' => 'https://vite.example.ddev.site'],
+                'expectedUseDevServer' => true,
+                'expectedDevServerUri' => 'https://vite.example.ddev.site',
+            ],
             'disabled dev server' => [
                 'useDevServer' => '0',
                 'devServerUri' => 'https://example.com',
