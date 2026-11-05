@@ -47,6 +47,16 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
                 'devServerBase' => new Uri('https://localhost:5173/prefix/'),
                 'expected' => 'https://localhost:5173/prefix/fileadmin/Fixtures/FileadminAsset/main.js',
             ],
+            'dev server with path without trailing slash' => [
+                'file' => AssetFile::create('fileadmin/Fixtures/FileadminAsset/main.js'),
+                'devServerBase' => new Uri('https://localhost:5173/prefix'),
+                'expected' => 'https://localhost:5173/prefix/fileadmin/Fixtures/FileadminAsset/main.js',
+            ],
+            'dev server with trailing slash' => [
+                'file' => AssetFile::create('fileadmin/Fixtures/FileadminAsset/main.js'),
+                'devServerBase' => new Uri('https://localhost:5173/'),
+                'expected' => 'https://localhost:5173/fileadmin/Fixtures/FileadminAsset/main.js',
+            ],
         ];
     }
 
