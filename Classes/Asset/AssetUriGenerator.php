@@ -27,7 +27,8 @@ final readonly class AssetUriGenerator implements AssetUriGeneratorInterface
 
     public function generateDevUri(AssetFile $file, UriInterface $devServerBase, ?ServerRequestInterface $request): UriInterface
     {
-        return $devServerBase->withPath($devServerBase->getPath() . $this->assetPathResolver->resolveSourcePath($file));
+        $path = rtrim($devServerBase->getPath(), '/') . '/' . ltrim($this->assetPathResolver->resolveSourcePath($file), '/');
+        return $devServerBase->withPath($path);
     }
 
     public function generateUri(AssetFile|OutputFile $file, Manifest $manifest, ?ServerRequestInterface $request): UriInterface
