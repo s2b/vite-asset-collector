@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\ViewHelpers\Asset;
 
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
-use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptLoading;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\ViewHelpers\AssetViewHelper;
 use TYPO3Fluid\Fluid\Core\Parser\Exception as ParserException;
@@ -43,14 +42,15 @@ final class ScriptViewHelper extends AbstractViewHelper implements ViewHelperNod
         $this->registerArgument('priority', 'bool', 'Set to "true" if the script should be embedded in the <head> of the document.', false, false);
         $this->registerArgument('preloadImports', 'bool', 'Set to "false" if imported scripts should not be preloaded automatically.', false, true);
         $this->registerArgument('ignore', 'bool', 'Set to "true" if the script should not be embedded at all.', false, false);
-        $this->registerArgument('loading', 'string', 'Set to one of "async", "defer" or "blocking" if the script should not be embedded as a JavaScript module.', false, ScriptLoading::Module->value);
-        $this->registerArgument('nomodule', 'bool', 'Set to "true" if the script should be used as an alternative to a JavaScript module.', false, false);
+        $this->registerArgument('module', 'bool', 'Set to "false" if the script should be embedded as a classic script instead of a JavaScript module (e. g. for non-ESM build output).', false, true);
+        $this->registerArgument('async', 'bool', 'Set to "true" if the script should be executed as soon as it is loaded. Can be used for JavaScript modules and classic scripts.', false, false);
+        $this->registerArgument('defer', 'bool', 'Set to "true" if the classic script should be executed after the document has been parsed. JavaScript modules are always deferred, so this can only be used with module="{false}".', false, false);
+        $this->registerArgument('nomodule', 'bool', 'Set to "true" if the classic script should be used as an alternative to a JavaScript module. Can only be used with module="{false}".', false, false);
         $this->registerArgument('additionalAttributes', 'array', 'Additional attributes to be added to the <script> tag.', false, []);
     }
 
     public function render(): void
     {
-        $this->arguments['loading'] = ScriptLoading::from($this->arguments['loading']);
         try {
             $scriptEmbedding = new ScriptEmbedding(...$this->arguments);
         } catch (ViteException $e) {

@@ -33,13 +33,14 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
     /**
      * @return array<string, array{string, array<string, string>}>
      */
-    public static function loadingDataProvider(): array
+    public static function scriptTypeAndLoadingDataProvider(): array
     {
         return [
-            'module' => ['module', ['type' => 'module']],
-            'defer' => ['defer', ['defer' => 'defer']],
-            'async' => ['async', ['async' => 'async']],
-            'blocking' => ['blocking', []],
+            'module' => ['', ['type' => 'module']],
+            'async module' => ['async="{true}"', ['type' => 'module', 'async' => 'async']],
+            'async classic script' => ['module="{false}" async="{true}"', ['async' => 'async']],
+            'deferred classic script' => ['module="{false}" defer="{true}"', ['defer' => 'defer']],
+            'blocking classic script' => ['module="{false}"', []],
         ];
     }
 
@@ -47,23 +48,23 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
      * @param array<string, string> $expectedAttributes
      */
     #[Test]
-    #[DataProvider('loadingDataProvider')]
-    public function loading(string $loading, array $expectedAttributes): void
+    #[DataProvider('scriptTypeAndLoadingDataProvider')]
+    public function scriptTypeAndLoading(string $arguments, array $expectedAttributes): void
     {
         $this->render('
             <vite:asset entry="Main.js">
-                <vite:asset.script loading="' . $loading . '" />
+                <vite:asset.script ' . $arguments . ' />
             </vite:asset>
         ');
         self::assertSame($expectedAttributes, $this->get(AssetCollector::class)->getJavaScripts()['vite:Main.js']['attributes']);
     }
 
     #[Test]
-    public function nomoduleWithNonModuleLoading(): void
+    public function nomoduleWithClassicScript(): void
     {
         $this->render('
             <vite:asset entry="Main.js">
-                <vite:asset.script loading="defer" nomodule="{true}" />
+                <vite:asset.script module="{false}" defer="{true}" nomodule="{true}" />
             </vite:asset>
         ');
         self::assertSame(
@@ -96,14 +97,27 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
         self::assertSame(['vite:Default.js'], array_keys($this->get(AssetCollector::class)->getJavaScripts()));
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function invalidCombinationThrowsExceptionDataProvider(): array
+    {
+        return [
+            'module and nomodule' => ['nomodule="{true}"'],
+            'module and defer' => ['defer="{true}"'],
+            'async and defer' => ['module="{false}" async="{true}" defer="{true}"'],
+        ];
+    }
+
     #[Test]
-    public function moduleAndNomoduleThrowsException(): void
+    #[DataProvider('invalidCombinationThrowsExceptionDataProvider')]
+    public function invalidCombinationThrowsException(string $arguments): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(1793528981);
         $this->render('
             <vite:asset entry="Main.js">
-                <vite:asset.script nomodule="{true}" />
+                <vite:asset.script ' . $arguments . ' />
             </vite:asset>
         ');
     }

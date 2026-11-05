@@ -6,7 +6,6 @@ namespace Praetorius\ViteAssetCollector\Asset;
 
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
-use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptLoading;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
@@ -73,10 +72,9 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority, 'csp' => $this->determineCspStatus($asset->csp, false)]),
             );
             if ($asset->scriptEmbedding->preloadImports) {
-                $preloadTemplate = match ($asset->scriptEmbedding->loading) {
-                    ScriptLoading::Module => '<link rel="modulepreload" href="%s" />',
-                    default => '<link rel="preload" href="%s" as="script" />',
-                };
+                $preloadTemplate = $asset->scriptEmbedding->module
+                    ? '<link rel="modulepreload" href="%s" />'
+                    : '<link rel="preload" href="%s" as="script" />';
                 foreach ($manifest->getImportsForChunk($identifier, true) as $preloadModule) {
                     $this->pageRenderer->addHeaderData(sprintf(
                         $preloadTemplate,
