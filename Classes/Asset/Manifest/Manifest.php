@@ -38,7 +38,7 @@ final readonly class Manifest
                 count($entrypoints)
             ), 1683552723);
         }
-        return array_last($entrypoints);
+        return reset($entrypoints);
     }
 
     /**
