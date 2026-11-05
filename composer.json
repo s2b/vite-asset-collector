@@ -27,7 +27,8 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Praetorius\\ViteAssetCollector\\Tests\\": "Tests/"
+			"Praetorius\\ViteAssetCollector\\Tests\\": "Tests/",
+			"Praetorius\\ViteAssetCollector\\Tests\\Fixtures\\ViteContextEventListener\\": "Tests/Fixtures/vite_context_event_listener/Classes/"
 		}
 	},
 	"config": {
