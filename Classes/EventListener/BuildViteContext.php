@@ -53,6 +53,11 @@ final readonly class BuildViteContext
         // This constant is used by ddev-viteserve and contains only the port that can be
         // combined with any ddev domain of the current project
         $vitePort = getenv('VITE_PRIMARY_PORT') ?: self::DEFAULT_PORT;
-        return $request->getUri()->withPath('')->withPort((int)$vitePort);
+        // Only scheme and host are taken from the current request, everything else
+        // (user info, path, query, fragment) is specific to the requested page
+        return (new Uri())
+            ->withScheme($request->getUri()->getScheme())
+            ->withHost($request->getUri()->getHost())
+            ->withPort((int)$vitePort);
     }
 }

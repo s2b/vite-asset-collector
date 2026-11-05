@@ -43,6 +43,15 @@ final class BuildViteContextTest extends UnitTestCase
                 'expectedUseDevServer' => true,
                 'expectedDevServerUri' => 'https://localhost:5173',
             ],
+            'automatic dev server uri does not inherit path, query, fragment or user info from request' => [
+                'useDevServer' => '1',
+                'devServerUri' => 'auto',
+                'requestUri' => 'https://user:password@localhost/some/page?id=1&L=1#section',
+                'typo3Context' => null,
+                'environmentVariables' => [],
+                'expectedUseDevServer' => true,
+                'expectedDevServerUri' => 'https://localhost:5173',
+            ],
             'automatic dev server uri based on supplied port' => [
                 'useDevServer' => '1',
                 'devServerUri' => 'auto',
