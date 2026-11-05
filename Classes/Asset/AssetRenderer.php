@@ -30,23 +30,37 @@ final readonly class AssetRenderer implements AssetRendererInterface
         private MimeTypeDetector $mimeTypeDetector,
     ) {}
 
+    /**
+     * Note that no CSP hashes are collected for dev server assets: Their content changes
+     * with every edit and vite injects additional scripts and styles at runtime. Instead,
+     * the dev server origin is allowed by the MutateContentSecurityPolicy event listener.
+     */
     public function renderDevAsset(Asset $asset, UriInterface $devServerUri, ServerRequestInterface $request): void
     {
-        $this->renderViteClient($devServerUri, $request);
-        $path = $this->assetPathResolver->resolveSourcePath($asset->entry);
-        $uri = (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request);
-        if ($asset->entry->type === AssetType::Css) {
+        if ($asset->entry->type === AssetType::Css && !$asset->cssEmbedding->ignore) {
+            $this->renderViteClient($devServerUri, $request);
             $this->assetCollector->addStyleSheet(
-                "vite:{$path}",
-                $uri,
+                'vite:' . $this->assetPathResolver->resolveSourcePath($asset->entry),
+                (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request),
                 $asset->cssEmbedding->getTagAttributes(),
                 $this->prepareOptions(['priority' => $asset->cssEmbedding->priority]),
             );
-        } else {
+        }
+
+        // CSS of script entries is injected by the script itself during development,
+        // so the script can only be skipped if its CSS should be ignored as well.
+        // Legacy (nomodule) bundles are only generated during build, the dev server
+        // doesn't provide them. Browsers supporting modules would ignore them anyway.
+        if (
+            $asset->entry->type === AssetType::Script
+            && (!$asset->scriptEmbedding->ignore || !$asset->cssEmbedding->ignore)
+            && !$asset->scriptEmbedding->nomodule
+        ) {
+            $this->renderViteClient($devServerUri, $request);
             $this->assetCollector->addJavaScript(
-                "vite:{$path}",
-                $uri,
-                $asset->scriptEmbedding->getTagAttributes(),
+                'vite:' . $this->assetPathResolver->resolveSourcePath($asset->entry),
+                (string)$this->assetUriGenerator->generateDevUri($asset->entry, $devServerUri, $request),
+                $asset->scriptEmbedding->getDevServerTagAttributes(),
                 $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority])
             );
         }
