@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Resource\MimeTypeDetector;
 use TYPO3\CMS\Core\Resource\RelativeCssPathFixer;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\ConsumableNonce;
+use TYPO3\CMS\Core\Type\DocType;
 
 #[AsAlias(AssetRendererInterface::class)]
 final readonly class AssetRenderer implements AssetRendererInterface
@@ -123,12 +124,13 @@ final readonly class AssetRenderer implements AssetRendererInterface
             );
             if ($asset->scriptEmbedding->preloadImports) {
                 $preloadTemplate = $asset->scriptEmbedding->module
-                    ? '<link rel="modulepreload" href="%s" />'
-                    : '<link rel="preload" href="%s" as="script" />';
+                    ? '<link rel="modulepreload" href="%s"%s>'
+                    : '<link rel="preload" href="%s" as="script"%s>';
                 foreach ($imports as $preloadModule) {
                     $this->pageRenderer->addHeaderData(sprintf(
                         $preloadTemplate,
                         htmlspecialchars((string)$this->assetUriGenerator->generateUri($preloadModule->file, $manifest, $request)),
+                        $this->determineHtmlEndingSlash($request),
                     ));
                 }
             }
@@ -187,9 +189,9 @@ final readonly class AssetRenderer implements AssetRendererInterface
         foreach ($assets as $asset) {
             $preloadTemplate = match (true) {
                 ($asset->type === AssetType::Font && $fontPreloading->appliesTo($asset))
-                    => '<link rel="preload" href="%s" as="font" type="%s" crossorigin />',
+                    => '<link rel="preload" href="%s" as="font" type="%s" crossorigin="anonymous"%s>',
                 (in_array($asset->type, [AssetType::Image, AssetType::Svg], true) && $imagePreloading->appliesTo($asset))
-                    => '<link rel="preload" href="%s" as="image" type="%s" />',
+                    => '<link rel="preload" href="%s" as="image" type="%s"%s>',
                 default => null,
             };
             if ($preloadTemplate) {
@@ -199,6 +201,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                         $preloadTemplate,
                         htmlspecialchars((string)$this->assetUriGenerator->generateUri($asset, $manifest, $request)),
                         htmlspecialchars($mimeType[0]),
+                        $this->determineHtmlEndingSlash($request),
                     ));
                 }
             }
@@ -263,8 +266,11 @@ final readonly class AssetRenderer implements AssetRendererInterface
             // Add metatag to <head> to allow vite to consume the current nonce
             // see: https://vite.dev/guide/features.html#content-security-policy-csp
             $nonce = $nonceAttribute->consumeInline();
-            $endingSlash = $this->pageRenderer->getDocType()->isXmlCompliant() ? ' /' : '';
-            $this->pageRenderer->addHeaderData('<meta property="csp-nonce" nonce="' . htmlspecialchars($nonce) . '"' . $endingSlash . '>');
+            $this->pageRenderer->addHeaderData(sprintf(
+                '<meta property="csp-nonce" nonce="%s"%s>',
+                htmlspecialchars($nonce),
+                $this->determineHtmlEndingSlash($request),
+            ));
         }
         $this->assetCollector->addJavaScript(
             'vite',
@@ -319,5 +325,14 @@ final readonly class AssetRenderer implements AssetRendererInterface
             ContentSecurityMode::Enabled => true,
             ContentSecurityMode::Disabled => false,
         };
+    }
+
+    private function determineHtmlEndingSlash(ServerRequestInterface $request): string
+    {
+        // TODO remove version switch when support for v13 is dropped
+        $isXmlCompliant = (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14
+            ? $this->pageRenderer->getDocType()->isXmlCompliant()
+            : DocType::createFromRequest($request)->isXmlCompliant();
+        return $isXmlCompliant ? ' /' : '';
     }
 }

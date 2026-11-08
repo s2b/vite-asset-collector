@@ -32,22 +32,22 @@ final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
             'default' => [
                 'arguments' => '',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'enabled' => [
                 'arguments' => 'preload="{true}"',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.png" as="image" type="image/png" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.png" as="image" type="image/png">',
                 ],
             ],
             'single format' => [
                 'arguments' => 'preload="{true}" formats="svg"',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml">',
                 ],
             ],
         ];

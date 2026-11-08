@@ -18,9 +18,13 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Type\DocType;
+use TYPO3\CMS\Core\TypoScript\AST\Node\RootNode;
+use TYPO3\CMS\Core\TypoScript\FrontendTypoScript;
 
 final class AssetRendererTest extends AbstractViteFunctionalTestCase
 {
@@ -451,7 +455,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" />',
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js">',
                 ],
             ],
             'withSpecialCharactersInPreloadedFiles' => [
@@ -467,8 +471,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="modulepreload" href="fileadmin/Fixtures/SpecialCharacters/assets/Shared&amp;1-To-v4Zbq.js" />',
-                    '<link rel="preload" href="fileadmin/Fixtures/SpecialCharacters/assets/Font&amp;1-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/SpecialCharacters/assets/Shared&amp;1-To-v4Zbq.js">',
+                    '<link rel="preload" href="fileadmin/Fixtures/SpecialCharacters/assets/Font&amp;1-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'withImportedJsAndCss' => [
@@ -497,7 +501,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJsAndCss/assets/Shared-To-v4Zbq.js" />',
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJsAndCss/assets/Shared-To-v4Zbq.js">',
                 ],
             ],
             'withImportedJsAsClassicScript' => [
@@ -521,7 +525,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" as="script" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" as="script">',
                 ],
             ],
             'withImportedJsAsAsyncModule' => [
@@ -545,7 +549,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" />',
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js">',
                 ],
             ],
             'withImportedJsWithoutPreload' => [
@@ -632,7 +636,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'preloadSpecificFontFormats' => [
@@ -650,8 +654,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin="anonymous">',
                 ],
             ],
             'preloadAllImageFormats' => [
@@ -670,8 +674,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.png" as="image" type="image/png" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.png" as="image" type="image/png">',
                 ],
             ],
             'preloadSpecificImageFormats' => [
@@ -690,7 +694,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml">',
                 ],
             ],
             'noPreloadingIfNothingIsEmbedded' => [
@@ -716,7 +720,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'preloadingWithCssEntry' => [
@@ -733,7 +737,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'noPreloadingWithIgnoredCssEntry' => [
@@ -820,6 +824,30 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         self::assertSame($expectedInlineStyleSheets, $assetCollector->getInlineStyleSheets(), 'inlineStyleSheets');
         $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
         self::assertSame($expectedPreloadTags, $headerDataAccessor->getValue($pageRenderer));
+    }
+
+    #[Test]
+    public function renderBuildAssetWithXhtmlDocType(): void
+    {
+        $pageRenderer = $this->get(PageRenderer::class);
+        // TODO remove version switch when support for TYPO3 v13 is dropped
+        if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14) {
+            $pageRenderer->setDocType(DocType::xhtmlStrict);
+        }
+        $frontendTypoScript = new FrontendTypoScript(new RootNode(), [], [], []);
+        $frontendTypoScript->setConfigArray(['doctype' => 'xhtml_strict']);
+        $request = $this->createRequest((new ServerRequest())->withAttribute('frontend.typoscript', $frontendTypoScript));
+
+        $manifest = $this->get(ManifestFactory::class)->createFromFilePath('fileadmin/Fixtures/SpecialCharacters/.vite/manifest.json');
+        $this->get(AssetRenderer::class)->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
+
+        self::assertSame(
+            [
+                '<link rel="modulepreload" href="fileadmin/Fixtures/SpecialCharacters/assets/Shared&amp;1-To-v4Zbq.js" />',
+                '<link rel="preload" href="fileadmin/Fixtures/SpecialCharacters/assets/Font&amp;1-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous" />',
+            ],
+            (new \ReflectionClass(PageRenderer::class))->getProperty('headerData')->getValue($pageRenderer),
+        );
     }
 
     #[Test]

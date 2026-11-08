@@ -66,7 +66,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'preload' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'autoEntry' => [
