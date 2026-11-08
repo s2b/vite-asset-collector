@@ -13,6 +13,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * @internal
+ */
 final readonly class ViteContextMiddleware implements MiddlewareInterface
 {
     public function __construct(private EventDispatcherInterface $eventDispatcher) {}

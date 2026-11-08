@@ -11,6 +11,9 @@ use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Event\PolicyMutatedEvent;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 
+/**
+ * @internal
+ */
 #[AsEventListener('praetorius/vite-asset-collector-csp')]
 final readonly class MutateContentSecurityPolicy
 {

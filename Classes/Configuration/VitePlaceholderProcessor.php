@@ -10,6 +10,9 @@ use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Processor\Placeholder\PlaceholderProcessorInterface;
 
+/**
+ * @internal
+ */
 #[Autoconfigure(public: true)]
 final readonly class VitePlaceholderProcessor implements PlaceholderProcessorInterface
 {
