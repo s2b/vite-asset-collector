@@ -341,7 +341,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print', 'disabled' => 'disabled'])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -366,7 +366,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print', 'disabled' => 'disabled'])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -380,7 +380,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(media: 'print', disabled: true),
                 ),
                 'expectedStyleSheets' => [
-                    'vite:Main.scss' => [
+                    'vite:fileadmin/Fixtures/OnlyCssManifest/assets/Main-4483b920.css:' . md5(serialize(['media' => 'print', 'disabled' => 'disabled'])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/OnlyCssManifest/assets/Main-4483b920.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -409,7 +409,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -442,7 +442,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -466,12 +466,12 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:6a181085b68130ba16f066fdaaf2da09:assets/Shared-pjWofKK4.css' => [
+                    'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize(['media' => 'print', 'disabled' => 'disabled'])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print', 'disabled' => 'disabled'])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                         'attributes' => ['media' => 'print', 'disabled' => 'disabled'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -495,7 +495,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -519,7 +519,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -543,7 +543,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -564,7 +564,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedInlineStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print'])) => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
                         'options' => ['external' => true, 'priority' => true],
@@ -585,7 +585,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedInlineStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print'])) => [
                         'source' => ".main{color:red;}\n",
                         'attributes' => ['media' => 'print'],
                         'options' => ['external' => true],
@@ -606,7 +606,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedInlineStyleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css:' . md5(serialize([])) => [
                         'source' => "body{background:url('fileadmin/Fixtures/DefaultManifest/assets/./typo3-57f5650e.svg');}\n",
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true],
@@ -625,7 +625,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(preloadFonts: false),
                 ),
                 'expectedStyleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -643,7 +643,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(preloadImages: false),
                 ),
                 'expectedStyleSheets' => [
-                    'vite:Default.js:assets/Default-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -667,7 +667,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, self::cspOptionName() => true],
@@ -688,7 +688,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedStyleSheets' => [
-                    'vite:Main.js:assets/Main-973bb662.css' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([])) => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true],
@@ -765,17 +765,17 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         );
         self::assertEquals(
             [
-                'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:Main.js:assets/Main-973bb662.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:Alternative.js:assets/Alternative-973bb662.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -801,28 +801,71 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         self::assertEquals(
             [
-                'vite:88713ee6f56256eb987323824e723146:assets/Shared-pjWofKK4.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize(['media' => 'print'])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => ['media' => 'print'],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:Main.js:assets/Main-973bb662.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print'])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css',
                     'attributes' => ['media' => 'print'],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:4c3e6cf2811f4c91dfa15ba7d99e10a8:assets/Shared-pjWofKK4.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
                     'attributes' => [],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:Alternative.js:assets/Alternative-973bb662.css' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-973bb662.css',
                     'attributes' => [],
                     'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                 ],
             ],
             $assetCollector->getStyleSheets(),
+        );
+    }
+
+    #[Test]
+    public function renderBuildAssetAddsSameCssFileFromDifferentEntriesOnce(): void
+    {
+        /** @var ManifestFactory */
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $manifest = $manifestFactory->createFromFilePath('fileadmin/Fixtures/CssEntryImportedByJs/.vite/manifest.json');
+        /** @var AssetRenderer */
+        $assetRenderer = $this->get(AssetRenderer::class);
+        $request = $this->createRequest();
+        // Main.js imports Main.css, which is also used as a separate entry point
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.css'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
+        self::assertSame(
+            ['vite:fileadmin/Fixtures/CssEntryImportedByJs/assets/Main-973bb662.css:' . md5(serialize([]))],
+            array_keys($this->get(AssetCollector::class)->getStyleSheets()),
+        );
+    }
+
+    #[Test]
+    public function renderBuildAssetAddsSameEntryWithDifferentAttributesSeparately(): void
+    {
+        /** @var ManifestFactory */
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $manifest = $manifestFactory->createFromFilePath('fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json');
+        /** @var AssetRenderer */
+        $assetRenderer = $this->get(AssetRenderer::class);
+        $request = $this->createRequest();
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js', cssEmbedding: new CssEmbedding(media: 'print')), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
+        self::assertSame(
+            [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize(['media' => 'print'])) => ['media' => 'print'],
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css:' . md5(serialize(['media' => 'print'])) => ['media' => 'print'],
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize([])) => [],
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-973bb662.css:' . md5(serialize([])) => [],
+            ],
+            array_map(
+                fn(array $styleSheet): array => $styleSheet['attributes'],
+                $this->get(AssetCollector::class)->getStyleSheets(),
+            ),
         );
     }
 

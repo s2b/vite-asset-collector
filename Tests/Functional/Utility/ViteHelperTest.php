@@ -43,7 +43,7 @@ final class ViteHelperTest extends AbstractViteFunctionalTestCase
         self::assertSame(['vite:Main.js'], array_keys($javaScripts));
         self::assertStringEndsWith('fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js', $javaScripts['vite:Main.js']['source']);
         self::assertSame(
-            ['vite:Main.js:assets/Main-973bb662.css'],
+            ['vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([]))],
             array_keys($this->get(AssetCollector::class)->getStyleSheets()),
         );
     }
