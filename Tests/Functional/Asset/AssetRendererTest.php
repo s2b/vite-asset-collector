@@ -310,7 +310,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     /**
      * @return array<string, array<string, mixed>>
      */
-    public static function renderAssetDataProvider(): array
+    public static function renderBuildAssetDataProvider(): array
     {
         return [
             'withoutCss' => [
@@ -705,8 +705,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
      * @param string[] $expectedPreloadTags
      */
     #[Test]
-    #[DataProvider('renderAssetDataProvider')]
-    public function renderAsset(
+    #[DataProvider('renderBuildAssetDataProvider')]
+    public function renderBuildAsset(
         string $manifestFile,
         Asset $asset,
         ?ServerRequestInterface $request = null,
@@ -724,7 +724,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderAsset($asset, $manifest, $this->createRequest($request));
+        $assetRenderer->renderBuildAsset($asset, $manifest, $this->createRequest($request));
         self::assertSame($expectedJavaScripts, $assetCollector->getJavaScripts(), 'javaScripts');
         self::assertSame($expectedStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
         self::assertSame($expectedInlineStyleSheets, $assetCollector->getInlineStyleSheets(), 'inlineStyleSheets');
@@ -733,7 +733,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
-    public function renderAssetPreventDuplicates(): void
+    public function renderBuildAssetPreventDuplicates(): void
     {
         $manifestFile = 'fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json';
         /** @var AssetCollector */
@@ -744,10 +744,10 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
         $request = $this->createRequest();
-        $assetRenderer->renderAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
-        $assetRenderer->renderAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
-        $assetRenderer->renderAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
-        $assetRenderer->renderAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         self::assertEquals(
             [
                 'vite:Main.js' => [
@@ -786,7 +786,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
-    public function renderAssetAddDuplicateCssWithDifferentSettings(): void
+    public function renderBuildAssetAddDuplicateCssWithDifferentSettings(): void
     {
         $manifestFile = 'fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json';
         /** @var AssetCollector */
@@ -797,8 +797,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
         $request = $this->createRequest();
-        $assetRenderer->renderAsset(Asset::create(entry: 'Main.js', cssEmbedding: new CssEmbedding(media: 'print')), $manifest, $request);
-        $assetRenderer->renderAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js', cssEmbedding: new CssEmbedding(media: 'print')), $manifest, $request);
+        $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         self::assertEquals(
             [
                 'vite:88713ee6f56256eb987323824e723146:assets/Shared-pjWofKK4.css' => [
@@ -874,7 +874,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
-        $assetRenderer->renderAsset($asset, $manifest, $this->createRequest());
+        $assetRenderer->renderBuildAsset($asset, $manifest, $this->createRequest());
     }
 
     /**

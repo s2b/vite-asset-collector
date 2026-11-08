@@ -32,7 +32,7 @@ final readonly class ViteHelper
             $this->assetRenderer->renderDevAsset($asset, $viteContext->getDevServer(), $request);
         } else {
             $manifest = $this->manifestFactory->createFromConfiguredPath($manifestFile);
-            $this->assetRenderer->renderAsset($asset, $manifest, $request);
+            $this->assetRenderer->renderBuildAsset($asset, $manifest, $request);
         }
     }
 

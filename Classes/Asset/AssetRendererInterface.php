@@ -12,5 +12,5 @@ interface AssetRendererInterface
 {
     public function renderDevAsset(Asset $asset, UriInterface $devServerUri, ServerRequestInterface $request): void;
 
-    public function renderAsset(Asset $asset, Manifest $manifest, ServerRequestInterface $request): void;
+    public function renderBuildAsset(Asset $asset, Manifest $manifest, ServerRequestInterface $request): void;
 }

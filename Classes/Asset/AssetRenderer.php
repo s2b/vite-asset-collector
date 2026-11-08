@@ -84,10 +84,9 @@ final readonly class AssetRenderer implements AssetRendererInterface
     }
 
     /**
-     * Embeds an asset based on a Vite manifest.json file, usually in production
-     * environments.
+     * Embeds an asset from vite's build output, based on its manifest.json file.
      */
-    public function renderAsset(Asset $asset, Manifest $manifest, ServerRequestInterface $request): void
+    public function renderBuildAsset(Asset $asset, Manifest $manifest, ServerRequestInterface $request): void
     {
         $identifier = $this->assetPathResolver->resolveSourcePath($asset->entry);
         $chunk = $manifest->getChunk($identifier);
