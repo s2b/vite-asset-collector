@@ -73,7 +73,6 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'preload' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
                     '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
                 ],
             ],

@@ -41,8 +41,6 @@ final class CssViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
     {
         $this->registerArgument('priority', 'bool', 'Set to "false" if the CSS should be loaded with lower priority.', false, true);
         $this->registerArgument('inline', 'bool', 'Set to "true" if the CSS should be embedded inline with a <style> tag.', false, false);
-        $this->registerArgument('preloadFonts', 'bool', 'Set to "false" if referenced font files shouldn not be preloaded automatically.', false, true);
-        $this->registerArgument('preloadImages', 'bool', 'Set to "false" if referenced image files should not be preloaded automatically.', false, true);
         $this->registerArgument('ignore', 'bool', 'Set to "true" if the CSS should not be embedded at all.', false, false);
         $this->registerArgument('disabled', 'bool', 'Set to "true" if the <link> tag should be marked as disabled.', false, false);
         $this->registerArgument('media', 'string', 'Associated media query');

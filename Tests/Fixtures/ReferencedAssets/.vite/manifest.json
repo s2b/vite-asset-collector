@@ -1,0 +1,25 @@
+{
+	"Main.js": {
+		"file": "assets/Main-4483b920.js",
+		"isEntry": true,
+		"src": "Main.js",
+		"css": [
+			"assets/Main-973bb662.css"
+		],
+		"assets": [
+			"assets/Font-57f5650e.woff2",
+			"assets/Font-57f5650e.woff",
+			"assets/Font-57f5650e.ttf",
+			"assets/Image-57f5650e.svg",
+			"assets/Image-57f5650e.png"
+		]
+	},
+	"Styles.css": {
+		"file": "assets/Styles-973bb662.css",
+		"isEntry": true,
+		"src": "Styles.css",
+		"assets": [
+			"assets/Font-57f5650e.woff2"
+		]
+	}
+}

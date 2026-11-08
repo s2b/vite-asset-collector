@@ -13,7 +13,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3Fluid\Fluid\Core\Parser\Exception as ParserException;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -30,34 +29,6 @@ final class CssViewHelperTest extends AbstractViteFunctionalTestCase
             'devServerUri' => 'https://localhost:5173',
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
-    }
-
-    #[Test]
-    public function disablePreloading(): void
-    {
-        $this->render('
-            <vite:asset entry="Default.js">
-                <vite:asset.css preloadFonts="{false}" preloadImages="{false}" />
-            </vite:asset>
-        ');
-        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
-        self::assertSame([], $headerDataAccessor->getValue($this->get(PageRenderer::class)));
-        self::assertCount(1, $this->get(AssetCollector::class)->getStyleSheets());
-    }
-
-    #[Test]
-    public function disablePreloadingOfFontsOnly(): void
-    {
-        $this->render('
-            <vite:asset entry="Default.js">
-                <vite:asset.css preloadFonts="{false}" />
-            </vite:asset>
-        ');
-        $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
-        self::assertSame(
-            ['<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />'],
-            $headerDataAccessor->getValue($this->get(PageRenderer::class)),
-        );
     }
 
     #[Test]
