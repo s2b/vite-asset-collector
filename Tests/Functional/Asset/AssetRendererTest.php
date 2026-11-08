@@ -454,6 +454,23 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     '<link rel="modulepreload" href="fileadmin/Fixtures/ImportJs/assets/Shared-To-v4Zbq.js" />',
                 ],
             ],
+            'withSpecialCharactersInPreloadedFiles' => [
+                'manifestFile' => 'fileadmin/Fixtures/SpecialCharacters/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                ),
+                'expectedJavaScripts' => [
+                    'vite:fileadmin/Fixtures/SpecialCharacters/assets/Main-4483b920.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/SpecialCharacters/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="modulepreload" href="fileadmin/Fixtures/SpecialCharacters/assets/Shared&amp;1-To-v4Zbq.js" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/SpecialCharacters/assets/Font&amp;1-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                ],
+            ],
             'withImportedJsAndCss' => [
                 'manifestFile' => 'fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json',
                 'asset' => Asset::create(

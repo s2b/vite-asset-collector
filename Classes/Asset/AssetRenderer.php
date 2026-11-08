@@ -128,7 +128,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 foreach ($imports as $preloadModule) {
                     $this->pageRenderer->addHeaderData(sprintf(
                         $preloadTemplate,
-                        (string)$this->assetUriGenerator->generateUri($preloadModule->file, $manifest, $request),
+                        htmlspecialchars((string)$this->assetUriGenerator->generateUri($preloadModule->file, $manifest, $request)),
                     ));
                 }
             }
@@ -197,8 +197,8 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 if ($mimeType[0]) {
                     $this->pageRenderer->addHeaderData(sprintf(
                         $preloadTemplate,
-                        (string)$this->assetUriGenerator->generateUri($asset, $manifest, $request),
-                        $mimeType[0],
+                        htmlspecialchars((string)$this->assetUriGenerator->generateUri($asset, $manifest, $request)),
+                        htmlspecialchars($mimeType[0]),
                     ));
                 }
             }
@@ -264,7 +264,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
             // see: https://vite.dev/guide/features.html#content-security-policy-csp
             $nonce = $nonceAttribute->consumeInline();
             $endingSlash = $this->pageRenderer->getDocType()->isXmlCompliant() ? ' /' : '';
-            $this->pageRenderer->addHeaderData('<meta property="csp-nonce" nonce="' . $nonce . '"' . $endingSlash . '>');
+            $this->pageRenderer->addHeaderData('<meta property="csp-nonce" nonce="' . htmlspecialchars($nonce) . '"' . $endingSlash . '>');
         }
         $this->assetCollector->addJavaScript(
             'vite',
