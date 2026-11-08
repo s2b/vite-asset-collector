@@ -50,7 +50,7 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
                 <vite:asset.script ' . $arguments . ' />
             </vite:asset>
         ');
-        self::assertSame($expectedAttributes, $this->get(AssetCollector::class)->getJavaScripts()['vite:Main.js']['attributes']);
+        self::assertSame($expectedAttributes, $this->get(AssetCollector::class)->getJavaScripts()['vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js']['attributes']);
     }
 
     #[Test]
@@ -63,7 +63,7 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
         ');
         self::assertSame(
             ['defer' => 'defer', 'nomodule' => 'nomodule'],
-            $this->get(AssetCollector::class)->getJavaScripts()['vite:Main.js']['attributes'],
+            $this->get(AssetCollector::class)->getJavaScripts()['vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js']['attributes'],
         );
     }
 
@@ -88,7 +88,7 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
             </vite:asset>
             <vite:asset manifest="fileadmin/Fixtures/DefaultManifest/.vite/manifest.json" entry="Default.js" />
         ');
-        self::assertSame(['vite:Default.js'], array_keys($this->get(AssetCollector::class)->getJavaScripts()));
+        self::assertSame(['vite:fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js'], array_keys($this->get(AssetCollector::class)->getJavaScripts()));
     }
 
     /**

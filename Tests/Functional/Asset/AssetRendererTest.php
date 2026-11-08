@@ -322,7 +322,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(ignore: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -336,7 +336,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(media: 'print', disabled: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -361,7 +361,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async', 'otherAttribute' => 'otherValue'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -404,7 +404,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     scriptEmbedding: new ScriptEmbedding(priority: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
@@ -424,7 +424,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     entry: 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
                 ),
                 'expectedJavaScripts' => [
-                    'vite:typo3conf/ext/test_extension/Resources/Private/JavaScript/Main.js' => [
+                    'vite:fileadmin/Fixtures/ExtPathManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ExtPathManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -437,7 +437,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     entry: 'Main.js',
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -461,7 +461,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(media: 'print', disabled: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -490,7 +490,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     scriptEmbedding: new ScriptEmbedding(module: false, async: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['async' => 'async'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -514,7 +514,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     scriptEmbedding: new ScriptEmbedding(async: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module', 'async' => 'async'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -538,7 +538,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     scriptEmbedding: new ScriptEmbedding(preloadImports: false),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -559,7 +559,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(media: 'print', inline: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -580,7 +580,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(media: 'print', inline: true, priority: false),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -601,7 +601,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(inline: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Default.js' => [
+                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -692,7 +692,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     cssEmbedding: new CssEmbedding(ignore: true),
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ReferencedAssets/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, ...self::autoCspForNonInline()],
@@ -733,7 +733,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     csp: ContentSecurityMode::Enabled,
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true, self::cspOptionName() => true],
@@ -754,7 +754,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     csp: ContentSecurityMode::Disabled,
                 ),
                 'expectedJavaScripts' => [
-                    'vite:Main.js' => [
+                    'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js' => [
                         'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
                         'attributes' => ['type' => 'module'],
                         'options' => ['external' => true],
@@ -806,6 +806,31 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
+    public function renderBuildAssetWithSameEntryFromDifferentManifests(): void
+    {
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $assetRenderer = $this->get(AssetRenderer::class);
+        $request = $this->createRequest();
+        $assetRenderer->renderBuildAsset(
+            Asset::create(entry: 'Main.js'),
+            $manifestFactory->createFromFilePath('fileadmin/Fixtures/ValidManifest/.vite/manifest.json'),
+            $request,
+        );
+        $assetRenderer->renderBuildAsset(
+            Asset::create(entry: 'Main.js'),
+            $manifestFactory->createFromFilePath('fileadmin/Fixtures/ImportJs/.vite/manifest.json'),
+            $request,
+        );
+        self::assertSame(
+            [
+                'vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
+                'vite:fileadmin/Fixtures/ImportJs/assets/Main-4483b920.js',
+            ],
+            array_keys($this->get(AssetCollector::class)->getJavaScripts()),
+        );
+    }
+
+    #[Test]
     public function renderBuildAssetPreventDuplicates(): void
     {
         $manifestFile = 'fileadmin/Fixtures/ImportJsAndCss/.vite/manifest.json';
@@ -823,12 +848,12 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         self::assertSame(
             [
-                'vite:Main.js' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Main-4483b920.js' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-4483b920.js',
                     'attributes' => ['type' => 'module'],
                     'options' => ['external' => true, ...self::autoCspForNonInline()],
                 ],
-                'vite:Alternative.js' => [
+                'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-4483b920.js' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Alternative-4483b920.js',
                     'attributes' => ['type' => 'module'],
                     'options' => ['external' => true, ...self::autoCspForNonInline()],
