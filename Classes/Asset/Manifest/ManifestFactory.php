@@ -58,7 +58,6 @@ final readonly class ManifestFactory
             $manifest = new Manifest(
                 chunks: $this->readManifestFile($resolvedFile),
                 file: OutputFile::create($this->stripOutputDir($resolvedFile, $outputDir)),
-                // TODO check if it makes sense to strip the project root path here
                 outputDir: $outputDir,
             );
             $this->cache->set($cacheIdentifier, $manifest);
