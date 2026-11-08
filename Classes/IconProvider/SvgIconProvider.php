@@ -16,12 +16,12 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconProvider\AbstractSvgIconProvider;
 
 #[Autoconfigure(public: true)]
-class SvgIconProvider extends AbstractSvgIconProvider
+final class SvgIconProvider extends AbstractSvgIconProvider
 {
     public function __construct(
-        private AssetPathResolverInterface $assetPathResolver,
-        private AssetUriGeneratorInterface $assetUriGenerator,
-        private ManifestFactory $manifestFactory,
+        private readonly AssetPathResolverInterface $assetPathResolver,
+        private readonly AssetUriGeneratorInterface $assetUriGenerator,
+        private readonly ManifestFactory $manifestFactory,
     ) {}
 
     /**
