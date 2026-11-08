@@ -17,7 +17,7 @@ jobs:
         uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
         with:
           php-version: 8.4
-          extensions: intl, mbstring, pdo_sqlite
+          extensions: intl, mbstring, pdo_sqlite, zip
           ini-file: development
 
       -
@@ -47,6 +47,54 @@ jobs:
         name: Editorconfig Linting
         run: composer lint:editorconfig
 
+
+  package:
+    name: TER packaging
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
+
+      -
+        name: Setup PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: 8.4
+          extensions: intl, mbstring, zip
+          tools: composer:v2
+
+      -
+        name: Install tailor
+        run: composer global require typo3/tailor:^2.1 --prefer-dist --no-progress
+
+      -
+        name: Create artefact
+        run: |
+          # Same validation and packaging as in the publish workflow, using the
+          # version that is currently declared in composer.json
+          version="$(jq -r '.extra["typo3/cms"].version' composer.json)"
+          # tailor ignores a mismatch in ext_emconf.php as long as composer.json declares the version
+          # shellcheck disable=SC2016 # PHP variables, not shell expressions
+          emconfVersion="$(php -r '$_EXTKEY = "vite_asset_collector"; include "ext_emconf.php"; echo $EM_CONF[$_EXTKEY]["version"];')"
+          if [ "${emconfVersion}" != "${version}" ]; then
+            echo "::error::ext_emconf.php declares version ${emconfVersion}, composer.json declares ${version}."
+            exit 1
+          fi
+          "$(composer global config bin-dir --absolute --quiet)/tailor" create-artefact "${version}"
+
+      -
+        name: Check artefact contents
+        run: |
+          artefacts=(tailor-version-artefact/*.zip)
+          unzip -Z1 "${artefacts[0]}"
+          unexpected="$(unzip -Z1 "${artefacts[0]}" | grep -vE '^(Classes|Configuration|Documentation|Resources)/|^(composer\.json|ext_conf_template\.txt|ext_emconf\.php|ext_localconf\.php|LICENSE|README\.md)$' || true)"
+          if [ -n "${unexpected}" ]; then
+            echo "::error::Unexpected files in TER artefact:"
+            echo "${unexpected}"
+            exit 1
+          fi
 
   test:
     name: Testing (PHP ${{ matrix.php-version }}, TYPO3 ^${{ matrix.typo3-version }})

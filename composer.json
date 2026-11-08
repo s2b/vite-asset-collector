@@ -17,7 +17,8 @@
 		"phpstan/phpstan": "^2.2",
 		"saschaegerer/phpstan-typo3": "^3.0",
 		"phpunit/phpunit": "^11",
-		"t3docs/fluid-documentation-generator": "^4.4"
+		"t3docs/fluid-documentation-generator": "^4.4",
+		"typo3/tailor": "^2.1"
 	},
 	"autoload": {
 		"psr-4": {
@@ -85,6 +86,11 @@
 		"coverage:functional": "phpunit -c Build/Testing/FunctionalTests.xml --coverage-clover .Build/logs/clover.functional.xml --coverage-php .Build/logs/clover.functional.cov",
 		"coverage:report": "phpcov merge --html .Build/logs/report .Build/logs",
 
-		"doc:viewhelpers": "fluidDocumentation generate Build/Documentation/ViewHelpers.json && cp fluidDocumentationOutput/ViteAssetCollector.json Documentation/Reference/ViewHelpers/"
+		"doc:viewhelpers": "fluidDocumentation generate Build/Documentation/ViewHelpers.json && cp fluidDocumentationOutput/ViteAssetCollector.json Documentation/Reference/ViewHelpers/",
+
+		"set-version": [
+			"@putenv TYPO3_DISABLE_DOCS_VERSION_UPDATE=1",
+			"tailor set-version"
+		]
 	}
 }

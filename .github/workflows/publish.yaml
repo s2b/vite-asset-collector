@@ -1,0 +1,109 @@
+name: publish
+
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Create artefact and publish to TER
+    runs-on: ubuntu-latest
+    env:
+      TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
+      RELEASE_VERSION: ${{ github.event.release.tag_name }}
+      RELEASE_NOTES: ${{ github.event.release.body }}
+      IS_PRERELEASE: ${{ github.event.release.prerelease }}
+    steps:
+      -
+        name: Validate version
+        run: |
+          # TER only accepts x.y.z, pre-releases (which aren't published to TER) may have a suffix
+          pattern='^[0-9]+\.[0-9]+\.[0-9]+$'
+          if [ "${IS_PRERELEASE}" = 'true' ]; then
+            pattern='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'
+          fi
+          if ! [[ "${RELEASE_VERSION}" =~ ${pattern} ]]; then
+            echo "::error::Release tag \"${RELEASE_VERSION}\" is not a valid version."
+            exit 1
+          fi
+
+      -
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
+
+      -
+        name: Setup PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: 8.4
+          extensions: intl, mbstring, zip
+          tools: composer:v2
+
+      -
+        name: Install tailor
+        run: composer global require typo3/tailor:^2.1 --prefer-dist --no-progress
+
+      -
+        name: Check version in ext_emconf.php
+        run: |
+          # tailor ignores a mismatch here as long as composer.json declares the version
+          # shellcheck disable=SC2016 # PHP variables, not shell expressions
+          emconfVersion="$(php -r '$_EXTKEY = "vite_asset_collector"; include "ext_emconf.php"; echo $EM_CONF[$_EXTKEY]["version"];')"
+          if [ "${emconfVersion}" != "${RELEASE_VERSION}" ]; then
+            echo "::error::ext_emconf.php declares version ${emconfVersion}, expected ${RELEASE_VERSION}."
+            exit 1
+          fi
+
+      -
+        name: Create artefact
+        run: |
+          "$(composer global config bin-dir --absolute --quiet)/tailor" create-artefact "${RELEASE_VERSION}"
+
+      -
+        name: Publish to TER
+        # Pre-releases are only published on GitHub
+        if: ${{ !github.event.release.prerelease }}
+        run: |
+          # Release notes from GitHub are used as upload comment
+          comment="${RELEASE_NOTES}"
+          if [ -z "${comment//[[:space:]]/}" ]; then
+            comment="Released version ${RELEASE_VERSION}. See https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_VERSION}"
+          fi
+          artefacts=(tailor-version-artefact/*.zip)
+          "$(composer global config bin-dir --absolute --quiet)/tailor" ter:publish \
+            --artefact="${artefacts[0]}" \
+            --comment="${comment}" \
+            "${RELEASE_VERSION}"
+
+      -
+        name: Store artefact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # 7.0.1
+        with:
+          name: ter-artefact
+          path: tailor-version-artefact/*.zip
+          if-no-files-found: error
+
+  attach:
+    name: Attach artefact to GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_VERSION: ${{ github.event.release.tag_name }}
+    steps:
+      -
+        name: Download artefact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # 8.0.2
+        with:
+          name: ter-artefact
+          path: ter-artefact
+
+      -
+        name: Upload artefact to release
+        run: gh release upload "${RELEASE_VERSION}" ter-artefact/*.zip --repo "${GITHUB_REPOSITORY}" --clobber
