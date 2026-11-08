@@ -46,7 +46,7 @@
 			"Package": {
 				"providesPackages": {}
 			},
-			"version": "1.18.3"
+			"version": "2.0.0"
 		}
 	},
 	"scripts": {
