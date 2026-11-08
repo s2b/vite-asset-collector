@@ -39,8 +39,8 @@ final class ViteHelperTest extends AbstractViteFunctionalTestCase
         );
 
         $javaScripts = $this->get(AssetCollector::class)->getJavaScripts();
-        self::assertSame(['vite:Main.js'], array_keys($javaScripts));
-        self::assertStringEndsWith('fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js', $javaScripts['vite:Main.js']['source']);
+        self::assertSame(['vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js'], array_keys($javaScripts));
+        self::assertStringEndsWith('fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js', $javaScripts['vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js']['source']);
         self::assertSame(
             ['vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([]))],
             array_keys($this->get(AssetCollector::class)->getStyleSheets()),
@@ -56,8 +56,8 @@ final class ViteHelperTest extends AbstractViteFunctionalTestCase
         );
 
         $javaScripts = $this->get(AssetCollector::class)->getJavaScripts();
-        self::assertSame(['vite:Default.js'], array_keys($javaScripts));
-        self::assertStringEndsWith('fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js', $javaScripts['vite:Default.js']['source']);
+        self::assertSame(['vite:fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js'], array_keys($javaScripts));
+        self::assertStringEndsWith('fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js', $javaScripts['vite:fileadmin/Fixtures/DefaultManifest/assets/Default-4483b920.js']['source']);
     }
 
     #[Test]
@@ -97,7 +97,7 @@ final class ViteHelperTest extends AbstractViteFunctionalTestCase
             self::ValidManifest,
         );
 
-        self::assertSame(['vite:Main.js'], array_keys($this->get(AssetCollector::class)->getJavaScripts()));
+        self::assertSame(['vite:fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js'], array_keys($this->get(AssetCollector::class)->getJavaScripts()));
     }
 
     #[Test]
