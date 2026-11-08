@@ -15,7 +15,7 @@ enum AssetType
 
     public static function fromFileExtension(string $extension): self
     {
-        return match ($extension) {
+        return match (strtolower($extension)) {
             'css', 'less', 'sass', 'scss', 'styl', 'stylus', 'pcss', 'postcss' => self::Css,
             'js', 'mjs', 'cjs', 'ts', 'mts', 'cts', 'jsx', 'tsx', 'svelte', 'vue' => self::Script,
             'woff2', 'woff', 'ttf', 'otf' => self::Font,

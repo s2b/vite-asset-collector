@@ -14,7 +14,7 @@ final readonly class AssetFile
 
     public static function create(string $locator): self
     {
-        $extension = pathinfo($locator, PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($locator, PATHINFO_EXTENSION));
         return new self(
             locator: $locator,
             extension: $extension,
