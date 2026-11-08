@@ -6,6 +6,9 @@ namespace Praetorius\ViteAssetCollector\EventListener;
 
 use TYPO3\CMS\Core\Attribute\AsEventListener;
 
+/**
+ * @internal
+ */
 #[AsEventListener('praetorius/vite-asset-collector/exclude-extension-from-language-update')]
 final readonly class ExcludeExtensionFromLanguageUpdate
 {

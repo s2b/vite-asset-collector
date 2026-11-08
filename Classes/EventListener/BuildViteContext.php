@@ -13,6 +13,9 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\Uri;
 
+/**
+ * @internal
+ */
 #[AsEventListener('praetorius/vite-asset-collector/build-vite-context')]
 final readonly class BuildViteContext
 {
