@@ -6,16 +6,9 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\View\TemplateView;
 
 final class UriViewHelperTest extends AbstractViteFunctionalTestCase
 {
@@ -48,10 +41,7 @@ final class UriViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource($template);
-
-        self::assertEquals($assetUri, (new TemplateView($context))->render());
+        self::assertSame($assetUri, $this->renderTemplate($template));
     }
 
     #[Test]
@@ -63,12 +53,9 @@ final class UriViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
         ]);
 
-        $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:uri file="path/to/file.jpg" />');
-
-        self::assertEquals(
+        self::assertSame(
             'https://localhost:5173/path/to/file.jpg',
-            (new TemplateView($context))->render(),
+            $this->renderTemplate('<vite:uri file="path/to/file.jpg" />', true),
         );
     }
 
@@ -81,23 +68,8 @@ final class UriViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => '',
         ]);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:uri file="Default.js" />');
-
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
-        (new TemplateView($context))->render();
-    }
-
-    protected function createRenderingContext(bool $useDevServer, UriInterface $devServerUri): RenderingContextInterface
-    {
-        $context = $this->get(RenderingContextFactory::class)->create();
-        $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
-
-        $request = $this->createRequest()
-            ->withAttribute('vite.context', new ViteContext(useDevServer: $useDevServer, devServer: $devServerUri));
-        $context->setAttribute(ServerRequestInterface::class, $request);
-
-        return $context;
+        $this->renderTemplate('<vite:uri file="Default.js" />');
     }
 }

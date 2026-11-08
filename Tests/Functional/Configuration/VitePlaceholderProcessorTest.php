@@ -25,7 +25,7 @@ final class VitePlaceholderProcessorTest extends AbstractViteFunctionalTestCase
     {
         $yamlLoader = GeneralUtility::makeInstance(YamlFileLoader::class);
         $result = $yamlLoader->load(self::getInstancePath() . '/fileadmin/Fixtures/VitePlaceholderProcessor/test.yaml');
-        self::assertEquals(
+        self::assertSame(
             [
                 'testWithoutManifest' => [
                     'withoutQuotes' => 'typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-973bb662.css',

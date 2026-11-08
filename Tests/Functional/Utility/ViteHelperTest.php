@@ -12,7 +12,6 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
 use Praetorius\ViteAssetCollector\Utility\ViteHelper;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 
@@ -20,15 +19,15 @@ final class ViteHelperTest extends AbstractViteFunctionalTestCase
 {
     private const ValidManifest = 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '0',
-            'devServerUri' => 'https://localhost:5173',
-            'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
-        ]);
-    }
+    protected array $configurationToUseInTestInstance = [
+        'EXTENSIONS' => [
+            'vite_asset_collector' => [
+                'useDevServer' => '0',
+                'devServerUri' => 'https://localhost:5173',
+                'defaultManifest' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+            ],
+        ],
+    ];
 
     #[Test]
     public function renderAssetUsesManifestWithoutDevServer(): void

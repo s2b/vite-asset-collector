@@ -50,8 +50,8 @@ final class CssEmbeddingTest extends UnitTestCase
     #[Test]
     public function moduleAndNomoduleCombinationThrowsException(): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode(1790873152);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1790873152);
         new CssEmbedding(inline: true, disabled: true);
     }
 }

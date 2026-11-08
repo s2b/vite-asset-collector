@@ -75,8 +75,8 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
     #[DataProvider('resolveOutputPathThrowsExceptionDataProvider')]
     public function resolveOutputPathThrowsException(AssetFile|OutputFile $file, string $manifestFile, string $expectedException, int $expectedExceptionCode): void
     {
-        self::expectException($expectedException);
-        self::expectExceptionCode($expectedExceptionCode);
+        $this->expectException($expectedException);
+        $this->expectExceptionCode($expectedExceptionCode);
         /** @var ManifestFactory */
         $manifestFactory = $this->get(ManifestFactory::class);
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
@@ -141,8 +141,8 @@ final class AssetPathResolverTest extends AbstractViteFunctionalTestCase
     #[DataProvider('resolveSourcePathThrowsExceptionDataProvider')]
     public function resolveSourcePathThrowsException(AssetFile $file, string $expectedException, int $expectedExceptionCode): void
     {
-        self::expectException($expectedException);
-        self::expectExceptionCode($expectedExceptionCode);
+        $this->expectException($expectedException);
+        $this->expectExceptionCode($expectedExceptionCode);
         /** @var AssetPathResolver */
         $subject = $this->get(AssetPathResolver::class);
         $subject->resolveSourcePath($file);

@@ -234,8 +234,8 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
     #[DataProvider('getOnlyEntrypointThrowsExceptionDataProvider')]
     public function getOnlyEntrypointThrowsException(string $manifestFile): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode(1683552723);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1683552723);
         /** @var ManifestFactory */
         $manifestFactory = $this->get(ManifestFactory::class);
         $manifestFactory->createFromFilePath($manifestFile)->getOnlyEntrypoint();
@@ -269,8 +269,8 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
     #[DataProvider('nonExistentManifestFilesDataProvider')]
     public function getDefaultManifestThrowsException(string $manifestFile): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode(1684528724);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1684528724);
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'defaultManifest' => $manifestFile,
         ]);
@@ -283,8 +283,8 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
     #[DataProvider('nonExistentManifestFilesDataProvider')]
     public function createFromFilePathThrowsException(string $manifestFile): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode(1683200522);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1683200522);
         /** @var ManifestFactory */
         $manifestFactory = $this->get(ManifestFactory::class);
         $manifestFactory->createFromFilePath($manifestFile);
@@ -323,8 +323,8 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
     #[DataProvider('invalidManifestContentThrowsExceptionDataProvider')]
     public function invalidManifestContentThrowsException(string $manifestFile, int $exceptionCode): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode($exceptionCode);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode($exceptionCode);
         /** @var ManifestFactory */
         $manifestFactory = $this->get(ManifestFactory::class);
         $manifestFactory->createFromFilePath($manifestFile);

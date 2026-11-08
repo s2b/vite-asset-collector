@@ -134,8 +134,8 @@ final class ScriptEmbeddingTest extends UnitTestCase
     #[DataProvider('invalidCombinationThrowsExceptionDataProvider')]
     public function invalidCombinationThrowsException(array $arguments, int $expectedCode): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode($expectedCode);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode($expectedCode);
         new ScriptEmbedding(...$arguments);
     }
 }

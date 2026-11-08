@@ -7,28 +7,21 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
-use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3Fluid\Fluid\Core\Parser\Exception as ParserException;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\View\TemplateView;
 
 final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
-            'useDevServer' => '0',
-            'devServerUri' => 'https://localhost:5173',
-            'defaultManifest' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
-        ]);
-    }
+    protected array $configurationToUseInTestInstance = [
+        'EXTENSIONS' => [
+            'vite_asset_collector' => [
+                'useDevServer' => '0',
+                'devServerUri' => 'https://localhost:5173',
+                'defaultManifest' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+            ],
+        ],
+    ];
 
     /**
      * @return array<string, array{arguments: string, expected: string[]}>
@@ -67,7 +60,7 @@ final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
     #[DataProvider('preloadingDataProvider')]
     public function preloading(string $arguments, array $expected): void
     {
-        $this->render('
+        $this->renderTemplate('
             <vite:asset entry="Main.js">
                 <vite:asset.image ' . $arguments . ' />
             </vite:asset>
@@ -81,7 +74,7 @@ final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
     {
         $this->expectException(ParserException::class);
         $this->expectExceptionCode(1794142772);
-        $this->render('
+        $this->renderTemplate('
             <vite:asset entry="Main.js">
                 <vite:asset.image />
                 <vite:asset.image />
@@ -110,7 +103,7 @@ final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
     {
         $this->expectException(ParserException::class);
         $this->expectExceptionCode(1794142771);
-        $this->render($template);
+        $this->renderTemplate($template);
     }
 
     #[Test]
@@ -119,27 +112,10 @@ final class ImageViewHelperTest extends AbstractViteFunctionalTestCase
     {
         $this->expectException(ParserException::class);
         $this->expectExceptionCode(1794142773);
-        $this->render('
+        $this->renderTemplate('
             <vite:asset entry="Main.js" priority="{true}">
                 <vite:asset.image />
             </vite:asset>
         ');
-    }
-
-    private function render(string $template): void
-    {
-        $context = $this->createRenderingContext();
-        $context->getTemplatePaths()->setTemplateSource($template);
-        (new TemplateView($context))->render();
-    }
-
-    private function createRenderingContext(): RenderingContextInterface
-    {
-        $context = $this->get(RenderingContextFactory::class)->create();
-        $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
-        $request = $this->createRequest()
-            ->withAttribute('vite.context', new ViteContext(useDevServer: false, devServer: new Uri('https://localhost:5173')));
-        $context->setAttribute(ServerRequestInterface::class, $request);
-        return $context;
     }
 }

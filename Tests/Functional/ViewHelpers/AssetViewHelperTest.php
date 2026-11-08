@@ -7,18 +7,11 @@ namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
-use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\View\TemplateView;
 
 final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
 {
@@ -239,9 +232,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         $pageRenderer = $this->get(PageRenderer::class);
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource($template);
-        (new TemplateView($context))->render();
+        $this->renderTemplate($template);
 
         self::assertSame(
             $javaScripts,
@@ -386,7 +377,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         array $inlineStyleSheets = [],
         array $preload = [],
     ): void {
-        self::expectUserDeprecationMessage($deprecationMessage);
+        $this->expectUserDeprecationMessage($deprecationMessage);
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
             'devServerUri' => 'https://localhost:5173',
@@ -396,9 +387,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
         $pageRenderer = $this->get(PageRenderer::class);
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource($template);
-        (new TemplateView($context))->render();
+        $this->renderTemplate($template);
 
         self::assertSame(
             $javaScripts,
@@ -421,11 +410,9 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     {
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />');
-        (new TemplateView($context))->render();
+        $this->renderTemplate('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />', true);
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
@@ -436,7 +423,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             $assetCollector->getJavaScripts(true)
         );
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:Main.js' => [
                     'source' => 'https://localhost:5173/Main.js',
@@ -453,15 +440,13 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
     {
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext(true, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('
+        $this->renderTemplate('
             <vite:asset manifest="fileadmin/Fixtures/OnlyCssManifest/.vite/manifest.json" entry="Main.scss">
                 <vite:asset.css media="print" disabled="{true}" />
             </vite:asset>
-        ');
-        (new TemplateView($context))->render();
+        ', true);
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite' => [
                     'source' => 'https://localhost:5173/@vite/client',
@@ -471,7 +456,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             ],
             $assetCollector->getJavaScripts(true)
         );
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:Main.scss' => [
                     'source' => 'https://localhost:5173/Main.scss',
@@ -492,30 +477,25 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             'defaultManifest' => '',
         ]);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset entry="Default.js" />');
-
         $this->expectException(ViteException::class);
         $this->expectExceptionCode(1684528724);
-        (new TemplateView($context))->render();
+        $this->renderTemplate('<vite:asset entry="Default.js" />');
     }
 
     #[Test]
     #[IgnoreDeprecations]
     public function nonceTriggersDeprecation(): void
     {
-        self::expectUserDeprecationMessage('The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.');
+        $this->expectUserDeprecationMessage('The "useNonce" argument of <vite:asset> is deprecated. Use "csp" instead.');
         $this->get(ExtensionConfiguration::class)->set('vite_asset_collector', [
             'useDevServer' => '0',
         ]);
 
         $assetCollector = $this->get(AssetCollector::class);
 
-        $context = $this->createRenderingContext(false, new Uri('https://localhost:5173'));
-        $context->getTemplatePaths()->setTemplateSource('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" useNonce="1" />');
-        (new TemplateView($context))->render();
+        $this->renderTemplate('<vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" useNonce="1" />');
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:Main.js' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-4483b920.js',
@@ -525,7 +505,7 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             ],
             $assetCollector->getJavaScripts(false)
         );
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css',
@@ -535,38 +515,5 @@ final class AssetViewHelperTest extends AbstractViteFunctionalTestCase
             ],
             $assetCollector->getStyleSheets(true)
         );
-    }
-
-    protected function createRenderingContext(bool $useDevServer, UriInterface $devServerUri): RenderingContextInterface
-    {
-        $context = $this->get(RenderingContextFactory::class)->create();
-        $context->getViewHelperResolver()->addNamespace('vite', 'Praetorius\\ViteAssetCollector\\ViewHelpers');
-
-        $request = $this->createRequest()
-            ->withAttribute('vite.context', new ViteContext(useDevServer: $useDevServer, devServer: $devServerUri));
-        $context->setAttribute(ServerRequestInterface::class, $request);
-
-        return $context;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected static function autoCspForNonInline(): array
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? [self::cspOptionName() => true] : [];
-    }
-
-    protected static function cspOptionName(): string
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'csp' : 'useNonce';
-    }
-
-    protected static function rawAssetUriPrefix(): string
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'URI:' : '';
     }
 }
