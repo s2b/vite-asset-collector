@@ -112,7 +112,7 @@ final readonly class ManifestFactory
         $data = array_merge($defaults, $data);
         return new ManifestChunk(
             identifier: $identifier,
-            name: (string)$data['name'],
+            name: $data['name'] !== null ? (string)$data['name'] : null,
             src: $data['src'] !== null ? AssetFile::create((string)$data['src']) : null,
             file: OutputFile::create((string)$data['file']),
             isEntry: (bool)$data['isEntry'],
