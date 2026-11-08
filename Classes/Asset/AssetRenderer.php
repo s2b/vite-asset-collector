@@ -108,6 +108,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
             ), 1794135660);
         }
 
+        $imports = $manifest->getImportsForChunk($identifier, true);
         $preload = false;
         if (!$asset->scriptEmbedding->ignore && $chunk->file->type === AssetType::Script) {
             $preload = true;
@@ -124,7 +125,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 $preloadTemplate = $asset->scriptEmbedding->module
                     ? '<link rel="modulepreload" href="%s" />'
                     : '<link rel="preload" href="%s" as="script" />';
-                foreach ($manifest->getImportsForChunk($identifier, true) as $preloadModule) {
+                foreach ($imports as $preloadModule) {
                     $this->pageRenderer->addHeaderData(sprintf(
                         $preloadTemplate,
                         (string)$this->assetUriGenerator->generateUri($preloadModule->file, $manifest, $request),
@@ -143,7 +144,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $request,
                 );
             }
-            foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
+            foreach ($imports as $import) {
                 foreach ($import->css as $file) {
                     $this->renderStyleSheet(
                         $file,
@@ -167,7 +168,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
 
         if ($preload) {
             $this->preloadReferencedAssets($chunk->assets, $manifest, $asset->fontPreloading, $asset->imagePreloading, $request);
-            foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
+            foreach ($imports as $import) {
                 $this->preloadReferencedAssets($import->assets, $manifest, $asset->fontPreloading, $asset->imagePreloading, $request);
             }
         }
