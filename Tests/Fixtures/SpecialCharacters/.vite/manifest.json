@@ -1,0 +1,16 @@
+{
+	"_Shared&1.js": {
+		"file": "assets/Shared&1-To-v4Zbq.js"
+	},
+	"Main.js": {
+		"file": "assets/Main-4483b920.js",
+		"imports": [
+			"_Shared&1.js"
+		],
+		"assets": [
+			"assets/Font&1-57f5650e.woff2"
+		],
+		"isEntry": true,
+		"src": "Main.js"
+	}
+}
