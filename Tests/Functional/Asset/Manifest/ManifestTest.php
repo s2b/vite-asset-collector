@@ -291,6 +291,46 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
     }
 
     /**
+     * @return array<string, array{manifestFile: string, exceptionCode: int}>
+     */
+    public static function invalidManifestContentThrowsExceptionDataProvider(): array
+    {
+        return [
+            'invalid json' => [
+                'manifestFile' => self::FixtureDir . 'InvalidManifest/.vite/manifest.json',
+                'exceptionCode' => 1683200523,
+            ],
+            'null instead of object' => [
+                'manifestFile' => self::FixtureDir . 'InvalidManifestStructure/NullManifest/.vite/manifest.json',
+                'exceptionCode' => 1794146428,
+            ],
+            'string instead of object' => [
+                'manifestFile' => self::FixtureDir . 'InvalidManifestStructure/StringManifest/.vite/manifest.json',
+                'exceptionCode' => 1794146428,
+            ],
+            'list instead of object' => [
+                'manifestFile' => self::FixtureDir . 'InvalidManifestStructure/ListManifest/.vite/manifest.json',
+                'exceptionCode' => 1794146429,
+            ],
+            'string instead of chunk object' => [
+                'manifestFile' => self::FixtureDir . 'InvalidManifestStructure/InvalidChunk/.vite/manifest.json',
+                'exceptionCode' => 1794146429,
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('invalidManifestContentThrowsExceptionDataProvider')]
+    public function invalidManifestContentThrowsException(string $manifestFile, int $exceptionCode): void
+    {
+        self::expectException(ViteException::class);
+        self::expectExceptionCode($exceptionCode);
+        /** @var ManifestFactory */
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $manifestFactory->createFromFilePath($manifestFile);
+    }
+
+    /**
      * @return array<string, mixed>[]
      */
     public static function createFromConfiguredPathDataProvider(): array
