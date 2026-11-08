@@ -12,7 +12,7 @@ use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceKeyword;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\UriValue;
 
 #[AsEventListener('praetorius/vite-asset-collector-csp')]
-final class MutateContentSecurityPolicy
+final readonly class MutateContentSecurityPolicy
 {
     public function __invoke(PolicyMutatedEvent $event): void
     {
