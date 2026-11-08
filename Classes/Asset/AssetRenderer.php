@@ -261,7 +261,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
         if ($nonceAttribute instanceof ConsumableNonce) {
             // Add metatag to <head> to allow vite to consume the current nonce
             // see: https://vite.dev/guide/features.html#content-security-policy-csp
-            $nonce = $nonceAttribute->consume();
+            $nonce = $nonceAttribute->consumeInline();
             $endingSlash = $this->pageRenderer->getDocType()->isXmlCompliant() ? ' /' : '';
             $this->pageRenderer->addHeaderData('<meta property="csp-nonce" nonce="' . $nonce . '"' . $endingSlash . '>');
         }
