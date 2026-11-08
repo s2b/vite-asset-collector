@@ -8,8 +8,7 @@
 	"require": {
 		"php": ">=8.2",
 		"typo3/cms-core": "^14.3 || ^13.4 || dev-main",
-		"typo3/cms-fluid": "^14.3 || ^13.4 || dev-main",
-		"symfony/console": "^7.0 || ^8.1"
+		"typo3/cms-fluid": "^14.3 || ^13.4 || dev-main"
 	},
 	"require-dev": {
 		"typo3/coding-standards": "^0.9",
@@ -43,12 +42,10 @@
 		"typo3/cms": {
 			"web-dir": ".Build/web",
 			"extension-key": "vite_asset_collector",
-			"version": "1.18.3",
 			"Package": {
-				"providesPackages": {
-					"symfony/console": ""
-				}
-			}
+				"providesPackages": {}
+			},
+			"version": "1.18.3"
 		}
 	},
 	"scripts": {
