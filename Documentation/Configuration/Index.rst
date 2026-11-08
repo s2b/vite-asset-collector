@@ -41,9 +41,7 @@ Change Location of manifest.json
 
 You can specify the path to Vite's `manifest.json` in the extension configuration.
 By default, this is set to `_assets/vite/.vite/manifest.json`, so it will run
-out-of-the-box with Vite 5 and the Vite TYPO3 plugin.
-
-If you still use Vite < 5, you should change this to `_assets/vite/manifest.json`.
+out-of-the-box with the Vite TYPO3 plugin.
 
 ..  code-block:: php
     :caption: config/system/additional.php
