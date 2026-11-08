@@ -158,12 +158,6 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 ),
                 'devServerUri' => new Uri('https://localhost:5173'),
             ],
-            'otherEntrypointTypeIsSkipped' => [
-                'asset' => Asset::create(
-                    entry: 'path/to/Image.svg',
-                ),
-                'devServerUri' => new Uri('https://localhost:5173'),
-            ],
             'withExtPath' => [
                 'asset' => Asset::create(
                     entry: 'EXT:test_extension/Resources/Private/JavaScript/Main.js',
@@ -297,6 +291,20 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         self::assertSame($expectedDevStyleSheets, $assetCollector->getStyleSheets(), 'styleSheets');
         $headerDataAccessor = (new \ReflectionClass(PageRenderer::class))->getProperty('headerData');
         self::assertSame([], $headerDataAccessor->getValue($pageRenderer));
+    }
+
+    #[Test]
+    public function renderDevAssetWithUnsupportedTypeThrowsException(): void
+    {
+        self::expectException(ViteException::class);
+        self::expectExceptionCode(1794135659);
+        /** @var AssetRenderer */
+        $assetRenderer = $this->get(AssetRenderer::class);
+        $assetRenderer->renderDevAsset(
+            Asset::create(entry: 'path/to/Image.svg'),
+            new Uri('https://localhost:5173'),
+            $this->createRequest(),
+        );
     }
 
     /**
@@ -843,6 +851,11 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',
                 'asset' => Asset::create(entry: 'NonExistentEntry.js'),
                 'exceptionCode' => 1683200524,
+            ],
+            'unsupportedEntryType' => [
+                'manifestFile' => 'fileadmin/Fixtures/ImageEntry/.vite/manifest.json',
+                'asset' => Asset::create(entry: 'Image.svg'),
+                'exceptionCode' => 1794135660,
             ],
         ];
     }
