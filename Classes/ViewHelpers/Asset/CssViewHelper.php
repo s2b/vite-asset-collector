@@ -72,5 +72,17 @@ final class CssViewHelper extends AbstractViewHelper implements ViewHelperNodeIn
         if (!$parentNode instanceof ViewHelperNode || $parentNode->getViewHelperClassName() !== AssetViewHelper::class) {
             throw new ParserException('<vite:asset.css> can only be used within <vite:asset> to configure CSS embedding.', 1793529908);
         }
+        foreach ($parentNode->getChildNodes() as $siblingNode) {
+            if ($siblingNode instanceof ViewHelperNode && $siblingNode->getViewHelperClassName() === self::class) {
+                throw new ParserException('<vite:asset.css> can only be used once within <vite:asset>.', 1794141766);
+            }
+        }
+        // @todo remove with v3
+        if (array_intersect(array_keys($parentNode->getArguments()), AssetViewHelper::DeprecatedEmbeddingArguments) !== []) {
+            throw new ParserException(
+                'Deprecated arguments of <vite:asset> cannot be combined with <vite:asset.css>. Use <vite:asset.css> and <vite:asset.script> instead of the following arguments: ' . implode(', ', AssetViewHelper::DeprecatedEmbeddingArguments),
+                1794140579,
+            );
+        }
     }
 }

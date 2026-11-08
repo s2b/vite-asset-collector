@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
@@ -144,6 +145,59 @@ final class ScriptViewHelperTest extends AbstractViteFunctionalTestCase
         $this->expectException(ParserException::class);
         $this->expectExceptionCode(1793529909);
         $this->render($template);
+    }
+
+    /**
+     * @return array<string, array{argument: string}>
+     */
+    public static function deprecatedArgumentOfParentThrowsExceptionDataProvider(): array
+    {
+        return [
+            'inlineCss' => ['argument' => 'inlineCss="{true}"'],
+            'priority' => ['argument' => 'priority="{true}"'],
+            'addCss' => ['argument' => 'addCss="{false}"'],
+            'cssTagAttributes' => ['argument' => 'cssTagAttributes="{foo: \'bar\'}"'],
+            'scriptTagAttributes' => ['argument' => 'scriptTagAttributes="{foo: \'bar\'}"'],
+        ];
+    }
+
+    #[Test]
+    #[IgnoreDeprecations]
+    #[DataProvider('deprecatedArgumentOfParentThrowsExceptionDataProvider')]
+    public function deprecatedArgumentOfParentThrowsException(string $argument): void
+    {
+        $this->expectException(ParserException::class);
+        $this->expectExceptionCode(1794141422);
+        $this->render('
+            <vite:asset entry="Main.js" ' . $argument . '>
+                <vite:asset.script />
+            </vite:asset>
+        ');
+    }
+
+    #[Test]
+    #[IgnoreDeprecations]
+    public function deprecatedUseNonceArgumentOfParentIsAllowed(): void
+    {
+        $this->render('
+            <vite:asset entry="Main.js" useNonce="{true}">
+                <vite:asset.script />
+            </vite:asset>
+        ');
+        self::assertNotSame([], $this->get(AssetCollector::class)->getJavaScripts());
+    }
+
+    #[Test]
+    public function multipleUsageThrowsException(): void
+    {
+        $this->expectException(ParserException::class);
+        $this->expectExceptionCode(1794141767);
+        $this->render('
+            <vite:asset entry="Main.js">
+                <vite:asset.script priority="{true}" />
+                <vite:asset.script async="{true}" />
+            </vite:asset>
+        ');
     }
 
     private function render(string $template): void

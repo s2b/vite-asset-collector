@@ -78,6 +78,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  */
 final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNodeInitializedEventInterface
 {
+    /**
+     * Deprecated arguments that cannot be combined with <vite:asset.*> ViewHelpers
+     *
+     * @todo remove with v3
+     */
+    public const DeprecatedEmbeddingArguments = ['inlineCss', 'priority', 'addCss', 'cssTagAttributes', 'scriptTagAttributes'];
+
     public function __construct(
         private readonly ViteHelper $viteHelper,
         private readonly ManifestFactory $manifestFactory,
@@ -119,22 +126,20 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
             $entry = $manifest->getOnlyEntrypoint()->identifier;
         }
 
-        $cssEmbedding = $this->createFallbackCssEmbedding();
-        $scriptEmbedding = $this->createFallbackScriptEmbedding();
         $viewHelperVariableContainer = $this->renderingContext?->getViewHelperVariableContainer();
         if ($viewHelperVariableContainer) {
-            $viewHelperVariableContainer->add(self::class, CssEmbedding::VariableName, $cssEmbedding);
-            $viewHelperVariableContainer->add(self::class, ScriptEmbedding::VariableName, $scriptEmbedding);
+            $viewHelperVariableContainer->remove(self::class, CssEmbedding::VariableName);
+            $viewHelperVariableContainer->remove(self::class, ScriptEmbedding::VariableName);
             $this->renderChildren();
-            /** @var CssEmbedding */
+            /** @var ?CssEmbedding */
             $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
-            /** @var ScriptEmbedding */
+            /** @var ?ScriptEmbedding */
             $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
         }
         $asset = Asset::create(
             entry: $entry,
-            cssEmbedding: $cssEmbedding,
-            scriptEmbedding: $scriptEmbedding,
+            cssEmbedding: $cssEmbedding ?? $this->createFallbackCssEmbedding(),
+            scriptEmbedding: $scriptEmbedding ?? $this->createFallbackScriptEmbedding(),
             csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
         $this->viteHelper->renderAsset($asset, $this->getRequest(), $this->arguments['manifest']);
