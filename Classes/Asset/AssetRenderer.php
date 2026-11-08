@@ -72,6 +72,14 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $this->prepareOptions(['priority' => $asset->scriptEmbedding->priority])
                 );
                 return;
+
+            default:
+                throw new ViteException(sprintf(
+                    'Vite entry point "%s" has unsupported type "%s". %s() only supports JavaScript and CSS entry points, use <vite:uri> to reference other files.',
+                    $asset->entry->locator,
+                    $asset->entry->type->name,
+                    __METHOD__,
+                ), 1794135659);
         }
     }
 
@@ -89,6 +97,14 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 $asset->entry->locator,
                 $manifest->resolveAssetPath($manifest->file),
             ), 1683200524);
+        }
+        if (!in_array($chunk->file->type, [AssetType::Script, AssetType::Css], true)) {
+            throw new ViteException(sprintf(
+                'Vite entry point "%s" has unsupported type "%s". %s() only supports JavaScript and CSS entry points, use <vite:uri> to reference other files.',
+                $asset->entry->locator,
+                $chunk->file->type->name,
+                __METHOD__,
+            ), 1794135660);
         }
 
         if (!$asset->scriptEmbedding->ignore && $chunk->file->type === AssetType::Script) {
