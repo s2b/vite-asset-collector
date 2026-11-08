@@ -18,14 +18,14 @@ final readonly class MutateContentSecurityPolicy
     {
         /** @var ?ViteContext */
         $viteContext = $event->request?->getAttribute('vite.context');
-        if (!$viteContext?->useDevServer()) {
+        if (!$viteContext?->useDevServer) {
             return;
         }
 
         $uris = [
-            new UriValue('http://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
-            new UriValue('https://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
-            new UriValue('wss://' . $viteContext->getDevServer()->getHost() . ':' . $viteContext->getDevServer()->getPort()),
+            new UriValue('http://' . $viteContext->devServer->getHost() . ':' . $viteContext->devServer->getPort()),
+            new UriValue('https://' . $viteContext->devServer->getHost() . ':' . $viteContext->devServer->getPort()),
+            new UriValue('wss://' . $viteContext->devServer->getHost() . ':' . $viteContext->devServer->getPort()),
         ];
 
         // Allow viteServer url in CSP

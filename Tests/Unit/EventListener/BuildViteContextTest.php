@@ -152,8 +152,8 @@ final class BuildViteContextTest extends UnitTestCase
         $subject = new BuildViteContext($extensionConfiguration);
         $subject($event);
         self::assertInstanceOf(ViteContext::class, $event->getViteContext());
-        self::assertSame($expectedUseDevServer, $event->getViteContext()->useDevServer());
-        self::assertSame($expectedDevServerUri, (string)$event->getViteContext()->getDevServer());
+        self::assertSame($expectedUseDevServer, $event->getViteContext()->useDevServer);
+        self::assertSame($expectedDevServerUri, (string)$event->getViteContext()->devServer);
         foreach ($originalVariables as $name => $value) {
             putenv($name . '=' . (string)$value);
         }
