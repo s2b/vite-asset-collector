@@ -108,6 +108,9 @@ More complex expressions are also possible, like negative patterns:
         "!**/Organism/Slider/*"
     ], { eager: true })
 
+If you want to split out optional chunks of code (such as big libraries), you can also use Vite's
+` dynamic imports <https://vite.dev/guide/features#dynamic-import>`__.
+
 ..  _css-preprocessors:
 
 CSS Preprocessors
