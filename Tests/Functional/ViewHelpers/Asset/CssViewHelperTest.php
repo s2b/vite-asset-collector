@@ -96,7 +96,7 @@ final class CssViewHelperTest extends AbstractViteFunctionalTestCase
             <vite:asset manifest="fileadmin/Fixtures/ValidManifest/.vite/manifest.json" entry="Main.js" />
         ');
         self::assertSame(
-            ['vite:Main.js:assets/Main-973bb662.css'],
+            ['vite:fileadmin/Fixtures/ValidManifest/assets/Main-973bb662.css:' . md5(serialize([]))],
             array_keys($this->get(AssetCollector::class)->getStyleSheets()),
         );
     }

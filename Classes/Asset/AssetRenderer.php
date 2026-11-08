@@ -129,7 +129,6 @@ final readonly class AssetRenderer implements AssetRendererInterface
         if (!$asset->cssEmbedding->ignore) {
             if ($chunk->file->type === AssetType::Css) {
                 $this->renderStyleSheet(
-                    "vite:{$chunk->identifier}",
                     $chunk->file,
                     $manifest,
                     $asset->cssEmbedding,
@@ -140,10 +139,8 @@ final readonly class AssetRenderer implements AssetRendererInterface
             $this->preloadReferencedAssets($chunk->assets, $manifest, $asset->cssEmbedding, $request);
 
             foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
-                $identifier = md5($import->identifier . '|' . serialize($asset->cssEmbedding->getTagAttributes()));
                 foreach ($import->css as $file) {
                     $this->renderStyleSheet(
-                        "vite:{$identifier}:{$file->locator}",
                         $file,
                         $manifest,
                         $asset->cssEmbedding,
@@ -156,7 +153,6 @@ final readonly class AssetRenderer implements AssetRendererInterface
 
             foreach ($chunk->css as $file) {
                 $this->renderStyleSheet(
-                    "vite:{$chunk->identifier}:{$file->locator}",
                     $file,
                     $manifest,
                     $asset->cssEmbedding,
@@ -194,13 +190,22 @@ final readonly class AssetRenderer implements AssetRendererInterface
     }
 
     private function renderStyleSheet(
-        string $identifier,
         OutputFile $file,
         Manifest $manifest,
         CssEmbedding $cssEmbedding,
         ContentSecurityMode $csp,
         ServerRequestInterface $request,
     ): void {
+        // The same file with the same attributes results in a single tag, regardless of the
+        // entry point or chunk it originates from. Different attributes (e. g. media) result
+        // in separate tags.
+        // Note that AssetCollector merges attributes and options of entries with the same
+        // identifier.
+        $identifier = sprintf(
+            'vite:%s:%s',
+            $this->assetUriGenerator->generateUri($file, $manifest, $request),
+            md5(serialize($cssEmbedding->getTagAttributes())),
+        );
         if (!$cssEmbedding->inline) {
             $this->assetCollector->addStyleSheet(
                 $identifier,
