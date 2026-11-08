@@ -33,6 +33,11 @@ final class FontPreloadingTest extends UnitTestCase
                 'file' => 'assets/Font-57f5650e.woff',
                 'expected' => true,
             ],
+            'matching format with different case' => [
+                'preloading' => new FontPreloading(formats: ['WOFF2', 'Woff']),
+                'file' => 'assets/Font-57f5650e.WOFF',
+                'expected' => true,
+            ],
             'all formats' => [
                 'preloading' => new FontPreloading(formats: []),
                 'file' => 'assets/Font-57f5650e.ttf',

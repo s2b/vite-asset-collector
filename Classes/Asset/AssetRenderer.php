@@ -184,7 +184,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
             $preloadTemplate = match (true) {
                 ($asset->type === AssetType::Font && $fontPreloading->appliesTo($asset))
                     => '<link rel="preload" href="%s" as="font" type="%s" crossorigin />',
-                (in_array($asset->type, [AssetType::Image, AssetType::Svg]) && $imagePreloading->appliesTo($asset))
+                (in_array($asset->type, [AssetType::Image, AssetType::Svg], true) && $imagePreloading->appliesTo($asset))
                     => '<link rel="preload" href="%s" as="image" type="%s" />',
                 default => null,
             };

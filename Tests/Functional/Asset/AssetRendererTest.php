@@ -623,7 +623,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                 'asset' => Asset::create(
                     entry: 'Main.js',
                     scriptEmbedding: new ScriptEmbedding(ignore: true),
-                    fontPreloading: new FontPreloading(formats: ['woff2', 'woff']),
+                    fontPreloading: new FontPreloading(formats: ['woff2', 'WOFF']),
                 ),
                 'expectedStyleSheets' => [
                     'vite:fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css:' . md5(serialize([])) => [

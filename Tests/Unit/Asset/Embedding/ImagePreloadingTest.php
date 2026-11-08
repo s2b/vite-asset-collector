@@ -33,6 +33,11 @@ final class ImagePreloadingTest extends UnitTestCase
                 'file' => 'assets/Image-57f5650e.svg',
                 'expected' => true,
             ],
+            'matching format with different case' => [
+                'preloading' => new ImagePreloading(preload: true, formats: ['SVG', 'Png']),
+                'file' => 'assets/Image-57f5650e.PNG',
+                'expected' => true,
+            ],
             'other format' => [
                 'preloading' => new ImagePreloading(preload: true, formats: ['svg']),
                 'file' => 'assets/Image-57f5650e.png',

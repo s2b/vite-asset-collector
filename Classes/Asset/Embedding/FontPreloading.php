@@ -11,12 +11,20 @@ final readonly class FontPreloading
     public const VariableName = 'fontPreloading';
 
     /**
-     * @param string[] $formats File extensions that should be preloaded; empty means all
+     * @var string[] File extensions that should be preloaded; empty means all
+     */
+    public array $formats;
+
+    /**
+     * @param string[] $formats
      */
     public function __construct(
         public bool $preload = true,
-        public array $formats = ['woff2'],
-    ) {}
+        array $formats = ['woff2'],
+    ) {
+        // File extensions are always lowercase, so the configured formats need to be as well
+        $this->formats = array_map(strtolower(...), $formats);
+    }
 
     public function appliesTo(OutputFile $file): bool
     {
