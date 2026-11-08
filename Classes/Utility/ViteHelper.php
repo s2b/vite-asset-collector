@@ -28,8 +28,8 @@ final readonly class ViteHelper
     public function renderAsset(Asset $asset, ServerRequestInterface $request, ?string $manifestFile = null): void
     {
         $viteContext = $request->getAttribute('vite.context');
-        if ($viteContext?->useDevServer()) {
-            $this->assetRenderer->renderDevAsset($asset, $viteContext->getDevServer(), $request);
+        if ($viteContext?->useDevServer) {
+            $this->assetRenderer->renderDevAsset($asset, $viteContext->devServer, $request);
         } else {
             $manifest = $this->manifestFactory->createFromConfiguredPath($manifestFile);
             $this->assetRenderer->renderBuildAsset($asset, $manifest, $request);
@@ -45,8 +45,8 @@ final readonly class ViteHelper
     public function generateUri(AssetFile $file, ServerRequestInterface $request, ?string $manifestFile = null): UriInterface
     {
         $viteContext = $request->getAttribute('vite.context');
-        if ($viteContext?->useDevServer()) {
-            return $this->assetUriGenerator->generateDevUri($file, $viteContext->getDevServer(), $request);
+        if ($viteContext?->useDevServer) {
+            return $this->assetUriGenerator->generateDevUri($file, $viteContext->devServer, $request);
         }
         $manifest = $this->manifestFactory->createFromConfiguredPath($manifestFile);
         return $this->assetUriGenerator->generateUri($file, $manifest, $request);
