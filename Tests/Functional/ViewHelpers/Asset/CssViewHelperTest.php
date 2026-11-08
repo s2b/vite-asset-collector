@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Praetorius\ViteAssetCollector\Tests\Functional\ViewHelpers\Asset;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use Praetorius\ViteAssetCollector\Context\ViteContext;
 use Praetorius\ViteAssetCollector\Tests\Functional\AbstractViteFunctionalTestCase;
@@ -74,16 +75,16 @@ final class CssViewHelperTest extends AbstractViteFunctionalTestCase
     }
 
     #[Test]
-    public function lastConfigurationWins(): void
+    public function multipleUsageThrowsException(): void
     {
+        $this->expectException(ParserException::class);
+        $this->expectExceptionCode(1794141766);
         $this->render('
             <vite:asset entry="Default.js">
                 <vite:asset.css media="screen" />
                 <vite:asset.css media="print" />
             </vite:asset>
         ');
-        $styleSheets = $this->get(AssetCollector::class)->getStyleSheets();
-        self::assertSame(['media' => 'print'], array_values($styleSheets)[0]['attributes']);
     }
 
     #[Test]
@@ -135,6 +136,46 @@ final class CssViewHelperTest extends AbstractViteFunctionalTestCase
         $this->expectException(ParserException::class);
         $this->expectExceptionCode(1793529908);
         $this->render($template);
+    }
+
+    /**
+     * @return array<string, array{argument: string}>
+     */
+    public static function deprecatedArgumentOfParentThrowsExceptionDataProvider(): array
+    {
+        return [
+            'inlineCss' => ['argument' => 'inlineCss="{true}"'],
+            'priority' => ['argument' => 'priority="{true}"'],
+            'addCss' => ['argument' => 'addCss="{false}"'],
+            'cssTagAttributes' => ['argument' => 'cssTagAttributes="{foo: \'bar\'}"'],
+            'scriptTagAttributes' => ['argument' => 'scriptTagAttributes="{foo: \'bar\'}"'],
+        ];
+    }
+
+    #[Test]
+    #[IgnoreDeprecations]
+    #[DataProvider('deprecatedArgumentOfParentThrowsExceptionDataProvider')]
+    public function deprecatedArgumentOfParentThrowsException(string $argument): void
+    {
+        $this->expectException(ParserException::class);
+        $this->expectExceptionCode(1794140579);
+        $this->render('
+            <vite:asset entry="Default.js" ' . $argument . '>
+                <vite:asset.css />
+            </vite:asset>
+        ');
+    }
+
+    #[Test]
+    #[IgnoreDeprecations]
+    public function deprecatedUseNonceArgumentOfParentIsAllowed(): void
+    {
+        $this->render('
+            <vite:asset entry="Default.js" useNonce="{true}">
+                <vite:asset.css />
+            </vite:asset>
+        ');
+        self::assertNotSame([], $this->get(AssetCollector::class)->getJavaScripts());
     }
 
     private function render(string $template): void

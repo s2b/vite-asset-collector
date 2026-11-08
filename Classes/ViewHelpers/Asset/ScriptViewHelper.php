@@ -72,5 +72,17 @@ final class ScriptViewHelper extends AbstractViewHelper implements ViewHelperNod
         if (!$parentNode instanceof ViewHelperNode || $parentNode->getViewHelperClassName() !== AssetViewHelper::class) {
             throw new ParserException('<vite:asset.script> can only be used within <vite:asset> to configure script embedding.', 1793529909);
         }
+        foreach ($parentNode->getChildNodes() as $siblingNode) {
+            if ($siblingNode instanceof ViewHelperNode && $siblingNode->getViewHelperClassName() === self::class) {
+                throw new ParserException('<vite:asset.script> can only be used once within <vite:asset>.', 1794141767);
+            }
+        }
+        // @todo remove with v3
+        if (array_intersect(array_keys($parentNode->getArguments()), AssetViewHelper::DeprecatedEmbeddingArguments) !== []) {
+            throw new ParserException(
+                'Deprecated arguments of <vite:asset> cannot be combined with <vite:asset.script>. Use <vite:asset.css> and <vite:asset.script> instead of the following arguments: ' . implode(', ', AssetViewHelper::DeprecatedEmbeddingArguments),
+                1794141422,
+            );
+        }
     }
 }
