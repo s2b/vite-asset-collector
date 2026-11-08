@@ -83,3 +83,8 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: ../../Classes/Asset/AssetUriGenerator.php
+		-
+			message: '#^Call to an undefined static method TYPO3\\CMS\\Core\\Type\\DocType\:\:createFromRequest\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: ../../Classes/Asset/AssetRenderer.php

@@ -32,7 +32,7 @@ final class FontViewHelperTest extends AbstractViteFunctionalTestCase
             'default' => [
                 'arguments' => '',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
                 ],
             ],
             'disabled' => [
@@ -43,16 +43,16 @@ final class FontViewHelperTest extends AbstractViteFunctionalTestCase
             'multiple formats' => [
                 'arguments' => 'formats="woff2, woff"',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin="anonymous">',
                 ],
             ],
             'all formats' => [
                 'arguments' => 'formats=""',
                 'expected' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin />',
-                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.ttf" as="font" type="font/ttf" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin="anonymous">',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.ttf" as="font" type="font/ttf" crossorigin="anonymous">',
                 ],
             ],
         ];
