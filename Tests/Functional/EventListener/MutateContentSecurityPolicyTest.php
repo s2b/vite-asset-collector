@@ -273,6 +273,6 @@ final class MutateContentSecurityPolicyTest extends AbstractViteFunctionalTestCa
         } else {
             $compiledPolicy = $currentPolicy->compile($nonce);
         }
-        self::assertEquals($expectedPolicy, explode('; ', $compiledPolicy));
+        self::assertSame($expectedPolicy, explode('; ', $compiledPolicy));
     }
 }

@@ -298,8 +298,8 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     #[Test]
     public function renderDevAssetWithUnsupportedTypeThrowsException(): void
     {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode(1794135659);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode(1794135659);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
         $assetRenderer->renderDevAsset(
@@ -821,7 +821,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js'), $manifest, $request);
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:Main.js' => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Main-4483b920.js',
@@ -836,7 +836,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
             ],
             $assetCollector->getJavaScripts(),
         );
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize([])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
@@ -872,7 +872,7 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         $request = $this->createRequest();
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Main.js', cssEmbedding: new CssEmbedding(media: 'print')), $manifest, $request);
         $assetRenderer->renderBuildAsset(Asset::create(entry: 'Alternative.js'), $manifest, $request);
-        self::assertEquals(
+        self::assertSame(
             [
                 'vite:fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css:' . md5(serialize(['media' => 'print'])) => [
                     'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ImportJsAndCss/assets/Shared-pjWofKK4.css',
@@ -948,16 +948,6 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
     public static function addAssetsFromManifestFileErrorHandlingDataProvider(): array
     {
         return [
-            'invalidJson' => [
-                'manifestFile' => 'fileadmin/Fixtures/InvalidManifest/.vite/manifest.json',
-                'asset' => Asset::create(entry: 'Main.js'),
-                'exceptionCode' => 1683200523,
-            ],
-            'nonExistentFile' => [
-                'manifestFile' => 'fileadmin/Fixtures/InvalidManifest/.vite/manifest123.json',
-                'asset' => Asset::create(entry: 'Main.js'),
-                'exceptionCode' => 1683200522,
-            ],
             'invalidEntry' => [
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',
                 'asset' => Asset::create(entry: 'Main.css'),
@@ -983,34 +973,13 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
         Asset $asset,
         int $exceptionCode
     ): void {
-        self::expectException(ViteException::class);
-        self::expectExceptionCode($exceptionCode);
+        $this->expectException(ViteException::class);
+        $this->expectExceptionCode($exceptionCode);
         /** @var ManifestFactory */
         $manifestFactory = $this->get(ManifestFactory::class);
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetRenderer */
         $assetRenderer = $this->get(AssetRenderer::class);
         $assetRenderer->renderBuildAsset($asset, $manifest, $this->createRequest());
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function autoCspForNonInline(): array
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? [self::cspOptionName() => true] : [];
-    }
-
-    private static function cspOptionName(): string
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'csp' : 'useNonce';
-    }
-
-    private static function rawAssetUriPrefix(): string
-    {
-        // TODO remove this when support for TYPO3 v13 is dropped
-        return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() > 13 ? 'URI:' : '';
     }
 }

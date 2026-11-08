@@ -66,7 +66,7 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
     {
         /** @var AssetUriGenerator */
         $subject = $this->get(AssetUriGenerator::class);
-        self::assertEquals($expected, (string)$subject->generateDevUri($file, $devServerBase, $this->createRequest()));
+        self::assertSame($expected, (string)$subject->generateDevUri($file, $devServerBase, $this->createRequest()));
     }
 
     /**
@@ -102,6 +102,6 @@ final class AssetUriGeneratorTest extends AbstractViteFunctionalTestCase
         $manifest = $manifestFactory->createFromFilePath($manifestFile);
         /** @var AssetUriGenerator */
         $subject = $this->get(AssetUriGenerator::class);
-        self::assertEquals($expected, (string)$subject->generateUri($file, $manifest, $this->createRequest()));
+        self::assertSame($expected, (string)$subject->generateUri($file, $manifest, $this->createRequest()));
     }
 }

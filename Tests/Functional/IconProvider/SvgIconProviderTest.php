@@ -53,7 +53,7 @@ final class SvgIconProviderTest extends AbstractViteFunctionalTestCase
     public function getLogoIconMarkup(): void
     {
         $this->svgIconProvider->prepareIconMarkup($this->icon, ['source' => 'typo3.svg']);
-        self::assertEquals(
+        self::assertSame(
             '<img src="typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" width="16" height="16" alt="" />',
             $this->icon->getMarkup()
         );
