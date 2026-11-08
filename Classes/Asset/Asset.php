@@ -6,6 +6,8 @@ namespace Praetorius\ViteAssetCollector\Asset;
 
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\FontPreloading;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ImagePreloading;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 
 final readonly class Asset
@@ -14,6 +16,8 @@ final readonly class Asset
         public AssetFile $entry,
         public CssEmbedding $cssEmbedding,
         public ScriptEmbedding $scriptEmbedding,
+        public FontPreloading $fontPreloading,
+        public ImagePreloading $imagePreloading,
         public ContentSecurityMode $csp,
     ) {}
 
@@ -21,12 +25,16 @@ final readonly class Asset
         AssetFile|string $entry,
         ?CssEmbedding $cssEmbedding = null,
         ?ScriptEmbedding $scriptEmbedding = null,
+        ?FontPreloading $fontPreloading = null,
+        ?ImagePreloading $imagePreloading = null,
         ContentSecurityMode $csp = ContentSecurityMode::Auto,
     ): self {
         return new self(
             entry: $entry instanceof AssetFile ? $entry : AssetFile::create($entry),
             cssEmbedding: $cssEmbedding ?? new CssEmbedding(),
             scriptEmbedding: $scriptEmbedding ?? new ScriptEmbedding(),
+            fontPreloading: $fontPreloading ?? new FontPreloading(),
+            imagePreloading: $imagePreloading ?? new ImagePreloading(),
             csp: $csp,
         );
     }

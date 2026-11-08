@@ -6,6 +6,8 @@ namespace Praetorius\ViteAssetCollector\Asset;
 
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\FontPreloading;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ImagePreloading;
 use Praetorius\ViteAssetCollector\Asset\Manifest\Manifest;
 use Praetorius\ViteAssetCollector\Asset\Manifest\OutputFile;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
@@ -106,7 +108,9 @@ final readonly class AssetRenderer implements AssetRendererInterface
             ), 1794135660);
         }
 
+        $preload = false;
         if (!$asset->scriptEmbedding->ignore && $chunk->file->type === AssetType::Script) {
+            $preload = true;
             $this->assetCollector->addJavaScript(
                 "vite:{$chunk->identifier}",
                 $this->prepareAssetPath($chunk->file, $manifest, $request),
@@ -125,8 +129,8 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 }
             }
         }
-
         if (!$asset->cssEmbedding->ignore) {
+            $preload = true;
             if ($chunk->file->type === AssetType::Css) {
                 $this->renderStyleSheet(
                     $chunk->file,
@@ -136,8 +140,6 @@ final readonly class AssetRenderer implements AssetRendererInterface
                     $request,
                 );
             }
-            $this->preloadReferencedAssets($chunk->assets, $manifest, $asset->cssEmbedding, $request);
-
             foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
                 foreach ($import->css as $file) {
                     $this->renderStyleSheet(
@@ -148,9 +150,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
                         $request,
                     );
                 }
-                $this->preloadReferencedAssets($import->assets, $manifest, $asset->cssEmbedding, $request);
             }
-
             foreach ($chunk->css as $file) {
                 $this->renderStyleSheet(
                     $file,
@@ -161,18 +161,30 @@ final readonly class AssetRenderer implements AssetRendererInterface
                 );
             }
         }
+
+        if ($preload) {
+            $this->preloadReferencedAssets($chunk->assets, $manifest, $asset->fontPreloading, $asset->imagePreloading, $request);
+            foreach ($manifest->getImportsForChunk($identifier, true) as $import) {
+                $this->preloadReferencedAssets($import->assets, $manifest, $asset->fontPreloading, $asset->imagePreloading, $request);
+            }
+        }
     }
 
     /**
      * @param OutputFile[] $assets
      */
-    private function preloadReferencedAssets(array $assets, Manifest $manifest, CssEmbedding $cssEmbedding, ServerRequestInterface $request): void
-    {
+    private function preloadReferencedAssets(
+        array $assets,
+        Manifest $manifest,
+        FontPreloading $fontPreloading,
+        ImagePreloading $imagePreloading,
+        ServerRequestInterface $request,
+    ): void {
         foreach ($assets as $asset) {
             $preloadTemplate = match (true) {
-                ($asset->type === AssetType::Font && $cssEmbedding->preloadFonts)
+                ($asset->type === AssetType::Font && $fontPreloading->appliesTo($asset))
                     => '<link rel="preload" href="%s" as="font" type="%s" crossorigin />',
-                (in_array($asset->type, [AssetType::Image, AssetType::Svg]) && $cssEmbedding->preloadImages)
+                (in_array($asset->type, [AssetType::Image, AssetType::Svg]) && $imagePreloading->appliesTo($asset))
                     => '<link rel="preload" href="%s" as="image" type="%s" />',
                 default => null,
             };

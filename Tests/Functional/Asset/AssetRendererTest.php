@@ -10,6 +10,8 @@ use Praetorius\ViteAssetCollector\Asset\Asset;
 use Praetorius\ViteAssetCollector\Asset\AssetRenderer;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\FontPreloading;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ImagePreloading;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Exception\ViteException;
@@ -613,45 +615,116 @@ final class AssetRendererTest extends AbstractViteFunctionalTestCase
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
                     '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
                 ],
             ],
-            'withoutFontPreload' => [
-                'manifestFile' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+            'preloadSpecificFontFormats' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
                 'asset' => Asset::create(
-                    entry: 'Default.js',
+                    entry: 'Main.js',
                     scriptEmbedding: new ScriptEmbedding(ignore: true),
-                    cssEmbedding: new CssEmbedding(preloadFonts: false),
+                    fontPreloading: new FontPreloading(formats: ['woff2', 'woff']),
                 ),
                 'expectedStyleSheets' => [
-                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css:' . md5(serialize([])) => [
-                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                    'vite:fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css:' . md5(serialize([])) => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/typo3-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff" as="font" type="font/woff" crossorigin />',
                 ],
             ],
-            'withoutImagePreload' => [
-                'manifestFile' => 'fileadmin/Fixtures/DefaultManifest/.vite/manifest.json',
+            'preloadAllImageFormats' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
                 'asset' => Asset::create(
-                    entry: 'Default.js',
+                    entry: 'Main.js',
                     scriptEmbedding: new ScriptEmbedding(ignore: true),
-                    cssEmbedding: new CssEmbedding(preloadImages: false),
+                    fontPreloading: new FontPreloading(preload: false),
+                    imagePreloading: new ImagePreloading(preload: true),
                 ),
                 'expectedStyleSheets' => [
-                    'vite:fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css:' . md5(serialize([])) => [
-                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/DefaultManifest/assets/Default-973bb662.css',
+                    'vite:fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css:' . md5(serialize([])) => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css',
                         'attributes' => [],
                         'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
                     ],
                 ],
                 'expectedPreloadTags' => [
-                    '<link rel="preload" href="fileadmin/Fixtures/DefaultManifest/assets/dummy-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.png" as="image" type="image/png" />',
                 ],
+            ],
+            'preloadSpecificImageFormats' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                    fontPreloading: new FontPreloading(preload: false),
+                    imagePreloading: new ImagePreloading(preload: true, formats: ['svg']),
+                ),
+                'expectedStyleSheets' => [
+                    'vite:fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css:' . md5(serialize([])) => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Main-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Image-57f5650e.svg" as="image" type="image/svg+xml" />',
+                ],
+            ],
+            'noPreloadingIfNothingIsEmbedded' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                    cssEmbedding: new CssEmbedding(ignore: true),
+                    imagePreloading: new ImagePreloading(preload: true),
+                ),
+            ],
+            'preloadingWithIgnoredCssOfScriptEntry' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Main.js',
+                    cssEmbedding: new CssEmbedding(ignore: true),
+                ),
+                'expectedJavaScripts' => [
+                    'vite:Main.js' => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Main-4483b920.js',
+                        'attributes' => ['type' => 'module'],
+                        'options' => ['external' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                ],
+            ],
+            'preloadingWithCssEntry' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Styles.css',
+                    scriptEmbedding: new ScriptEmbedding(ignore: true),
+                ),
+                'expectedStyleSheets' => [
+                    'vite:fileadmin/Fixtures/ReferencedAssets/assets/Styles-973bb662.css:' . md5(serialize([])) => [
+                        'source' => self::rawAssetUriPrefix() . 'fileadmin/Fixtures/ReferencedAssets/assets/Styles-973bb662.css',
+                        'attributes' => [],
+                        'options' => ['external' => true, 'priority' => true, ...self::autoCspForNonInline()],
+                    ],
+                ],
+                'expectedPreloadTags' => [
+                    '<link rel="preload" href="fileadmin/Fixtures/ReferencedAssets/assets/Font-57f5650e.woff2" as="font" type="font/woff2" crossorigin />',
+                ],
+            ],
+            'noPreloadingWithIgnoredCssEntry' => [
+                'manifestFile' => 'fileadmin/Fixtures/ReferencedAssets/.vite/manifest.json',
+                'asset' => Asset::create(
+                    entry: 'Styles.css',
+                    cssEmbedding: new CssEmbedding(ignore: true),
+                ),
             ],
             'withCsp' => [
                 'manifestFile' => 'fileadmin/Fixtures/ValidManifest/.vite/manifest.json',

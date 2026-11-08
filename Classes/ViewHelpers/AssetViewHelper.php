@@ -7,6 +7,8 @@ namespace Praetorius\ViteAssetCollector\ViewHelpers;
 use Praetorius\ViteAssetCollector\Asset\Asset;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ContentSecurityMode;
 use Praetorius\ViteAssetCollector\Asset\Embedding\CssEmbedding;
+use Praetorius\ViteAssetCollector\Asset\Embedding\FontPreloading;
+use Praetorius\ViteAssetCollector\Asset\Embedding\ImagePreloading;
 use Praetorius\ViteAssetCollector\Asset\Embedding\ScriptEmbedding;
 use Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory;
 use Praetorius\ViteAssetCollector\Utility\ViteHelper;
@@ -30,14 +32,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  * * CSS files use `<link rel="stylesheet">` in the `<head>`
  * * Imported JavaScript modules are preloaded automatically using
  *   `<link rel="modulepreload">`
- * * Referenced images and fonts are preloaded automatically using
+ * * Referenced fonts in the woff2 format are preloaded automatically using
  *   `<link rel="preload">`
  *
- * These defaults can be configured separately for CSS and script assets by nesting
- * `<vite:asset.script> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-script>`_
+ * These defaults can be configured by nesting
+ * `<vite:asset.script> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-script>`_,
+ * `<vite:asset.css> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-css>`_,
+ * `<vite:asset.font> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-font>`_
  * and/or
- * `<vite:asset.css> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-css>`_
- * inside `<vite:asset>` (see examples below).
+ * `<vite:asset.image> <https://docs.typo3.org/permalink/praetorius/vite-asset-collector:viewhelper-asset-image>`_
+ * inside `<vite:asset>` (see examples below). Each of them can be used once.
  *
  * Example: Basic usage
  * ====================
@@ -62,7 +66,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperNodeInitializedEventInterface;
  *
  *     <vite:asset entry="EXT:sitepackage/Resources/Private/JavaScript/Main.entry.js">
  *         <vite:asset.script preloadImports="{false}" />
- *         <vite:asset.css preloadFonts="{false}" preloadImages="{false}" />
+ *         <vite:asset.font preload="{false}" />
  *     </vite:asset>
  *
  * Example: Media query for CSS
@@ -130,16 +134,24 @@ final class AssetViewHelper extends AbstractViewHelper implements ViewHelperNode
         if ($viewHelperVariableContainer) {
             $viewHelperVariableContainer->remove(self::class, CssEmbedding::VariableName);
             $viewHelperVariableContainer->remove(self::class, ScriptEmbedding::VariableName);
+            $viewHelperVariableContainer->remove(self::class, FontPreloading::VariableName);
+            $viewHelperVariableContainer->remove(self::class, ImagePreloading::VariableName);
             $this->renderChildren();
             /** @var ?CssEmbedding */
             $cssEmbedding = $viewHelperVariableContainer->get(self::class, CssEmbedding::VariableName);
             /** @var ?ScriptEmbedding */
             $scriptEmbedding = $viewHelperVariableContainer->get(self::class, ScriptEmbedding::VariableName);
+            /** @var ?FontPreloading */
+            $fontPreloading = $viewHelperVariableContainer->get(self::class, FontPreloading::VariableName);
+            /** @var ?ImagePreloading */
+            $imagePreloading = $viewHelperVariableContainer->get(self::class, ImagePreloading::VariableName);
         }
         $asset = Asset::create(
             entry: $entry,
             cssEmbedding: $cssEmbedding ?? $this->createFallbackCssEmbedding(),
             scriptEmbedding: $scriptEmbedding ?? $this->createFallbackScriptEmbedding(),
+            fontPreloading: $fontPreloading ?? null,
+            imagePreloading: $imagePreloading ?? null,
             csp: ContentSecurityMode::fromViewHelperArgument($this->arguments['useNonce'] ?? $this->arguments['csp']),
         );
         $this->viteHelper->renderAsset($asset, $this->getRequest(), $this->arguments['manifest']);
