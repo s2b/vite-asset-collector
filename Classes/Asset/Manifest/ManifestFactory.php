@@ -44,7 +44,7 @@ final readonly class ManifestFactory
     public function createFromFilePath(string $manifestFile): Manifest
     {
         $resolvedFile = $this->assetPathResolver->resolveSourcePath(AssetFile::create($manifestFile), true);
-        if ($resolvedFile === '' || !@is_file($resolvedFile) || !@file_exists($resolvedFile)) {
+        if ($resolvedFile === '' || !@is_file($resolvedFile)) {
             throw new ViteException(sprintf(
                 'Vite manifest file "%s" was resolved to "%s" and cannot be opened.',
                 $manifestFile,
@@ -86,8 +86,23 @@ final readonly class ManifestFactory
                 json_last_error_msg()
             ), 1683200523);
         }
+        if (!is_array($manifest)) {
+            throw new ViteException(sprintf(
+                'Invalid vite manifest file "%s": Expected an object of chunks, got %s.',
+                $manifestFile,
+                get_debug_type($manifest),
+            ), 1794146428);
+        }
         $chunks = [];
         foreach ($manifest as $identifier => $data) {
+            if (!is_string($identifier) || !is_array($data)) {
+                throw new ViteException(sprintf(
+                    'Invalid vite manifest file "%s": Expected chunk "%s" to be an object, got %s.',
+                    $manifestFile,
+                    $identifier,
+                    get_debug_type($data),
+                ), 1794146429);
+            }
             $chunks[$identifier] = $this->createManifestChunk($identifier, $data);
         }
         return $chunks;

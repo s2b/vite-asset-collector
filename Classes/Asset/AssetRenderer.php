@@ -228,7 +228,7 @@ final readonly class AssetRenderer implements AssetRendererInterface
             return;
         }
         $resolvedFile = $this->assetPathResolver->resolveOutputPath($file, $manifest, true);
-        if ($resolvedFile === '' || !@is_file($resolvedFile) || !@file_exists($resolvedFile)) {
+        if ($resolvedFile === '' || !@is_file($resolvedFile)) {
             throw new ViteException(sprintf(
                 'CSS asset file "%s" was resolved to "%s" and cannot be opened for inline rendering.',
                 $file->locator,
