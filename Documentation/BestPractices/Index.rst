@@ -198,3 +198,10 @@ to validate the HTML output for certain pages, the following adjustments need to
     $this->get(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->set('vite_asset_collector', [
         'useDevServer' => '1',
     ]);
+
+    alternatively, you often can provide a vite context via an attribute in the request object:
+
+..  code-block:: php
+
+    $request = (new ServerRequest())
+        ->withAttribute('vite.context', new ViteContext(useDevServer: true, devServer: new Uri('https://localhost:5173')));
