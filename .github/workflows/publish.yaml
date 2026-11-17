@@ -14,7 +14,6 @@ jobs:
     env:
       TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
       RELEASE_VERSION: ${{ github.event.release.tag_name }}
-      RELEASE_NOTES: ${{ github.event.release.body }}
       IS_PRERELEASE: ${{ github.event.release.prerelease }}
     steps:
       -
@@ -68,15 +67,10 @@ jobs:
         # Pre-releases are only published on GitHub
         if: ${{ !github.event.release.prerelease }}
         run: |
-          # Release notes from GitHub are used as upload comment
-          comment="${RELEASE_NOTES}"
-          if [ -z "${comment//[[:space:]]/}" ]; then
-            comment="Released version ${RELEASE_VERSION}. See https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_VERSION}"
-          fi
           artefacts=(tailor-version-artefact/*.zip)
           "$(composer global config bin-dir --absolute --quiet)/tailor" ter:publish \
             --artefact="${artefacts[0]}" \
-            --comment="${comment}" \
+            --comment="Release notes: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_VERSION}" \
             "${RELEASE_VERSION}"
 
       -
