@@ -151,9 +151,10 @@ templates:
     requested with different tag attributes (e. g. a different `media`
     query).
 *   **Asset identifiers:** The identifiers of assets in TYPO3's
-    :php:`AssetCollector` have changed. Code that accesses or removes Vite
-    assets from the :php:`AssetCollector` by their identifier needs to be
-    adjusted.
+    :php-short:`\TYPO3\CMS\Core\Page\AssetCollector` have changed. Code that
+    accesses or removes Vite assets from the
+    :php-short:`\TYPO3\CMS\Core\Page\AssetCollector` by their identifier
+    needs to be adjusted.
 
 ..  _migration-php:
 
@@ -176,24 +177,24 @@ and replaced by several smaller services. For most use cases, the new
         -   Replacement (2.0)
 
     *   -   `addAssetsFromManifest()`, `addAssetsFromDevServer()`
-        -   :php:`ViteHelper::renderAsset()`, or
-            :php:`AssetRendererInterface::renderBuildAsset()` /
-            :php:`AssetRendererInterface::renderDevAsset()`
+        -   :php-short:`\Praetorius\ViteAssetCollector\Utility\ViteHelper::renderAsset()`, or
+            :php-short:`\Praetorius\ViteAssetCollector\Asset\AssetRendererInterface::renderBuildAsset()` /
+            :php-short:`\Praetorius\ViteAssetCollector\Asset\AssetRendererInterface::renderDevAsset()`
 
     *   -   `getAssetPathFromManifest()`, `getAssetPathFromDevServer()`
-        -   :php:`ViteHelper::generateUri()`, or
-            :php:`AssetUriGeneratorInterface::generateUri()` /
-            :php:`AssetUriGeneratorInterface::generateDevUri()`
+        -   :php-short:`\Praetorius\ViteAssetCollector\Utility\ViteHelper::generateUri()`, or
+            :php-short:`\Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface::generateUri()` /
+            :php-short:`\Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface::generateDevUri()`
 
     *   -   `useDevServer()`, `determineDevServer()`
         -   Request attribute `vite.context`, see
             :ref:`php-api-vite-context`
 
     *   -   `getDefaultManifestFile()`
-        -   :php:`ManifestFactory::getDefault()`
+        -   :php-short:`\Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory::getDefault()`
 
     *   -   `determineEntrypointFromManifest()`
-        -   :php:`Manifest::getOnlyEntrypoint()`
+        -   :php-short:`\Praetorius\ViteAssetCollector\Asset\Manifest\Manifest::getOnlyEntrypoint()`
 
 ..  _migration-php-vite-context:
 

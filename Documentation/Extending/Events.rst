@@ -21,8 +21,8 @@ BuildViteContextEvent
 dispatched once per request by a middleware, both in frontend and in
 backend context. Its listeners determine whether the Vite dev server
 should be used and which dev server URI applies. The resulting
-:php:`ViteContext` object is available as :ref:`request attribute
-<php-api-vite-context>` afterwards.
+:php-short:`\Praetorius\ViteAssetCollector\Context\ViteContext` object is
+available as :ref:`request attribute <php-api-vite-context>` afterwards.
 
 The middleware runs after the site has been resolved (frontend) and after
 the backend user has been authenticated (backend), so both are available
