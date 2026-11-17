@@ -65,7 +65,8 @@ Embedding assets
     }
 
 If you need to use a different :file:`manifest.json` file, it can be supplied
-as a third argument to :php:`renderAsset()`.
+as a third argument to
+:php-short:`\Praetorius\ViteAssetCollector\Utility\ViteHelper::renderAsset()`.
 
 ..  _php-api-vitehelper-generate-uri:
 
@@ -89,9 +90,10 @@ string since `generateUri()` returns a `UriInterface` object.
 Asset configuration
 ===================
 
-Both :php:`ViteHelper::renderAsset()` and :php:`AssetRenderer` accept
-:php:`Asset` objects as input.
-:php:`\Praetorius\ViteAssetCollector\Asset\Asset::create()` accepts the
+Both :php-short:`\Praetorius\ViteAssetCollector\Utility\ViteHelper::renderAsset()`
+and :php-short:`\Praetorius\ViteAssetCollector\Asset\AssetRenderer` accept
+:php-short:`\Praetorius\ViteAssetCollector\Asset\Asset` objects as input.
+:php-short:`\Praetorius\ViteAssetCollector\Asset\Asset::create()` accepts the
 same options as the :ref:`<vite:asset> <viewhelper-asset>` ViewHelper and
 its child ViewHelpers:
 
@@ -120,16 +122,17 @@ AssetRenderer and AssetUriGenerator
 
 Sometimes, you might prefer to only use the built assets and opt-out of
 the Vite dev server for your use case. In such cases, the underlying APIs
-:php:`Praetorius\ViteAssetCollector\Asset\AssetRendererInterface` and
-:php:`Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface`
+:php:`\Praetorius\ViteAssetCollector\Asset\AssetRendererInterface` and
+:php:`\Praetorius\ViteAssetCollector\Asset\AssetUriGeneratorInterface`
 can be used instead.
 
 The extension itself uses this approach for its YAML integration because
 YAML parsing happens server-side and thus needs an actual file to check for.
 
-The :php:`Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory` can
-be used to obtain a :php:`Manifest` object, which interprets a Vite
-:file:`manifest.json` file.
+The :php:`\Praetorius\ViteAssetCollector\Asset\Manifest\ManifestFactory` can
+be used to obtain a
+:php-short:`\Praetorius\ViteAssetCollector\Asset\Manifest\Manifest` object,
+which interprets a Vite :file:`manifest.json` file.
 
 ..  code-block:: php
 

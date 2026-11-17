@@ -38,8 +38,8 @@ aren't used:
     VITE_SERVER_RUNNING=1
     VITE_SERVER_URI=https://localhost:5173
 
-Alternatively, you can adjust both options in your :php:`$TYPO3_CONF_VARS`, for
-example to use your own environment variables:
+Alternatively, you can adjust both options in your :php:`$GLOBALS['TYPO3_CONF_VARS']`,
+for example to use your own environment variables:
 
 ..  code-block:: php
     :caption: config/system/additional.php
