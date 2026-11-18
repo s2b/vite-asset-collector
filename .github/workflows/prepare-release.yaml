@@ -87,6 +87,14 @@ jobs:
             exit 1
           fi
 
+      -
+        name: Store artefact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # 7.0.1
+        with:
+          name: ter-artefact
+          path: tailor-version-artefact/*.zip
+          if-no-files-found: error
+
   draft:
     name: Create draft release ${{ inputs.version }}
     needs: validate
@@ -99,9 +107,18 @@ jobs:
       IS_PRERELEASE: ${{ inputs.prerelease }}
     steps:
       -
+        name: Download artefact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # 8.0.2
+        with:
+          name: ter-artefact
+          path: ter-artefact
+
+      -
         name: Create draft release
         run: |
-          # The tag is created at the validated commit once the draft is published
+          # The tag is created at the validated commit once the draft is published.
+          # The artefact needs to be attached to the draft, because assets of
+          # immutable releases can't be changed after publishing.
           options=()
           if [ "${IS_PRERELEASE}" = 'true' ]; then
             options+=(--prerelease)
@@ -112,5 +129,6 @@ jobs:
             --target "${GITHUB_SHA}" \
             --title "${RELEASE_VERSION}" \
             --generate-notes \
-            "${options[@]}"
+            "${options[@]}" \
+            ter-artefact/*.zip
           echo "Draft created: $(gh release view "${RELEASE_VERSION}" --repo "${GITHUB_REPOSITORY}" --json url --jq .url)" >> "$GITHUB_STEP_SUMMARY"
