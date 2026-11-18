@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   publish:
-    name: Create artefact and publish to TER
+    name: Publish to TER
     runs-on: ubuntu-latest
     env:
       TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
@@ -58,46 +58,25 @@ jobs:
           fi
 
       -
-        name: Create artefact
+        name: Download artefact from release
+        # Created and attached to the draft by the prepare release workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          "$(composer global config bin-dir --absolute --quiet)/tailor" create-artefact "${RELEASE_VERSION}"
+          gh release download "${RELEASE_VERSION}" --repo "${GITHUB_REPOSITORY}" --pattern '*.zip' --dir ter-artefact
+          artefacts=(ter-artefact/*.zip)
+          if [ "${#artefacts[@]}" -ne 1 ] || [ ! -f "${artefacts[0]}" ]; then
+            echo "::error::Expected exactly one ZIP file attached to release ${RELEASE_VERSION}."
+            exit 1
+          fi
 
       -
         name: Publish to TER
         # Pre-releases are only published on GitHub
         if: ${{ !github.event.release.prerelease }}
         run: |
-          artefacts=(tailor-version-artefact/*.zip)
+          artefacts=(ter-artefact/*.zip)
           "$(composer global config bin-dir --absolute --quiet)/tailor" ter:publish \
             --artefact="${artefacts[0]}" \
             --comment="Release notes: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_VERSION}" \
             "${RELEASE_VERSION}"
-
-      -
-        name: Store artefact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # 7.0.1
-        with:
-          name: ter-artefact
-          path: tailor-version-artefact/*.zip
-          if-no-files-found: error
-
-  attach:
-    name: Attach artefact to GitHub release
-    needs: publish
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      GH_TOKEN: ${{ github.token }}
-      RELEASE_VERSION: ${{ github.event.release.tag_name }}
-    steps:
-      -
-        name: Download artefact
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # 8.0.2
-        with:
-          name: ter-artefact
-          path: ter-artefact
-
-      -
-        name: Upload artefact to release
-        run: gh release upload "${RELEASE_VERSION}" ter-artefact/*.zip --repo "${GITHUB_REPOSITORY}" --clobber

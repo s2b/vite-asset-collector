@@ -128,11 +128,11 @@ by GitHub Actions. Packagist picks up new tags automatically.
     For pre-releases (e. g. `2.1.0-rc1`), set the version in both files manually.
 2.  Run the [prepare release](https://github.com/s2b/vite-asset-collector/actions/workflows/prepare-release.yaml)
     workflow on `main`, entering the version (and checking "Pre-release" if applicable).
-    It verifies the versions in both files and creates a draft release with generated release notes.
+    It verifies the versions in both files and creates a draft release with generated release notes
+    and the TER ZIP file attached (assets of immutable releases can't be changed after publishing).
 3.  Edit the release notes of the draft and publish it. This creates the tag. The
     [publish](https://github.com/s2b/vite-asset-collector/actions/workflows/publish.yaml) workflow then
-    uploads the release to TER (except pre-releases), using the release notes as upload comment,
-    and attaches the TER ZIP file to the GitHub release.
+    uploads the attached ZIP file to TER (except pre-releases), using the release notes as upload comment.
 
 Publishing to TER requires the repository secret `TYPO3_API_TOKEN`
 (created at extensions.typo3.org with the scopes `extension:read,extension:write`).
