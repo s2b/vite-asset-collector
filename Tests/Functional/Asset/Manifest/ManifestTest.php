@@ -371,4 +371,29 @@ final class ManifestTest extends AbstractViteFunctionalTestCase
         $manifestFactory = $this->get(ManifestFactory::class);
         self::assertSame($manifestFactory->createFromFilePath($manifestFile), $manifestFactory->createFromFilePath($manifestFile));
     }
+
+    #[Test]
+    public function outputDirIsExtensionPathForExtensionManifest(): void
+    {
+        /** @var ManifestFactory */
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $subject = $manifestFactory->createFromFilePath('EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json');
+        self::assertSame('EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/', $subject->outputDir);
+        self::assertSame('.vite/manifest.json', $subject->file->locator);
+        self::assertSame(
+            'EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/assets/Default-4483b920.js',
+            $subject->resolveAssetPath(OutputFile::create('assets/Default-4483b920.js')),
+        );
+    }
+
+    #[Test]
+    public function cacheDistinguishesExtensionPathFromResolvedPath(): void
+    {
+        /** @var ManifestFactory */
+        $manifestFactory = $this->get(ManifestFactory::class);
+        $extManifest = $manifestFactory->createFromFilePath('EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json');
+        $pathManifest = $manifestFactory->createFromFilePath('typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/.vite/manifest.json');
+        self::assertSame('EXT:vite_asset_collector/Tests/Fixtures/DefaultManifest/', $extManifest->outputDir);
+        self::assertSame(self::getInstancePath() . '/typo3conf/ext/vite_asset_collector/Tests/Fixtures/DefaultManifest/', $pathManifest->outputDir);
+    }
 }

@@ -11,6 +11,7 @@ use Praetorius\ViteAssetCollector\Exception\ViteException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 final readonly class ManifestFactory
 {
@@ -51,13 +52,16 @@ final readonly class ManifestFactory
                 $resolvedFile
             ), 1683200522);
         }
-        $cacheIdentifier = md5($resolvedFile);
+        $cacheIdentifier = md5($resolvedFile . '|' . $manifestFile);
         $manifest = $this->cache->get($cacheIdentifier);
         if ($manifest === false) {
-            $outputDir = $this->determineOutputDir($resolvedFile);
+            // Keep extension paths to be able to address files of extensions installed
+            // outside of the public folder (composer mode)
+            $manifestPath = PathUtility::isExtensionPath($manifestFile) ? $manifestFile : $resolvedFile;
+            $outputDir = $this->determineOutputDir($manifestPath);
             $manifest = new Manifest(
                 chunks: $this->readManifestFile($resolvedFile),
-                file: OutputFile::create($this->stripOutputDir($resolvedFile, $outputDir)),
+                file: OutputFile::create($this->stripOutputDir($manifestPath, $outputDir)),
                 outputDir: $outputDir,
             );
             $this->cache->set($cacheIdentifier, $manifest);
