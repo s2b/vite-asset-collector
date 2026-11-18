@@ -1,0 +1,11 @@
+{
+	".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/JavaScript/Default.js": {
+		"file": "assets/Default-Kp2sQ8wX.js",
+		"name": "Default",
+		"src": ".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/JavaScript/Default.js",
+		"isEntry": true,
+		"css": [
+			"assets/Default-Rt5uV1yA.css"
+		]
+	}
+}

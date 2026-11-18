@@ -58,7 +58,8 @@ composer update \
     --with typo3/cms-fluid:^13.4 \
     --with typo3/cms-extbase:^13.4 \
     --with typo3/cms-backend:^13.4 \
-    --with typo3/cms-frontend:^13.4
+    --with typo3/cms-frontend:^13.4 \
+    --with typo3/cms-install:^13.4
 ```
 
 </details>
@@ -70,9 +71,15 @@ composer update \
 composer test
 composer test:unit
 composer test:functional
+composer test:acceptance
 ```
 
-Functional tests use SQLite, no database server needed.
+Functional and acceptance tests use SQLite, no database server needed.
+
+Acceptance tests use the project in `.Build/` as TYPO3 installation in composer mode
+and render a page with PHP's built-in web server (port 8601, can be changed with the
+environment variable `ACCEPTANCE_PORT`). Each run sets up TYPO3 from scratch in `config/`
+and `var/` in the repository root.
 
 </details>
 

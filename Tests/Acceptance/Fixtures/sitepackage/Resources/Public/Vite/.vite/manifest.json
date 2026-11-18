@@ -1,0 +1,25 @@
+{
+	"_Shared-Cx3k9aZb.js": {
+		"file": "assets/Shared-Cx3k9aZb.js",
+		"name": "Shared"
+	},
+	".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/Images/Logo.svg": {
+		"file": "assets/Logo-Dq7rT2mN.svg",
+		"src": ".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/Images/Logo.svg"
+	},
+	".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/JavaScript/Main.js": {
+		"file": "assets/Main-B8fW2pLq.js",
+		"name": "Main",
+		"src": ".Build/vendor/praetorius/vite-asset-collector-test-sitepackage/Resources/Private/JavaScript/Main.js",
+		"isEntry": true,
+		"imports": [
+			"_Shared-Cx3k9aZb.js"
+		],
+		"css": [
+			"assets/Main-Hn4vY6sE.css"
+		],
+		"assets": [
+			"assets/Logo-Dq7rT2mN.svg"
+		]
+	}
+}

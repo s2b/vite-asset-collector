@@ -1,0 +1,10 @@
+base: '/'
+rootPageId: 1
+dependencies:
+  - praetorius/vite-asset-collector-test-sitepackage
+languages:
+  - title: English
+    enabled: true
+    languageId: 0
+    base: /
+    locale: en_US.UTF-8

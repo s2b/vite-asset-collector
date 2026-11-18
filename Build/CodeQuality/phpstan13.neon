@@ -9,17 +9,7 @@ parameters:
 			count: 1
 			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
 		-
-			message: '#^Call to method removeExtension\(\) on an unknown class TYPO3\\CMS\\Install\\Service\\Event\\ModifyLanguagePacksEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
-		-
 			message: '#^Parameter \$event of method Praetorius\\ViteAssetCollector\\EventListener\\ExcludeExtensionFromLanguageUpdate\:\:__invoke\(\) has invalid type TYPO3\\CMS\\Core\\Localization\\Event\\ModifyLanguagePacksEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php
-		-
-			message: '#^Parameter \$event of method Praetorius\\ViteAssetCollector\\EventListener\\ExcludeExtensionFromLanguageUpdate\:\:__invoke\(\) has invalid type TYPO3\\CMS\\Install\\Service\\Event\\ModifyLanguagePacksEvent\.$#'
 			identifier: class.notFound
 			count: 1
 			path: ../../Classes/EventListener/ExcludeExtensionFromLanguageUpdate.php

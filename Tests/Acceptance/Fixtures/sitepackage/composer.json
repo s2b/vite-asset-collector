@@ -1,0 +1,12 @@
+{
+	"name": "praetorius/vite-asset-collector-test-sitepackage",
+	"description": "Sitepackage for acceptance tests of vite_asset_collector",
+	"type": "typo3-cms-extension",
+	"license": "GPL-2.0-or-later",
+	"version": "1.0.0",
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "sitepackage"
+		}
+	}
+}

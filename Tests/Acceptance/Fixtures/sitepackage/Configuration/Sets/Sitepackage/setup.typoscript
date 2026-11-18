@@ -1,0 +1,5 @@
+page = PAGE
+# Rendering depends on the environment (dev server or build), so the page must not be cached
+page.config.no_cache = 1
+page.10 = FLUIDTEMPLATE
+page.10.file = EXT:sitepackage/Resources/Private/Templates/Page.html
