@@ -11,6 +11,8 @@
 		"typo3/cms-fluid": "^14.3 || ^13.4 || dev-main"
 	},
 	"require-dev": {
+		"praetorius/vite-asset-collector-test-sitepackage": "^1.0",
+		"typo3/cms-install": "^14.3 || ^13.4 || dev-main",
 		"typo3/coding-standards": "^0.9",
 		"editorconfig-checker/editorconfig-checker": "^10.6",
 		"typo3/testing-framework": "^8.0 || ^9.0 || dev-main",
@@ -20,6 +22,12 @@
 		"t3docs/fluid-documentation-generator": "^4.4",
 		"typo3/tailor": "^2.1"
 	},
+	"repositories": [
+		{
+			"type": "path",
+			"url": "Tests/Acceptance/Fixtures/sitepackage"
+		}
+	],
 	"autoload": {
 		"psr-4": {
 			"Praetorius\\ViteAssetCollector\\": "Classes/"
@@ -65,7 +73,8 @@
 
 		"test": [
 			"@test:unit",
-			"@test:functional"
+			"@test:functional",
+			"@test:acceptance"
 		],
 		"test:unit": [
 			"@putenv TYPO3_CONTEXT=Testing",
@@ -76,6 +85,7 @@
 			"@putenv TYPO3_CONTEXT=Testing",
 			"phpunit -c Build/Testing/FunctionalTests.xml"
 		],
+		"test:acceptance": "phpunit -c Build/Testing/AcceptanceTests.xml",
 
 		"coverage": [
 			"@coverage:unit",

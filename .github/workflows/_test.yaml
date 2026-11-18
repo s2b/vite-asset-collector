@@ -86,7 +86,7 @@ jobs:
         name: Install composer dependencies
         env:
           INPUTS_TYPO3_VERSION: ${{ inputs.typo3-version }}
-        run: composer up --with typo3/cms-core:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-fluid:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-extbase:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-backend:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-frontend:"${INPUTS_TYPO3_VERSION}" --prefer-dist --no-progress
+        run: composer up --with typo3/cms-core:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-fluid:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-extbase:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-backend:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-frontend:"${INPUTS_TYPO3_VERSION}" --with typo3/cms-install:"${INPUTS_TYPO3_VERSION}" --prefer-dist --no-progress
 
       - parallel:
         -
@@ -103,6 +103,10 @@ jobs:
         -
           name: Functional testing
           run: typo3DatabaseDriver=pdo_sqlite composer coverage:functional
+
+        -
+          name: Acceptance testing
+          run: composer test:acceptance
 
       -
         name: Upload coverage report

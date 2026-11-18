@@ -1,0 +1,22 @@
+<html
+    xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+
+<!-- Build output inside of an extension (outside of public folder in composer mode) -->
+<vite:asset
+    entry="EXT:sitepackage/Resources/Private/JavaScript/Main.js"
+    manifest="EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json"
+/>
+<img
+    id="logo"
+    src="{vite:uri(file: 'EXT:sitepackage/Resources/Private/Images/Logo.svg', manifest: 'EXT:sitepackage/Resources/Public/Vite/.vite/manifest.json')}"
+    alt=""
+/>
+
+<!-- Build output in public folder (default manifest), with inline CSS -->
+<vite:asset entry="EXT:sitepackage/Resources/Private/JavaScript/Default.js">
+    <vite:asset.css inline="{true}" />
+</vite:asset>
+
+</html>

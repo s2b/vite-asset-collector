@@ -1,6 +1,7 @@
 /.Build
 /composer.lock
 /.php-cs-fixer.cache
+/config
 /var
 /Build/Testing/.phpunit.cache
 /Documentation-GENERATED-temp
