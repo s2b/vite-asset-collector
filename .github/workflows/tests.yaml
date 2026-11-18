@@ -26,14 +26,21 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> "${GITHUB_OUTPUT}"
+          # Cache is renewed weekly, because composer.lock isn't committed and
+          # dependency versions change over time
+          echo "week=$(date -u +%G-%V)" >> "${GITHUB_OUTPUT}"
 
       -
         name: Cache composer dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-
+          key: composer-lint-${{ steps.composer-cache.outputs.week }}
+          restore-keys: |
+            composer-lint-
+            composer-
 
       -
         name: Install composer dependencies
