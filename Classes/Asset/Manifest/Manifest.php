@@ -10,6 +10,8 @@ final readonly class Manifest
 {
     /**
      * @param array<string, ManifestChunk> $chunks
+     * @param string $outputDir vite's output directory, either as extension path
+     *        (EXT:my_ext/...) if the manifest was referenced that way, or as absolute path
      */
     public function __construct(
         private array $chunks,

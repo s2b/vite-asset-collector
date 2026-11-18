@@ -36,7 +36,14 @@ final readonly class AssetPathResolver implements AssetPathResolverInterface
             $outputFile = $chunk->file;
         }
         $path = $manifest->resolveAssetPath($outputFile);
-        return $absolute ? $path : $this->stripPublicPath($path);
+        $absolutePath = PathUtility::isExtensionPath($path) ? $this->packageManager->resolvePackagePath($path) : $path;
+        if ($absolute) {
+            return $absolutePath;
+        }
+        // Prefer path relative to public folder. If the asset is outside of the public folder
+        // (e.g. extension installed via composer), keep extension path, which can be published by TYPO3
+        $relativePath = $this->stripPublicPath($absolutePath);
+        return $relativePath !== $absolutePath ? $relativePath : $path;
     }
 
     public function resolveSourcePath(AssetFile $file, bool $absolute = false): string
